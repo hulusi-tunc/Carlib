@@ -1,0 +1,56 @@
+name: Carlib
+options:
+  bundleIdPrefix: com.carlib
+  deploymentTarget:
+    iOS: "26.0"
+  xcodeVersion: "26"
+  defaultConfig: Debug
+  groupSortPosition: top
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    SUPPORTED_INTERFACE_ORIENTATIONS: UIInterfaceOrientationPortrait
+    DEVELOPMENT_LANGUAGE: fr
+
+targets:
+  Carlib:
+    type: application
+    platform: iOS
+    sources:
+      - path: Carlib
+        excludes:
+          - "**/.DS_Store"
+          - "**/Resources/Assets.xcassets"
+          - "**/Resources/Info.plist"
+          - "**/Resources/Carlib.entitlements"
+    resources:
+      - path: Carlib/Resources/Assets.xcassets
+      - path: Carlib/Resources/Localizable.xcstrings
+      - path: Carlib/Resources/Fonts
+        optional: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.carlib.app
+        PRODUCT_NAME: Carlib
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_EMIT_LOC_STRINGS: "YES"
+        CODE_SIGN_ENTITLEMENTS: Carlib/Resources/Carlib.entitlements
+    info:
+      path: Carlib/Resources/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: fr
+        CFBundleDisplayName: Carlib
+        LSRequiresIPhoneOS: true
+        UILaunchScreen: {}
+        UIRequiredDeviceCapabilities:
+          - armv7
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSCameraUsageDescription: "Carlib utilise l'appareil photo pour prendre des photos des dégâts de votre véhicule."
+        NSPhotoLibraryUsageDescription: "Carlib accède à vos photos pour joindre des images à votre déclaration de sinistre."
+        NSLocationWhenInUseUsageDescription: "Carlib utilise votre position pour trouver les garages à proximité."

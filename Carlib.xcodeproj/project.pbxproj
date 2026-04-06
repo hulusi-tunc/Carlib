@@ -1,0 +1,636 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0790F2664113F69DFA11590A /* GarageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 476A0E186230758E86447132 /* GarageDetailView.swift */; };
+		08D27503D805473E2B3AC759 /* ClaimStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24FD502B66C9949F0CA0FCD /* ClaimStatus.swift */; };
+		0D08DB3A84CB0BA7E8FFB7EA /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A5D81AD50E8DBFC52A5455F /* Strings.swift */; };
+		11878E4D2EF7ACB9391E7AC8 /* ClaimCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE49D83333850BE2A338291 /* ClaimCardView.swift */; };
+		15F989C8E8B173539CEC7724 /* GarageProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF4B190F5C5EE98E97E0857 /* GarageProfileView.swift */; };
+		166B3B9E8A20EA5ED43F18DB /* DeclarationConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBC8E304817BBAF175DD63E8 /* DeclarationConfirmationView.swift */; };
+		1693047F5C7866F5CE9A3C7C /* GarageClaimsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10EB238C465D71C2885F653C /* GarageClaimsListView.swift */; };
+		2E17BF93BE21D248BFD7E947 /* CarlibStatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2866F357DBEB6F94BBF7CE /* CarlibStatusBadge.swift */; };
+		362033F4E3151F4D8B929CE0 /* ClaimStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0784D7D619C7186A60839DD3 /* ClaimStore.swift */; };
+		4045C86B4DEF7AFB3F61CE37 /* GarageSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17AE9A85DF483DF0FF10E0B3 /* GarageSearchView.swift */; };
+		41501708F953872F499AB509 /* GarageDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A731283156F24D11077B1A /* GarageDashboardView.swift */; };
+		54CD2CD61DB207CFA038636D /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2209834D9E1AF9F932C4BBC4 /* OnboardingView.swift */; };
+		54D057AC882E810193F357AD /* StatusTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA573BCF1B3F9BDD02BB258 /* StatusTimelineView.swift */; };
+		5AB1F2704D21DE5FDD4A2EBA /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F163983106891EB13874A1 /* NotificationSettingsView.swift */; };
+		5B81417938EBE295DAB4C0FC /* DriverProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A820B0F22C9630976C3FA67 /* DriverProfileView.swift */; };
+		5E5F15BE91F9B2EA51CD871D /* CarlibRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9D4D3BD2B2E517ED480B41 /* CarlibRadius.swift */; };
+		6566174DD55D154C794C4998 /* CarlibApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEE12E3A5CAFB0FC348CA02 /* CarlibApp.swift */; };
+		68C7E2208AD14509D43D08F2 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5896D8564F05F375CF791EB4 /* MockData.swift */; };
+		6E1E9C25A2CC0DF2F065F53D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 82CD3023B08C31526B32654F /* Localizable.xcstrings */; };
+		74359B5279F3B36D19E01B08 /* Garage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011B327F072A49208F76E562 /* Garage.swift */; };
+		74D05FF76C01470BC5F59073 /* GarageClaimDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B0DCE7F51CC33A815464CB /* GarageClaimDetailView.swift */; };
+		77B82E1BAFC0C15D6235D0D9 /* Vehicle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2548F33656A4E3795BCCAC86 /* Vehicle.swift */; };
+		7803270F613ACE9BE93C08B4 /* MyGarageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99FB396802A8576878AD0911 /* MyGarageView.swift */; };
+		7E6DD579EE536E1183BFBB9F /* RepairStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78BAACD0399F5F33DBF3856 /* RepairStatus.swift */; };
+		863F4F65616E7BBE46AFD04E /* Booking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FAF9CE2E349B05B6275D0A /* Booking.swift */; };
+		871477BA9A7DB9E7786C28C7 /* GaragePlanningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593B5B75C2CAC0C895EE8CC0 /* GaragePlanningView.swift */; };
+		8790CC18EAB66A8EC1AB59AF /* DeclarationFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DE167C52C6191E36618B16 /* DeclarationFlowView.swift */; };
+		87BB912677B436DA81E4EBB2 /* CarlibCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5587A44890856F907030AEF /* CarlibCard.swift */; };
+		9545418C45DD7F474127ABFC /* TimeSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04BE545770D1F4B02431860 /* TimeSlot.swift */; };
+		978894CA9FA9B5D13F2BFB2A /* BookingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A3FD5C234C6CA19A797461 /* BookingFlowView.swift */; };
+		A3A16BB60EB54F22B665CA55 /* CarlibButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A4DD9FCFA298B86662EE66 /* CarlibButton.swift */; };
+		A582FEB66DCA717CF5A39915 /* DriverHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECD9FDE347D292BD9331D87 /* DriverHomeView.swift */; };
+		A79E8D9EA48F6D8598224857 /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F2F54FDE5B7697A872C608 /* DateFormatting.swift */; };
+		ADE5DBDBF76A5DEC0B8AF7F2 /* LucideIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3220831D4A43F04603D42043 /* LucideIcon.swift */; };
+		B3DC822A27AA9DF3D5B08405 /* CarlibTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67A3A38888D36EC4C4F5FB5C /* CarlibTypography.swift */; };
+		BAAEB54A8647595DE3915E5B /* DriverClaimsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9D1E29F6EC119546A1BC2A /* DriverClaimsListView.swift */; };
+		BD5087791FDD43D3495335B0 /* UserRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B2B78A5789A951EBDD6349 /* UserRole.swift */; };
+		C01A48462777994E4C99BFB2 /* DriverClaimDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C40C09492855BC92ED1E83 /* DriverClaimDetailView.swift */; };
+		C080BADE511E7734DE2E31DD /* CarlibSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A051B521759D2597DFA5AAC /* CarlibSectionHeader.swift */; };
+		C11657BF927FFAB05C3E3899 /* DriverTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BF0731A33C59BADEFCDC74 /* DriverTabView.swift */; };
+		CD9DF4F88E3284D3C237553A /* CarlibColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DAD59397DE1AF1A957959C /* CarlibColors.swift */; };
+		D4BAC6807F11C4B83DFF4996 /* Claim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C981B7CB9ABC5E8B102A85 /* Claim.swift */; };
+		DF2204A46E40B283125ABB1F /* BookingStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEF94961455516382E87730 /* BookingStatus.swift */; };
+		E033692AA01604CEC7B51573 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C01E8B78E6FFB1A0F7575FA /* ThemeManager.swift */; };
+		E430FD8C9B07351267372E32 /* GarageProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 148609A1283F43ADB7418572 /* GarageProfileEditView.swift */; };
+		ED060D9F58A66529292E6C75 /* GarageTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE4D0B2E0A6EF17B2065C22 /* GarageTabView.swift */; };
+		F0F29619AC644DC94A019B72 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E83D52CF63849F27DE5A03 /* AppState.swift */; };
+		F64F957B903F07968CA138F6 /* CarlibSpacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A47E2556AF55CD0A2E306054 /* CarlibSpacing.swift */; };
+		F7089E125D5AF445CB3403A1 /* PolestarTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098E79662AA75FA1985D33B1 /* PolestarTile.swift */; };
+		F9143814F6380D71C75E1592 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19E577496F01195491E878D /* RootView.swift */; };
+		FB8D94EE4F7901640F5BC183 /* VehicleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0EFAF96DA039A0BE34A09B9 /* VehicleDetailView.swift */; };
+		FE7BB24581909D52FA4543CD /* GarageCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3993E0BB2312582EB3F21DB0 /* GarageCardView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		00A3FD5C234C6CA19A797461 /* BookingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingFlowView.swift; sourceTree = "<group>"; };
+		011B327F072A49208F76E562 /* Garage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Garage.swift; sourceTree = "<group>"; };
+		054376629BD848CC28FDCBD4 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		0784D7D619C7186A60839DD3 /* ClaimStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimStore.swift; sourceTree = "<group>"; };
+		098E79662AA75FA1985D33B1 /* PolestarTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolestarTile.swift; sourceTree = "<group>"; };
+		0C01E8B78E6FFB1A0F7575FA /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		0E9D1E29F6EC119546A1BC2A /* DriverClaimsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverClaimsListView.swift; sourceTree = "<group>"; };
+		10EB238C465D71C2885F653C /* GarageClaimsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageClaimsListView.swift; sourceTree = "<group>"; };
+		148609A1283F43ADB7418572 /* GarageProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageProfileEditView.swift; sourceTree = "<group>"; };
+		17AE9A85DF483DF0FF10E0B3 /* GarageSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageSearchView.swift; sourceTree = "<group>"; };
+		17FAF9CE2E349B05B6275D0A /* Booking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Booking.swift; sourceTree = "<group>"; };
+		1FE49D83333850BE2A338291 /* ClaimCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimCardView.swift; sourceTree = "<group>"; };
+		2209834D9E1AF9F932C4BBC4 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		2548F33656A4E3795BCCAC86 /* Vehicle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vehicle.swift; sourceTree = "<group>"; };
+		27C40C09492855BC92ED1E83 /* DriverClaimDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverClaimDetailView.swift; sourceTree = "<group>"; };
+		2BA573BCF1B3F9BDD02BB258 /* StatusTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusTimelineView.swift; sourceTree = "<group>"; };
+		2C153EDCCB550641C7966A64 /* Carlib.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Carlib.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2FEE12E3A5CAFB0FC348CA02 /* CarlibApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibApp.swift; sourceTree = "<group>"; };
+		3220831D4A43F04603D42043 /* LucideIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LucideIcon.swift; sourceTree = "<group>"; };
+		3993E0BB2312582EB3F21DB0 /* GarageCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageCardView.swift; sourceTree = "<group>"; };
+		3AF4B190F5C5EE98E97E0857 /* GarageProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageProfileView.swift; sourceTree = "<group>"; };
+		45B2B78A5789A951EBDD6349 /* UserRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRole.swift; sourceTree = "<group>"; };
+		476A0E186230758E86447132 /* GarageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageDetailView.swift; sourceTree = "<group>"; };
+		4A5D81AD50E8DBFC52A5455F /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
+		4CE4D0B2E0A6EF17B2065C22 /* GarageTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageTabView.swift; sourceTree = "<group>"; };
+		51BF0731A33C59BADEFCDC74 /* DriverTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverTabView.swift; sourceTree = "<group>"; };
+		52E83D52CF63849F27DE5A03 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		5896D8564F05F375CF791EB4 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
+		593B5B75C2CAC0C895EE8CC0 /* GaragePlanningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GaragePlanningView.swift; sourceTree = "<group>"; };
+		65B0DCE7F51CC33A815464CB /* GarageClaimDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageClaimDetailView.swift; sourceTree = "<group>"; };
+		67A3A38888D36EC4C4F5FB5C /* CarlibTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibTypography.swift; sourceTree = "<group>"; };
+		7BEF94961455516382E87730 /* BookingStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingStatus.swift; sourceTree = "<group>"; };
+		7ECD9FDE347D292BD9331D87 /* DriverHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverHomeView.swift; sourceTree = "<group>"; };
+		82CD3023B08C31526B32654F /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		83DAD59397DE1AF1A957959C /* CarlibColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibColors.swift; sourceTree = "<group>"; };
+		8A051B521759D2597DFA5AAC /* CarlibSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibSectionHeader.swift; sourceTree = "<group>"; };
+		94DE167C52C6191E36618B16 /* DeclarationFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeclarationFlowView.swift; sourceTree = "<group>"; };
+		95C981B7CB9ABC5E8B102A85 /* Claim.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Claim.swift; sourceTree = "<group>"; };
+		99FB396802A8576878AD0911 /* MyGarageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGarageView.swift; sourceTree = "<group>"; };
+		9A820B0F22C9630976C3FA67 /* DriverProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverProfileView.swift; sourceTree = "<group>"; };
+		9B9D4D3BD2B2E517ED480B41 /* CarlibRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibRadius.swift; sourceTree = "<group>"; };
+		A0A4DD9FCFA298B86662EE66 /* CarlibButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibButton.swift; sourceTree = "<group>"; };
+		A47E2556AF55CD0A2E306054 /* CarlibSpacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibSpacing.swift; sourceTree = "<group>"; };
+		A5F2F54FDE5B7697A872C608 /* DateFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatting.swift; sourceTree = "<group>"; };
+		A78BAACD0399F5F33DBF3856 /* RepairStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepairStatus.swift; sourceTree = "<group>"; };
+		B0EFAF96DA039A0BE34A09B9 /* VehicleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleDetailView.swift; sourceTree = "<group>"; };
+		B19E577496F01195491E878D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		B4A731283156F24D11077B1A /* GarageDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageDashboardView.swift; sourceTree = "<group>"; };
+		B5587A44890856F907030AEF /* CarlibCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibCard.swift; sourceTree = "<group>"; };
+		C24FD502B66C9949F0CA0FCD /* ClaimStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimStatus.swift; sourceTree = "<group>"; };
+		E04BE545770D1F4B02431860 /* TimeSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSlot.swift; sourceTree = "<group>"; };
+		E7F163983106891EB13874A1 /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
+		EBC8E304817BBAF175DD63E8 /* DeclarationConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeclarationConfirmationView.swift; sourceTree = "<group>"; };
+		EC2866F357DBEB6F94BBF7CE /* CarlibStatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibStatusBadge.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		004A0564E1222849047A4E5E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FCDA81F458E4C610C24325D7 /* Fonts */,
+				82CD3023B08C31526B32654F /* Localizable.xcstrings */,
+				4A5D81AD50E8DBFC52A5455F /* Strings.swift */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		032C3410AFC2CDF66ACE93A4 /* Garage */ = {
+			isa = PBXGroup;
+			children = (
+				65B0DCE7F51CC33A815464CB /* GarageClaimDetailView.swift */,
+				10EB238C465D71C2885F653C /* GarageClaimsListView.swift */,
+				B4A731283156F24D11077B1A /* GarageDashboardView.swift */,
+				593B5B75C2CAC0C895EE8CC0 /* GaragePlanningView.swift */,
+				148609A1283F43ADB7418572 /* GarageProfileEditView.swift */,
+				3AF4B190F5C5EE98E97E0857 /* GarageProfileView.swift */,
+				4CE4D0B2E0A6EF17B2065C22 /* GarageTabView.swift */,
+			);
+			path = Garage;
+			sourceTree = "<group>";
+		};
+		18EF527C31776F07846A4C4B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				17FAF9CE2E349B05B6275D0A /* Booking.swift */,
+				7BEF94961455516382E87730 /* BookingStatus.swift */,
+				95C981B7CB9ABC5E8B102A85 /* Claim.swift */,
+				C24FD502B66C9949F0CA0FCD /* ClaimStatus.swift */,
+				011B327F072A49208F76E562 /* Garage.swift */,
+				A78BAACD0399F5F33DBF3856 /* RepairStatus.swift */,
+				E04BE545770D1F4B02431860 /* TimeSlot.swift */,
+				45B2B78A5789A951EBDD6349 /* UserRole.swift */,
+				2548F33656A4E3795BCCAC86 /* Vehicle.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		273156D355DB76C36B388B41 = {
+			isa = PBXGroup;
+			children = (
+				F562283DCC51672701463041 /* Carlib */,
+				B5A91F1FFE48B0604A8DC7D7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		32C831E4A09803A73BC6D6A8 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				52E83D52CF63849F27DE5A03 /* AppState.swift */,
+				2FEE12E3A5CAFB0FC348CA02 /* CarlibApp.swift */,
+				B19E577496F01195491E878D /* RootView.swift */,
+				0C01E8B78E6FFB1A0F7575FA /* ThemeManager.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		3B3930CCEDB2585EB87F85DD /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				B9261D8502BA7198370919B6 /* Components */,
+				83DAD59397DE1AF1A957959C /* CarlibColors.swift */,
+				9B9D4D3BD2B2E517ED480B41 /* CarlibRadius.swift */,
+				A47E2556AF55CD0A2E306054 /* CarlibSpacing.swift */,
+				67A3A38888D36EC4C4F5FB5C /* CarlibTypography.swift */,
+				3220831D4A43F04603D42043 /* LucideIcon.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		4A7ACBCAD22DBC40227DEA0F /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				A5F2F54FDE5B7697A872C608 /* DateFormatting.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		5888242C38F964CC6CE996E3 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				0784D7D619C7186A60839DD3 /* ClaimStore.swift */,
+				5896D8564F05F375CF791EB4 /* MockData.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		70535AA4AE346F696BA1A019 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				2209834D9E1AF9F932C4BBC4 /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		7D4B5710CDF29766E7E97C17 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				1FE49D83333850BE2A338291 /* ClaimCardView.swift */,
+				3993E0BB2312582EB3F21DB0 /* GarageCardView.swift */,
+				E7F163983106891EB13874A1 /* NotificationSettingsView.swift */,
+				2BA573BCF1B3F9BDD02BB258 /* StatusTimelineView.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		917FB24506EABC464A08F274 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F4B71673D4318861106B2F72 /* Driver */,
+				032C3410AFC2CDF66ACE93A4 /* Garage */,
+				D6CF66988FE541C8AA4D5E75 /* Landing */,
+				70535AA4AE346F696BA1A019 /* Onboarding */,
+				7D4B5710CDF29766E7E97C17 /* Shared */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B5A91F1FFE48B0604A8DC7D7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2C153EDCCB550641C7966A64 /* Carlib.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B9261D8502BA7198370919B6 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A0A4DD9FCFA298B86662EE66 /* CarlibButton.swift */,
+				B5587A44890856F907030AEF /* CarlibCard.swift */,
+				8A051B521759D2597DFA5AAC /* CarlibSectionHeader.swift */,
+				EC2866F357DBEB6F94BBF7CE /* CarlibStatusBadge.swift */,
+				098E79662AA75FA1985D33B1 /* PolestarTile.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		D6CF66988FE541C8AA4D5E75 /* Landing */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Landing;
+			sourceTree = "<group>";
+		};
+		E711B095D066BC2FFD46C867 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		F4B71673D4318861106B2F72 /* Driver */ = {
+			isa = PBXGroup;
+			children = (
+				00A3FD5C234C6CA19A797461 /* BookingFlowView.swift */,
+				EBC8E304817BBAF175DD63E8 /* DeclarationConfirmationView.swift */,
+				94DE167C52C6191E36618B16 /* DeclarationFlowView.swift */,
+				27C40C09492855BC92ED1E83 /* DriverClaimDetailView.swift */,
+				0E9D1E29F6EC119546A1BC2A /* DriverClaimsListView.swift */,
+				7ECD9FDE347D292BD9331D87 /* DriverHomeView.swift */,
+				9A820B0F22C9630976C3FA67 /* DriverProfileView.swift */,
+				51BF0731A33C59BADEFCDC74 /* DriverTabView.swift */,
+				476A0E186230758E86447132 /* GarageDetailView.swift */,
+				17AE9A85DF483DF0FF10E0B3 /* GarageSearchView.swift */,
+				99FB396802A8576878AD0911 /* MyGarageView.swift */,
+				B0EFAF96DA039A0BE34A09B9 /* VehicleDetailView.swift */,
+			);
+			path = Driver;
+			sourceTree = "<group>";
+		};
+		F562283DCC51672701463041 /* Carlib */ = {
+			isa = PBXGroup;
+			children = (
+				32C831E4A09803A73BC6D6A8 /* App */,
+				3B3930CCEDB2585EB87F85DD /* DesignSystem */,
+				4A7ACBCAD22DBC40227DEA0F /* Extensions */,
+				18EF527C31776F07846A4C4B /* Models */,
+				004A0564E1222849047A4E5E /* Resources */,
+				5888242C38F964CC6CE996E3 /* Services */,
+				E711B095D066BC2FFD46C867 /* ViewModels */,
+				917FB24506EABC464A08F274 /* Views */,
+			);
+			path = Carlib;
+			sourceTree = "<group>";
+		};
+		FCDA81F458E4C610C24325D7 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				054376629BD848CC28FDCBD4 /* .gitkeep */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		50B392FA34B7328E24643DF1 /* Carlib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 171E782DC8B18ED40F11277D /* Build configuration list for PBXNativeTarget "Carlib" */;
+			buildPhases = (
+				6ABAB8C39CE78C32A448743B /* Sources */,
+				70C8821FC27A97526D59DF38 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Carlib;
+			packageProductDependencies = (
+			);
+			productName = Carlib;
+			productReference = 2C153EDCCB550641C7966A64 /* Carlib.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C02908B9D428ADD5AB0F7B3F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = C93E4ADA68C976B9C982A820 /* Build configuration list for PBXProject "Carlib" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+				fr,
+			);
+			mainGroup = 273156D355DB76C36B388B41;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = B5A91F1FFE48B0604A8DC7D7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				50B392FA34B7328E24643DF1 /* Carlib */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		70C8821FC27A97526D59DF38 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E1E9C25A2CC0DF2F065F53D /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6ABAB8C39CE78C32A448743B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0F29619AC644DC94A019B72 /* AppState.swift in Sources */,
+				863F4F65616E7BBE46AFD04E /* Booking.swift in Sources */,
+				978894CA9FA9B5D13F2BFB2A /* BookingFlowView.swift in Sources */,
+				DF2204A46E40B283125ABB1F /* BookingStatus.swift in Sources */,
+				6566174DD55D154C794C4998 /* CarlibApp.swift in Sources */,
+				A3A16BB60EB54F22B665CA55 /* CarlibButton.swift in Sources */,
+				87BB912677B436DA81E4EBB2 /* CarlibCard.swift in Sources */,
+				CD9DF4F88E3284D3C237553A /* CarlibColors.swift in Sources */,
+				5E5F15BE91F9B2EA51CD871D /* CarlibRadius.swift in Sources */,
+				C080BADE511E7734DE2E31DD /* CarlibSectionHeader.swift in Sources */,
+				F64F957B903F07968CA138F6 /* CarlibSpacing.swift in Sources */,
+				2E17BF93BE21D248BFD7E947 /* CarlibStatusBadge.swift in Sources */,
+				B3DC822A27AA9DF3D5B08405 /* CarlibTypography.swift in Sources */,
+				D4BAC6807F11C4B83DFF4996 /* Claim.swift in Sources */,
+				11878E4D2EF7ACB9391E7AC8 /* ClaimCardView.swift in Sources */,
+				08D27503D805473E2B3AC759 /* ClaimStatus.swift in Sources */,
+				362033F4E3151F4D8B929CE0 /* ClaimStore.swift in Sources */,
+				A79E8D9EA48F6D8598224857 /* DateFormatting.swift in Sources */,
+				166B3B9E8A20EA5ED43F18DB /* DeclarationConfirmationView.swift in Sources */,
+				8790CC18EAB66A8EC1AB59AF /* DeclarationFlowView.swift in Sources */,
+				C01A48462777994E4C99BFB2 /* DriverClaimDetailView.swift in Sources */,
+				BAAEB54A8647595DE3915E5B /* DriverClaimsListView.swift in Sources */,
+				A582FEB66DCA717CF5A39915 /* DriverHomeView.swift in Sources */,
+				5B81417938EBE295DAB4C0FC /* DriverProfileView.swift in Sources */,
+				C11657BF927FFAB05C3E3899 /* DriverTabView.swift in Sources */,
+				74359B5279F3B36D19E01B08 /* Garage.swift in Sources */,
+				FE7BB24581909D52FA4543CD /* GarageCardView.swift in Sources */,
+				74D05FF76C01470BC5F59073 /* GarageClaimDetailView.swift in Sources */,
+				1693047F5C7866F5CE9A3C7C /* GarageClaimsListView.swift in Sources */,
+				41501708F953872F499AB509 /* GarageDashboardView.swift in Sources */,
+				0790F2664113F69DFA11590A /* GarageDetailView.swift in Sources */,
+				871477BA9A7DB9E7786C28C7 /* GaragePlanningView.swift in Sources */,
+				E430FD8C9B07351267372E32 /* GarageProfileEditView.swift in Sources */,
+				15F989C8E8B173539CEC7724 /* GarageProfileView.swift in Sources */,
+				4045C86B4DEF7AFB3F61CE37 /* GarageSearchView.swift in Sources */,
+				ED060D9F58A66529292E6C75 /* GarageTabView.swift in Sources */,
+				ADE5DBDBF76A5DEC0B8AF7F2 /* LucideIcon.swift in Sources */,
+				68C7E2208AD14509D43D08F2 /* MockData.swift in Sources */,
+				7803270F613ACE9BE93C08B4 /* MyGarageView.swift in Sources */,
+				5AB1F2704D21DE5FDD4A2EBA /* NotificationSettingsView.swift in Sources */,
+				54CD2CD61DB207CFA038636D /* OnboardingView.swift in Sources */,
+				F7089E125D5AF445CB3403A1 /* PolestarTile.swift in Sources */,
+				7E6DD579EE536E1183BFBB9F /* RepairStatus.swift in Sources */,
+				F9143814F6380D71C75E1592 /* RootView.swift in Sources */,
+				54D057AC882E810193F357AD /* StatusTimelineView.swift in Sources */,
+				0D08DB3A84CB0BA7E8FFB7EA /* Strings.swift in Sources */,
+				E033692AA01604CEC7B51573 /* ThemeManager.swift in Sources */,
+				9545418C45DD7F474127ABFC /* TimeSlot.swift in Sources */,
+				BD5087791FDD43D3495335B0 /* UserRole.swift in Sources */,
+				77B82E1BAFC0C15D6235D0D9 /* Vehicle.swift in Sources */,
+				FB8D94EE4F7901640F5BC183 /* VehicleDetailView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		876A1AE26753898E0080A7E4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Carlib/Resources/Carlib.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Carlib/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.carlib.app;
+				PRODUCT_NAME = Carlib;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		87F62D204E4DD0EC1FAE866D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_LANGUAGE = fr;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_INTERFACE_ORIENTATIONS = UIInterfaceOrientationPortrait;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		E8597F1CBA3BBE716A0F580C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Carlib/Resources/Carlib.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Carlib/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.carlib.app;
+				PRODUCT_NAME = Carlib;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F88BDB60534E96718B882B6D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_LANGUAGE = fr;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_INTERFACE_ORIENTATIONS = UIInterfaceOrientationPortrait;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		171E782DC8B18ED40F11277D /* Build configuration list for PBXNativeTarget "Carlib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E8597F1CBA3BBE716A0F580C /* Debug */,
+				876A1AE26753898E0080A7E4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C93E4ADA68C976B9C982A820 /* Build configuration list for PBXProject "Carlib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				87F62D204E4DD0EC1FAE866D /* Debug */,
+				F88BDB60534E96718B882B6D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C02908B9D428ADD5AB0F7B3F /* Project object */;
+}
