@@ -32,11 +32,11 @@ struct CarlibCard<Content: View>: View {
     VStack(spacing: CarlibSpacing.md) {
         CarlibCard(variant: .flat) {
             Text("Flat card")
-                .foregroundStyle(.white)
+                .foregroundStyle(.carlibDark)
         }
         CarlibCard(variant: .elevated) {
             Text("Elevated card")
-                .foregroundStyle(.white)
+                .foregroundStyle(.carlibDark)
         }
     }
     .padding()

@@ -3,8 +3,8 @@ import SwiftUI
 /// Driver profile and settings.
 struct DriverProfileView: View {
     @Environment(AppState.self) private var appState
-    @AppStorage("app_theme") private var selectedTheme: String = AppTheme.dark.rawValue
-    private let mockVehicle = MockData.vehicleClio
+    @Environment(ClaimStore.self) private var claimStore
+    @AppStorage("app_theme") private var selectedTheme: String = AppTheme.light.rawValue
 
     var body: some View {
         NavigationStack {
@@ -12,17 +12,18 @@ struct DriverProfileView: View {
                 // Header
                 Section {
                     HStack(spacing: CarlibSpacing.md) {
-                        Circle()
-                            .fill(Color.brandYellowLight)
-                            .frame(width: 56, height: 56)
-                            .overlay {
-                                Text("SD")
-                                    .font(CarlibFont.headingMedium())
-                                    .foregroundStyle(.brandYellowDark)
-                            }
+                        DummyImage(
+                            kind: .person,
+                            seed: "sophie-durand",
+                            pixelWidth: 200,
+                            pixelHeight: 200
+                        )
+                        .frame(width: 56, height: 56)
+                        .clipShape(Circle())
+
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Sophie Durand")
-                                .font(CarlibFont.bodyLarge(.semibold))
+                                .font(CarlibFont.bodyLarge(.medium))
                             Text("sophie.durand@email.com")
                                 .font(CarlibFont.bodySmall())
                                 .foregroundStyle(.secondary)
@@ -31,15 +32,56 @@ struct DriverProfileView: View {
                 }
 
                 Section {
-                    HStack {
-                        Label("\(mockVehicle.brand) \(mockVehicle.model)", systemImage: "car.fill")
-                        Spacer()
-                        Text(mockVehicle.licensePlate)
-                            .font(CarlibFont.bodySmall())
-                            .foregroundStyle(.secondary)
+                    ForEach(claimStore.vehicles) { vehicle in
+                        NavigationLink {
+                            VehicleDetailView(vehicle: vehicle.info)
+                        } label: {
+                            HStack {
+                                Label {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("\(vehicle.info.brand) \(vehicle.info.model)")
+                                        if vehicle.isDefault {
+                                            Text("Default")
+                                                .font(CarlibFont.caption(.medium))
+                                                .foregroundStyle(.carlibPrimaryBlue)
+                                        }
+                                    }
+                                } icon: {
+                                    RemixIcon.carFill.view(size: 18, color: .carlibPrimaryBlue)
+                                }
+                                Spacer()
+                                Text(vehicle.info.licensePlate)
+                                    .font(CarlibFont.bodySmall())
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+
+                    NavigationLink {
+                        MyGarageView()
+                    } label: {
+                        Label {
+                            Text("Manage vehicles")
+                        } icon: {
+                            RemixIcon.addCircleLine.view(size: 18, color: .carlibPrimaryBlue)
+                        }
                     }
                 } header: {
                     Text(verbatim: L10n.Profile.sectionVehicle)
+                }
+
+                Section {
+                    NavigationLink {
+                        DriverClaimsListView()
+                    } label: {
+                        Label {
+                            Text(verbatim: L10n.Profile.historyRow)
+                        } icon: {
+                            RemixIcon.historyLine.view(size: 18, color: .carlibPrimaryBlue)
+                        }
+                    }
+                } header: {
+                    Text(verbatim: L10n.Profile.sectionHistory)
                 }
 
                 Section {
@@ -49,7 +91,7 @@ struct DriverProfileView: View {
                         Label {
                             Text(verbatim: L10n.Profile.preferences)
                         } icon: {
-                            Image(systemName: "bell")
+                            RemixIcon.notificationLine.view(size: 18, color: .carlibPrimaryBlue)
                         }
                     }
                 } header: {
@@ -61,7 +103,7 @@ struct DriverProfileView: View {
                         Label {
                             Text(verbatim: L10n.Profile.sectionLanguage)
                         } icon: {
-                            Image(systemName: "globe")
+                            RemixIcon.globalLine.view(size: 18, color: .carlibPrimaryBlue)
                         }
                         Spacer()
                         Text(verbatim: L10n.Profile.languageCurrent)
@@ -71,39 +113,23 @@ struct DriverProfileView: View {
                     Text(verbatim: L10n.Profile.sectionLanguage)
                 }
 
-                Section {
-                    Picker(selection: $selectedTheme) {
-                        ForEach(AppTheme.allCases, id: \.rawValue) { theme in
-                            Label(theme.label, systemImage: theme.icon)
-                                .tag(theme.rawValue)
-                        }
-                    } label: {
-                        Label {
-                            Text(verbatim: L10n.Profile.sectionAppearance)
-                        } icon: {
-                            Image(systemName: "circle.lefthalf.filled")
-                        }
-                    }
-                } header: {
-                    Text(verbatim: L10n.Profile.sectionAppearance)
-                }
 
                 Section {
                     Label {
                         Text(verbatim: L10n.ProfileAbout.terms)
                     } icon: {
-                        Image(systemName: "doc.text")
+                        RemixIcon.fileTextLine.view(size: 18, color: .carlibPrimaryBlue)
                     }
                     Label {
                         Text(verbatim: L10n.ProfileAbout.privacy)
                     } icon: {
-                        Image(systemName: "lock.shield")
+                        RemixIcon.shieldKeyholeLine.view(size: 18, color: .carlibPrimaryBlue)
                     }
                     HStack {
                         Label {
                             Text(verbatim: L10n.ProfileAbout.version)
                         } icon: {
-                            Image(systemName: "info.circle")
+                            RemixIcon.informationLine.view(size: 18, color: .carlibPrimaryBlue)
                         }
                         Spacer()
                         Text("0.1.0")
@@ -115,13 +141,12 @@ struct DriverProfileView: View {
 
                 Section {
                     Button(role: .destructive) {
-                        appState.userRole = nil
-                        appState.isOnboarded = false
+                        appState.signOut()
                     } label: {
                         Label {
                             Text(verbatim: L10n.Profile.logout)
                         } icon: {
-                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                            RemixIcon.logoutBoxLine.view(size: 18, color: .destructiveRed)
                         }
                     }
                 }
@@ -134,4 +159,5 @@ struct DriverProfileView: View {
 #Preview {
     DriverProfileView()
         .environment(AppState())
+        .environment(ClaimStore())
 }

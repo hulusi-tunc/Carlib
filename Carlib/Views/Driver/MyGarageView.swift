@@ -22,9 +22,7 @@ struct MyGarageView: View {
                 Button {
                     showAddVehicle = true
                 } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.title2)
-                        .foregroundStyle(.carlibPrimaryBlue)
+                    RemixIcon.addCircleFill.view(size: 24, color: .carlibPrimaryBlue)
                 }
             }
             .padding(.horizontal, 20)
@@ -73,19 +71,17 @@ struct MyGarageView: View {
     private var emptyGarage: some View {
         VStack(spacing: 20) {
             Spacer()
-            Image(systemName: "car.side")
-                .font(.system(size: 64))
-                .foregroundStyle(.carlibSecondary.opacity(0.3))
+            RemixIcon.carLine.view(size: 64, color: .carlibSecondary.opacity(0.3))
 
             Text("No vehicles yet")
                 .font(CarlibFont.title())
-                .foregroundStyle(.white)
+                .foregroundStyle(.carlibDark)
 
             Text("Add your first car to get started")
                 .font(CarlibFont.body())
                 .foregroundStyle(.carlibSecondary)
 
-            CarlibButton(label: "Add Vehicle", icon: "plus", variant: .primary) {
+            CarlibButton(label: "Add Vehicle", icon: .addLine, variant: .primary) {
                 showAddVehicle = true
             }
             .padding(.horizontal, 40)
@@ -157,11 +153,11 @@ struct MyGarageView: View {
         VStack(spacing: 4) {
             Text(value)
                 .font(CarlibFont.body(.medium))
-                .foregroundStyle(.white)
+                .foregroundStyle(.carlibDark)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             Text(label)
-                .font(.system(size: 10, weight: .medium))
+                .font(CarlibFont.label())
                 .tracking(0.8)
                 .foregroundStyle(.carlibLabel)
         }
@@ -212,7 +208,7 @@ struct VehicleCard3D: View {
                 HStack {
                     if isDefault {
                         Text("DEFAULT")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(CarlibFont.label())
                             .tracking(1)
                             .foregroundStyle(.carlibPrimaryBlue)
                             .padding(.horizontal, 10)
@@ -225,7 +221,7 @@ struct VehicleCard3D: View {
                             onSetDefault()
                         } label: {
                             Text("Set Default")
-                                .font(.system(size: 12, weight: .medium))
+                                .font(CarlibFont.caption(.medium))
                                 .foregroundStyle(.carlibSecondary)
                         }
                     }
@@ -238,9 +234,7 @@ struct VehicleCard3D: View {
                 // Center: Car visual
                 HStack {
                     Spacer()
-                    Image(systemName: "car.side")
-                        .font(.system(size: 80, weight: .ultraLight))
-                        .foregroundStyle(.white.opacity(0.15))
+                    RemixIcon.carLine.view(size: 80, color: .white.opacity(0.15))
                         .rotation3DEffect(.degrees(appeared ? 0 : -15), axis: (x: 0, y: 1, z: 0))
                         .scaleEffect(appeared ? 1.0 : 0.9)
                     Spacer()
@@ -248,16 +242,18 @@ struct VehicleCard3D: View {
 
                 Spacer()
 
-                // Bottom: Vehicle name + plate
+                // Bottom: Vehicle name + plate.
+                // Card has a fixed dark gradient background, so text must use literal
+                // white (not the adaptive .carlibDark) to stay visible in light mode.
                 HStack(alignment: .bottom) {
                     VStack(alignment: .leading, spacing: 4) {
                         if let nickname = vehicle.nickname {
                             Text(nickname)
-                                .font(.system(size: 13, weight: .medium))
+                                .font(CarlibFont.caption(.medium))
                                 .foregroundStyle(.carlibPrimaryBlue)
                         }
                         Text(vehicle.displayName)
-                            .font(.system(size: 22, weight: .bold))
+                            .font(CarlibFont.title())
                             .foregroundStyle(.white)
                     }
 
@@ -265,7 +261,7 @@ struct VehicleCard3D: View {
 
                     // Plate badge
                     Text(vehicle.info.licensePlate)
-                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                        .font(CarlibFont.caption(.medium))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
@@ -340,7 +336,7 @@ struct AddVehicleSheet: View {
                         dismiss()
                     }
                     .disabled(plate.isEmpty || brand.isEmpty || model.isEmpty)
-                    .fontWeight(.semibold)
+                    .fontWeight(.medium)
                 }
             }
         }

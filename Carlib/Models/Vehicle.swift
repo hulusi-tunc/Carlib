@@ -23,12 +23,4 @@ struct Vehicle: Identifiable, Codable, Hashable {
     var displayName: String {
         nickname ?? "\(info.brand) \(info.model)"
     }
-
-    /// SF Symbol for the vehicle type — visual variety in the garage.
-    var iconName: String {
-        let brand = info.brand.lowercased()
-        if brand.contains("tesla") { return "car.side" }
-        if brand.contains("bmw") || brand.contains("mercedes") || brand.contains("audi") { return "car.side" }
-        return "car.side"
-    }
 }

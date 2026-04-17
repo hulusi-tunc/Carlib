@@ -10,10 +10,7 @@ struct OnboardingView: View {
                 Spacer()
 
                 // Logo placeholder
-                Image(systemName: "car.fill")
-                    .font(.system(size: 64))
-                    .foregroundStyle(.brandYellow)
-                    .symbolEffect(.pulse, options: .repeating)
+                RemixIcon.carFill.view(size: 64, color: .brandYellow)
 
                 Text(verbatim: L10n.Onboarding.welcomeTitle)
                     .font(CarlibFont.displayLarge())
@@ -30,7 +27,7 @@ struct OnboardingView: View {
                 VStack(spacing: CarlibSpacing.md) {
                     CarlibButton(
                         label: L10n.Onboarding.roleDriver,
-                        icon: "person.fill",
+                        icon: .userFill,
                         variant: .primary
                     ) {
                         appState.userRole = .driver
@@ -39,7 +36,7 @@ struct OnboardingView: View {
 
                     CarlibButton(
                         label: L10n.Onboarding.roleGarage,
-                        icon: "wrench.and.screwdriver.fill",
+                        icon: .toolsFill,
                         variant: .secondary
                     ) {
                         appState.userRole = .garage

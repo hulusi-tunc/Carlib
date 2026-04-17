@@ -24,17 +24,15 @@ targets:
       - path: Carlib
         excludes:
           - "**/.DS_Store"
-          - "**/Resources/Assets.xcassets"
           - "**/Resources/Info.plist"
           - "**/Resources/Carlib.entitlements"
     resources:
-      - path: Carlib/Resources/Assets.xcassets
       - path: Carlib/Resources/Localizable.xcstrings
       - path: Carlib/Resources/Fonts
         optional: true
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.carlib.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.carlib.fr
         PRODUCT_NAME: Carlib
         MARKETING_VERSION: "0.1.0"
         CURRENT_PROJECT_VERSION: "1"
@@ -47,10 +45,20 @@ targets:
         CFBundleDisplayName: Carlib
         LSRequiresIPhoneOS: true
         UILaunchScreen: {}
+        UIAppFonts:
+          - remixicon.ttf
+          - Aeonik-Regular.otf
+          - Aeonik-Medium.otf
+          - Aeonik-Bold.otf
+          - Aeonik-Light.otf
         UIRequiredDeviceCapabilities:
           - armv7
+        UIRequiresFullScreen: true
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
         NSCameraUsageDescription: "Carlib utilise l'appareil photo pour prendre des photos des dégâts de votre véhicule."
         NSPhotoLibraryUsageDescription: "Carlib accède à vos photos pour joindre des images à votre déclaration de sinistre."
         NSLocationWhenInUseUsageDescription: "Carlib utilise votre position pour trouver les garages à proximité."

@@ -31,7 +31,8 @@ struct GarageClaimsListView: View {
                                 ? L10n.GarageClaims.emptyAvailableTitle
                                 : L10n.GarageClaims.emptyAcceptedTitle)
                         } icon: {
-                            Image(systemName: selectedFilter == .available ? "doc.text.magnifyingglass" : "folder")
+                            (selectedFilter == .available ? RemixIcon.searchLine : RemixIcon.folderLine)
+                                .view(size: 48, color: .carlibSecondary)
                         }
                     } description: {
                         Text(verbatim: selectedFilter == .available

@@ -3,7 +3,7 @@ import SwiftUI
 /// Garage profile — business info, specialties, availability settings.
 struct GarageProfileView: View {
     @Environment(AppState.self) private var appState
-    @AppStorage("app_theme") private var selectedTheme: String = AppTheme.dark.rawValue
+    @AppStorage("app_theme") private var selectedTheme: String = AppTheme.light.rawValue
     @State private var showEditSheet = false
     private let garage = MockData.garages[0]
 
@@ -17,19 +17,15 @@ struct GarageProfileView: View {
                             .fill(Color.brandYellowLight)
                             .frame(width: 56, height: 56)
                             .overlay {
-                                Image(systemName: "wrench.and.screwdriver.fill")
-                                    .font(.title3)
-                                    .foregroundStyle(.brandYellowDark)
+                                RemixIcon.toolsFill.view(size: 22, color: .brandYellowDark)
                             }
                         VStack(alignment: .leading, spacing: 2) {
                             Text(garage.name)
-                                .font(CarlibFont.bodyLarge(.semibold))
+                                .font(CarlibFont.bodyLarge(.medium))
                             HStack(spacing: 4) {
-                                Image(systemName: "star.fill")
-                                    .font(.caption)
-                                    .foregroundStyle(.brandYellow)
+                                RemixIcon.starFill.view(size: 11, color: .brandYellow)
                                 Text(String(format: "%.1f", garage.rating ?? 0))
-                                    .font(CarlibFont.bodySmall(.semibold))
+                                    .font(CarlibFont.bodySmall(.medium))
                                 Text("(\(garage.reviewCount) \(L10n.GarageDetail.reviews))")
                                     .font(CarlibFont.caption())
                                     .foregroundStyle(.secondary)
@@ -39,8 +35,16 @@ struct GarageProfileView: View {
                 }
 
                 Section {
-                    Label(garage.address, systemImage: "mappin")
-                    Label(garage.phone, systemImage: "phone")
+                    Label {
+                        Text(garage.address)
+                    } icon: {
+                        RemixIcon.mapPinLine.view(size: 18, color: .carlibPrimaryBlue)
+                    }
+                    Label {
+                        Text(garage.phone)
+                    } icon: {
+                        RemixIcon.phoneLine.view(size: 18, color: .carlibPrimaryBlue)
+                    }
                 } header: {
                     Text(verbatim: L10n.GarageProfile.sectionInfo)
                 }
@@ -51,8 +55,7 @@ struct GarageProfileView: View {
                             Text(specialty.localizedName)
                             Spacer()
                             if garage.specialties.contains(specialty) {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(.brandYellow)
+                                RemixIcon.checkLine.view(size: 16, color: .brandYellow)
                             }
                         }
                     }
@@ -65,7 +68,7 @@ struct GarageProfileView: View {
                         Label {
                             Text(verbatim: L10n.GarageProfile.coverage)
                         } icon: {
-                            Image(systemName: "location.circle")
+                            RemixIcon.focus2Line.view(size: 18, color: .carlibPrimaryBlue)
                         }
                         Spacer()
                         Text("\(Int(garage.coverageRadiusKm)) km")
@@ -83,8 +86,7 @@ struct GarageProfileView: View {
                                     .fill(Color(.systemGray5))
                                     .frame(width: 100, height: 75)
                                     .overlay {
-                                        Image(systemName: "photo")
-                                            .foregroundStyle(.secondary)
+                                        RemixIcon.imageLine.view(size: 22, color: .secondary)
                                     }
                             }
                             // Add button
@@ -93,8 +95,7 @@ struct GarageProfileView: View {
                                 .foregroundStyle(Color(.systemGray3))
                                 .frame(width: 100, height: 75)
                                 .overlay {
-                                    Image(systemName: "plus")
-                                        .foregroundStyle(.brandYellow)
+                                    RemixIcon.addLine.view(size: 22, color: .brandYellow)
                                 }
                         }
                     }
@@ -108,7 +109,7 @@ struct GarageProfileView: View {
                         Label {
                             Text(verbatim: L10n.GarageProfile.statsCompleted)
                         } icon: {
-                            Image(systemName: "checkmark.circle.fill")
+                            RemixIcon.checkboxCircleFill.view(size: 18, color: .carlibPrimaryBlue)
                         }
                         Spacer()
                         Text("12")
@@ -118,7 +119,7 @@ struct GarageProfileView: View {
                         Label {
                             Text(verbatim: L10n.GarageProfile.statsRating)
                         } icon: {
-                            Image(systemName: "star.fill")
+                            RemixIcon.starFill.view(size: 18, color: .brandYellow)
                         }
                         Spacer()
                         Text(String(format: "%.1f", garage.rating ?? 0))
@@ -128,29 +129,13 @@ struct GarageProfileView: View {
                     Text(verbatim: L10n.GarageProfile.sectionStats)
                 }
 
-                Section {
-                    Picker(selection: $selectedTheme) {
-                        ForEach(AppTheme.allCases, id: \.rawValue) { theme in
-                            Label(theme.label, systemImage: theme.icon)
-                                .tag(theme.rawValue)
-                        }
-                    } label: {
-                        Label {
-                            Text(verbatim: L10n.Profile.sectionAppearance)
-                        } icon: {
-                            Image(systemName: "circle.lefthalf.filled")
-                        }
-                    }
-                } header: {
-                    Text(verbatim: L10n.Profile.sectionAppearance)
-                }
 
                 Section {
                     HStack {
                         Label {
                             Text(verbatim: L10n.Profile.sectionLanguage)
                         } icon: {
-                            Image(systemName: "globe")
+                            RemixIcon.globalLine.view(size: 18, color: .carlibPrimaryBlue)
                         }
                         Spacer()
                         Text(verbatim: L10n.Profile.languageCurrent)
@@ -162,13 +147,12 @@ struct GarageProfileView: View {
 
                 Section {
                     Button(role: .destructive) {
-                        appState.userRole = nil
-                        appState.isOnboarded = false
+                        appState.signOut()
                     } label: {
                         Label {
                             Text(verbatim: L10n.Profile.logout)
                         } icon: {
-                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                            RemixIcon.logoutBoxLine.view(size: 18, color: .destructiveRed)
                         }
                     }
                 }

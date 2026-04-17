@@ -9,10 +9,7 @@ struct DeclarationConfirmationView: View {
         VStack(spacing: CarlibSpacing.xxl) {
             Spacer()
 
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(.statusCompleted)
-                .symbolEffect(.bounce, value: true)
+            RemixIcon.checkboxCircleFill.view(size: 80, color: .statusCompleted)
 
             VStack(spacing: CarlibSpacing.sm) {
                 Text(verbatim: L10n.Declaration.confirmationTitle)
@@ -33,22 +30,16 @@ struct DeclarationConfirmationView: View {
                         .foregroundStyle(.secondary)
                     Spacer()
                     Text("SIN-2026-\(String(format: "%04d", Int.random(in: 1...9999)))")
-                        .font(CarlibFont.bodyMedium(.semibold))
+                        .font(CarlibFont.bodyMedium(.medium))
                 }
             }
             .padding(.horizontal, CarlibSpacing.screenHorizontal)
 
             Spacer()
 
-            VStack(spacing: CarlibSpacing.sm) {
-                CarlibButton(label: L10n.Declaration.confirmationCtaClaims, icon: "doc.text.fill", variant: .primary) {
-                    appState.pendingDriverTab = .claims
-                    dismiss()
-                }
-                CarlibButton(label: L10n.Declaration.confirmationCtaHome, variant: .ghost) {
-                    appState.pendingDriverTab = .home
-                    dismiss()
-                }
+            CarlibButton(label: L10n.Declaration.confirmationCtaHome, variant: .primary) {
+                appState.pendingDriverTab = .home
+                dismiss()
             }
             .padding(.horizontal, CarlibSpacing.screenHorizontal)
             .padding(.bottom, CarlibSpacing.xxl)

@@ -25,8 +25,7 @@ enum L10n {
 
     enum DriverTab {
         static let home = "Home"
-        static let declare = "Report"
-        static let claims = "My Claims"
+        static let shops = "Shops"
         static let profile = "Profile"
     }
 
@@ -47,14 +46,67 @@ enum L10n {
         static let save = "Save"
     }
 
-    // MARK: - Driver Home
+    // MARK: - Driver Home — The File (editorial)
 
     enum DriverHome {
         static let appName = "Carlib"
+
+        // Masthead
+        static let masthead = "The File"
+        static func fileNumber(_ n: Int) -> String { String(format: "N°%02d", n) }
+
+        // Ready state (no active claim)
+        static let readyKicker = "Ready"
+        static let readyHeadline = "Something\nhappened?"
+        static let readyBody = "Report your claim in a few minutes. We'll find the best body shop near you."
+        static let readyCta = "Report an accident"
+        static let readyEmergencyTitle = "In case of emergency"
+        static let readyEmergency112 = "Emergency"
+        static let readyEmergencyInsurer = "Insurer"
+        static let readyEmergencyTow = "Tow truck"
+
+        // Waiting state (submitted / matched)
+        static let waitingKicker = "Waiting"
+        static let waitingHeadline = "Your claim\nis being reviewed."
+        static func waitingBody(_ elapsed: String) -> String { "We're looking for an available body shop — \(elapsed) elapsed." }
+        static let waitingEta = "Response expected within 2h"
+        static let waitingCta = "View claim"
+
+        // Accepted state (garage found, booking pending or confirmed)
+        static let acceptedKicker = "Accepted"
+        static func acceptedHeadline(_ garage: String) -> String { "\(garage)\naccepted your file." }
+        static let acceptedBody = "Your body shop has been assigned. Get ready to drop off your vehicle."
+        static func acceptedEta(_ date: String) -> String { "Drop-off \(date)" }
+        static let acceptedCta = "Prepare drop-off"
+
+        // Repair state (vehicle at garage)
+        static let repairKicker = "In repair"
+        static func repairHeadline(_ vehicle: String) -> String { "Your \(vehicle) is\nin good hands." }
+        static func repairBody(_ days: Int, _ garage: String) -> String {
+            "\(garage) has been working on it for \(days) \(days == 1 ? "day" : "days")."
+        }
+        static func repairEta(_ date: String) -> String { "Ready \(date)" }
+        static let repairCta = "Track progress"
+
+        // Ready for pickup state
+        static let readyForPickupKicker = "Ready for pickup"
+        static func readyForPickupHeadline(_ vehicle: String) -> String { "Your \(vehicle) is\nready to pick up." }
+        static let readyForPickupBody = "Your body shop has finished the work. You can come pick up your vehicle."
+        static let readyForPickupCta = "Directions to the shop"
+
+        // Shared secondary
+        static let callGarage = "Call"
+        static let directions = "Directions"
+        static let secondaryDeclare = "Report a new accident"
+        static let secondarySearchGarage = "Find a body shop"
+        static let stageLabel = "Stage"
+        static func stageProgress(_ current: Int, _ total: Int) -> String { "Stage \(current) of \(total)" }
+
+        // Legacy aliases — keep other views compiling
         static func greeting(_ name: String) -> String { "Hello, \(name)" }
         static let subtitle = "How can we help you today?"
-        static let heroTitle = "Report damage"
-        static let heroSubtitle = "Declare in a few minutes and find a garage nearby"
+        static let heroTitle = readyCta
+        static let heroSubtitle = readyBody
         static let sectionActive = "Your active claim"
         static let sectionQuickFind = "Find a garage"
         static let sectionQuickVehicle = "My vehicle"
@@ -62,7 +114,6 @@ enum L10n {
         static let sectionRecent = "Recent"
         static let emptyTitle = "No active claims"
         static let emptyDescription = "You have no active claims. Let's hope it stays that way!"
-        // Legacy — keep other views working
         static let greeting = "Hello"
         static let title = "Had an accident?"
         static let ctaDeclare = "Report an Accident"
@@ -116,19 +167,15 @@ enum L10n {
         static let confirmationTitle = "Claim Submitted"
         static let confirmationSubtitle = "Your claim has been recorded. We're searching for available body shops."
         static let confirmationReference = "Reference"
-        static let confirmationCtaClaims = "View My Claims"
-        static let confirmationCtaHome = "Back to Home"
+        static let confirmationCtaHome = "Back to home"
     }
 
     // MARK: - Driver Claims
 
     enum DriverClaims {
-        static let title = "My Claims"
-        static let filter = "Filter"
-        static let filterActive = "Active"
-        static let filterPast = "Completed"
-        static let emptyTitle = "No Claims"
-        static let emptyDescription = "Your accident claims will appear here."
+        static let title = "Claim history"
+        static let emptyTitle = "No past claims"
+        static let emptyDescription = "Archived claims will appear here once a repair is completed or cancelled."
     }
 
     // MARK: - Claim Detail
@@ -182,6 +229,8 @@ enum L10n {
         static let title = "Profile"
         static let sectionVehicle = "My Vehicle"
         static let addVehicle = "Add Vehicle"
+        static let sectionHistory = "Claim history"
+        static let historyRow = "Claim history"
         static let sectionNotifications = "Notifications"
         static let preferences = "Preferences"
         static let sectionLanguage = "Language"
@@ -378,6 +427,82 @@ enum L10n {
         static let coverageRadius = "Coverage Radius (km)"
         static let specialties = "Specialties"
         static let save = "Save Changes"
+    }
+
+    // MARK: - Splash
+
+    enum Splash {
+        static let tagline = "Repair starts here"
+    }
+
+    // MARK: - Welcome Carousel
+
+    enum Welcome {
+        static let skip = "Skip"
+        static let next = "Next"
+        static let getStarted = "Get Started"
+        static let slide1Title = "Declare in minutes"
+        static let slide1Subtitle = "Report your accident with guided steps, photos, and location — all from your phone."
+        static let slide2Title = "Find a body shop"
+        static let slide2Subtitle = "Browse nearby garages, compare ratings, and book an appointment in one tap."
+        static let slide3Title = "Track your repair"
+        static let slide3Subtitle = "Follow every step from drop-off to pickup with real-time status updates."
+    }
+
+    // MARK: - Auth
+
+    enum Auth {
+        static let welcomeTitle = "Welcome to Carlib"
+        static let signInWithApple = "Sign in with Apple"
+        static let signInWithEmail = "Sign in with email"
+        static let createAccount = "Create an account"
+        static let or = "or"
+        static let termsDisclaimer = "By continuing, you agree to our Terms of Service and Privacy Policy"
+    }
+
+    // MARK: - Sign In
+
+    enum SignIn {
+        static let title = "Sign In"
+        static let email = "Email"
+        static let password = "Password"
+        static let forgotPassword = "Forgot password?"
+        static let signIn = "Sign In"
+        static let noAccount = "Don't have an account?"
+        static let errorInvalid = "Invalid email or password"
+    }
+
+    // MARK: - Sign Up
+
+    enum SignUp {
+        static let title = "Create Account"
+        static let fullName = "Full Name"
+        static let email = "Email"
+        static let password = "Password"
+        static let passwordHint = "8 characters minimum"
+        static let createAccount = "Create Account"
+        static let hasAccount = "Already have an account?"
+    }
+
+    // MARK: - Role Selection
+
+    enum Role {
+        static let title = "How will you use Carlib?"
+        static let driverTitle = "I'm a driver"
+        static let driverDescription = "Declare accidents, find garages, track repairs"
+        static let garageTitle = "I'm a body shop"
+        static let garageDescription = "Receive claims, manage planning, update repairs"
+        static let continueButton = "Continue"
+    }
+
+    // MARK: - Forgot Password
+
+    enum ForgotPassword {
+        static let title = "Reset Password"
+        static let subtitle = "Enter your email and we'll send a reset link"
+        static let email = "Email"
+        static let send = "Send Reset Link"
+        static let success = "Check your email for a reset link"
     }
 
 }

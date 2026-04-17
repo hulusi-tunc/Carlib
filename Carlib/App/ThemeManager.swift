@@ -14,11 +14,11 @@ enum AppTheme: String, CaseIterable {
         }
     }
 
-    var icon: String {
+    var icon: RemixIcon {
         switch self {
-        case .system: "circle.lefthalf.filled"
-        case .dark: "moon.fill"
-        case .light: "sun.max.fill"
+        case .system: .contrastFill
+        case .dark: .moonFill
+        case .light: .sunFill
         }
     }
 

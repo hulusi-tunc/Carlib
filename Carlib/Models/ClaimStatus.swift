@@ -26,4 +26,19 @@ enum ClaimStatus: String, Codable, CaseIterable {
         case .expired: L10n.ClaimStatusLabel.expired
         }
     }
+
+    /// Maps the 9 internal states to a 5-stage journey shown on the Home hero.
+    /// Stages: 1 Déclaration — 2 Recherche — 3 Accepté — 4 Réparation — 5 Prêt
+    var stageIndex: Int {
+        switch self {
+        case .draft, .submitted: 1
+        case .matched: 2
+        case .accepted, .inProgress: 3
+        case .repairing: 4
+        case .completed: 5
+        case .cancelled, .expired: 0
+        }
+    }
+
+    static let totalStages = 5
 }

@@ -30,7 +30,9 @@ enum MockData {
         color: "Noir Intense"
     )
 
-    // MARK: - User Vehicles (multi-car)
+    // MARK: - User Vehicles
+    // Realistic household: one daily driver, one secondary. Multi-vehicle is an edge
+    // case the UI should handle, but the seed models the common case.
 
     static let vehicles: [Vehicle] = [
         Vehicle(
@@ -43,12 +45,6 @@ enum MockData {
             id: UUID(uuidString: "20000002-0000-0000-0000-000000000002")!,
             info: vehicleClio,
             nickname: nil,
-            isDefault: false
-        ),
-        Vehicle(
-            id: UUID(uuidString: "20000003-0000-0000-0000-000000000003")!,
-            info: vehicleGolf,
-            nickname: "Weekend",
             isDefault: false
         ),
     ]

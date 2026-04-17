@@ -114,8 +114,7 @@ struct DeclarationFlowView: View {
                         selectedType = type
                     } label: {
                         VStack(spacing: CarlibSpacing.xs) {
-                            Image(systemName: type.iconName)
-                                .font(.title2)
+                            type.icon.view(size: 28, color: .carlibDark)
                             Text(type.localizedName)
                                 .font(CarlibFont.bodySmall(.medium))
                         }
@@ -157,9 +156,7 @@ struct DeclarationFlowView: View {
                     matching: .images
                 ) {
                     VStack(spacing: CarlibSpacing.xs) {
-                        Image(systemName: "camera.fill")
-                            .font(.title)
-                            .foregroundStyle(.brandYellow)
+                        RemixIcon.cameraFill.view(size: 28, color: .brandYellow)
                         Text(verbatim: L10n.Declaration.photosAdd)
                             .font(CarlibFont.caption(.medium))
                     }
@@ -185,9 +182,7 @@ struct DeclarationFlowView: View {
                             .fill(Color.tileSecondary)
                             .frame(height: 120)
                             .overlay {
-                                Image(systemName: "photo")
-                                    .font(.title2)
-                                    .foregroundStyle(.carlibSecondary)
+                                RemixIcon.imageLine.view(size: 24, color: .carlibSecondary)
                             }
                     }
                 }
@@ -279,7 +274,7 @@ struct DeclarationFlowView: View {
                 .foregroundStyle(.secondary)
             Spacer()
             Text(value)
-                .font(CarlibFont.bodySmall(.semibold))
+                .font(CarlibFont.bodySmall(.medium))
         }
     }
 }

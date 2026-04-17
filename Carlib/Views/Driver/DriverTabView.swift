@@ -1,24 +1,45 @@
 import SwiftUI
 
 /// Main tab navigation for the driver experience.
-/// Only main pages in the tab bar — "Report" is accessed from the Home screen.
+/// Three tabs: Home (claim dossier + CTA), Shops (browse body shops), Profile.
+/// "Report" is triggered from the Home CTA, not a tab — declaration is an event, not a destination.
 struct DriverTabView: View {
     @Environment(AppState.self) private var appState
     @State private var selectedTab: DriverTab = .home
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            Tab(L10n.DriverTab.home, systemImage: CarlibIcon.home, value: .home) {
+            Tab(value: DriverTab.home) {
                 DriverHomeView()
                     .environment(appState)
+            } label: {
+                Label {
+                    Text(verbatim: L10n.DriverTab.home)
+                } icon: {
+                    CarlibIcon.home.image(size: 24)
+                }
             }
 
-            Tab(L10n.DriverTab.claims, systemImage: CarlibIcon.claims, value: .claims) {
-                DriverClaimsListView()
+            Tab(value: DriverTab.shops) {
+                NavigationStack {
+                    GarageSearchView()
+                }
+            } label: {
+                Label {
+                    Text(verbatim: L10n.DriverTab.shops)
+                } icon: {
+                    CarlibIcon.shops.image(size: 24)
+                }
             }
 
-            Tab(L10n.DriverTab.profile, systemImage: CarlibIcon.profile, value: .profile) {
+            Tab(value: DriverTab.profile) {
                 DriverProfileView()
+            } label: {
+                Label {
+                    Text(verbatim: L10n.DriverTab.profile)
+                } icon: {
+                    CarlibIcon.profile.image(size: 24)
+                }
             }
         }
         .tint(.carlibPrimaryBlue)
@@ -33,7 +54,7 @@ struct DriverTabView: View {
 
 enum DriverTab: Hashable {
     case home
-    case claims
+    case shops
     case profile
 }
 

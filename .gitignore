@@ -40,6 +40,11 @@ Thumbs.db
 *.swo
 *~
 
+# Signing credentials
+*.p12
+*.mobileprovision
+*.cer
+
 # Environment
 .env
 .env.local

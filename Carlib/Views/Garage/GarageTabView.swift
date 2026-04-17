@@ -7,20 +7,44 @@ struct GarageTabView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            Tab(L10n.GarageTab.dashboard, systemImage: "square.grid.2x2.fill", value: .dashboard) {
+            Tab(value: GarageTab.dashboard) {
                 GarageDashboardView()
+            } label: {
+                Label {
+                    Text(verbatim: L10n.GarageTab.dashboard)
+                } icon: {
+                    CarlibIcon.dashboard.image(size: 24)
+                }
             }
 
-            Tab(L10n.GarageTab.claims, systemImage: "doc.text.fill", value: .claims) {
+            Tab(value: GarageTab.claims) {
                 GarageClaimsListView()
+            } label: {
+                Label {
+                    Text(verbatim: L10n.GarageTab.claims)
+                } icon: {
+                    CarlibIcon.claims.image(size: 24)
+                }
             }
 
-            Tab(L10n.GarageTab.planning, systemImage: "calendar", value: .planning) {
+            Tab(value: GarageTab.planning) {
                 GaragePlanningView()
+            } label: {
+                Label {
+                    Text(verbatim: L10n.GarageTab.planning)
+                } icon: {
+                    CarlibIcon.planning.image(size: 24)
+                }
             }
 
-            Tab(L10n.GarageTab.profile, systemImage: "building.2.fill", value: .profile) {
+            Tab(value: GarageTab.profile) {
                 GarageProfileView()
+            } label: {
+                Label {
+                    Text(verbatim: L10n.GarageTab.profile)
+                } icon: {
+                    CarlibIcon.shop.image(size: 24)
+                }
             }
         }
         .tint(.carlibPrimaryBlue)

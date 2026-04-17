@@ -27,11 +27,15 @@ struct GaragePlanningView: View {
                 Divider()
 
                 if slotsForSelectedDate.isEmpty {
-                    ContentUnavailableView(
-                        L10n.GaragePlanning.emptyTitle,
-                        systemImage: "clock",
-                        description: Text(verbatim: L10n.GaragePlanning.emptyDescription)
-                    )
+                    ContentUnavailableView {
+                        Label {
+                            Text(verbatim: L10n.GaragePlanning.emptyTitle)
+                        } icon: {
+                            RemixIcon.timeLine.view(size: 48, color: .carlibSecondary)
+                        }
+                    } description: {
+                        Text(verbatim: L10n.GaragePlanning.emptyDescription)
+                    }
                 } else {
                     ScrollView {
                         VStack(spacing: CarlibSpacing.sm) {
@@ -40,7 +44,7 @@ struct GaragePlanningView: View {
                                     HStack {
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text("\(slot.startTime.timeFormatted) — \(slot.endTime.timeFormatted)")
-                                                .font(CarlibFont.bodyMedium(.semibold))
+                                                .font(CarlibFont.bodyMedium(.medium))
 
                                             if slot.isBlocked {
                                                 Text(verbatim: L10n.GaragePlanning.slotBlocked)
@@ -82,7 +86,7 @@ struct GaragePlanningView: View {
                         Label {
                             Text(verbatim: L10n.GaragePlanning.add)
                         } icon: {
-                            Image(systemName: "plus")
+                            RemixIcon.addLine.view(size: 16, color: .brandYellow)
                         }
                     }
                 }
@@ -125,7 +129,7 @@ struct GaragePlanningView: View {
                         claimStore.addTimeSlot(slot)
                         showAddSheet = false
                     }
-                    .fontWeight(.semibold)
+                    .fontWeight(.medium)
                 }
             }
         }

@@ -16,11 +16,10 @@ struct GarageDetailView: View {
 
                     HStack(spacing: CarlibSpacing.sm) {
                         HStack(spacing: 4) {
-                            Image(systemName: "star.fill")
-                                .foregroundStyle(.brandYellow)
+                            RemixIcon.starFill.view(size: 14, color: .brandYellow)
                             if let rating = garage.rating {
                                 Text(String(format: "%.1f", rating))
-                                    .font(CarlibFont.bodyMedium(.semibold))
+                                    .font(CarlibFont.bodyMedium(.medium))
                             }
                             Text("(\(garage.reviewCount) \(L10n.GarageDetail.reviews))")
                                 .font(CarlibFont.bodySmall())
@@ -37,18 +36,18 @@ struct GarageDetailView: View {
                 }
                 .padding(.horizontal, CarlibSpacing.screenHorizontal)
 
-                // Photos carousel placeholder
+                // Photos carousel
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: CarlibSpacing.sm) {
-                        ForEach(0..<3, id: \.self) { _ in
-                            RoundedRectangle(cornerRadius: CarlibRadius.md)
-                                .fill(Color.tileSecondary)
-                                .frame(width: 240, height: 160)
-                                .overlay {
-                                    Image(systemName: "building.2.fill")
-                                        .font(.largeTitle)
-                                        .foregroundStyle(.carlibSecondary)
-                                }
+                        ForEach(0..<3, id: \.self) { index in
+                            DummyImage(
+                                kind: .garage,
+                                seed: "\(garage.id.uuidString)-photo-\(index)",
+                                pixelWidth: 720,
+                                pixelHeight: 480
+                            )
+                            .frame(width: 240, height: 160)
+                            .clipShape(RoundedRectangle(cornerRadius: CarlibRadius.md))
                         }
                     }
                     .padding(.horizontal, CarlibSpacing.screenHorizontal)
@@ -57,11 +56,11 @@ struct GarageDetailView: View {
                 // Info
                 CarlibCard(variant: .flat) {
                     VStack(alignment: .leading, spacing: CarlibSpacing.sm) {
-                        infoRow(icon: "mappin.circle.fill", text: garage.address)
+                        infoRow(icon: .mapPinFill, text: garage.address)
                         Divider()
-                        infoRow(icon: "phone.circle.fill", text: garage.phone)
+                        infoRow(icon: .phoneFill, text: garage.phone)
                         Divider()
-                        infoRow(icon: "location.circle.fill", text: L10n.GarageDetail.coverage(Int(garage.coverageRadiusKm)))
+                        infoRow(icon: .focus2Line, text: L10n.GarageDetail.coverage(Int(garage.coverageRadiusKm)))
                     }
                 }
                 .padding(.horizontal, CarlibSpacing.screenHorizontal)
@@ -106,7 +105,7 @@ struct GarageDetailView: View {
                                         Text(slot.date.shortFormatted)
                                             .font(CarlibFont.caption(.medium))
                                         Text("\(slot.startTime.timeFormatted) — \(slot.endTime.timeFormatted)")
-                                            .font(CarlibFont.bodySmall(.semibold))
+                                            .font(CarlibFont.bodySmall(.medium))
                                     }
                                     .padding(.horizontal, CarlibSpacing.sm)
                                     .padding(.vertical, CarlibSpacing.xs)
@@ -121,7 +120,7 @@ struct GarageDetailView: View {
                 // CTA — Book Appointment
                 CarlibButton(
                     label: L10n.GarageDetail.ctaBook,
-                    icon: "calendar.badge.plus",
+                    icon: .calendarEventLine,
                     variant: .primary
                 ) {
                     showBookingSheet = true
@@ -138,11 +137,9 @@ struct GarageDetailView: View {
         }
     }
 
-    private func infoRow(icon: String, text: String) -> some View {
+    private func infoRow(icon: RemixIcon, text: String) -> some View {
         HStack(spacing: CarlibSpacing.sm) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundStyle(.brandYellow)
+            icon.view(size: 20, color: .brandYellow)
                 .frame(width: 28)
             Text(text)
                 .font(CarlibFont.bodyMedium())

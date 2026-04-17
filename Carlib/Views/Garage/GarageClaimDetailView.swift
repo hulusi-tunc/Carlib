@@ -25,10 +25,9 @@ struct GarageClaimDetailView: View {
                             .font(CarlibFont.headingSmall())
                         if let type = claim.accidentType {
                             HStack(spacing: CarlibSpacing.xs) {
-                                Image(systemName: type.iconName)
-                                    .foregroundStyle(.brandYellow)
+                                type.icon.view(size: 16, color: .brandYellow)
                                 Text(type.localizedName)
-                                    .font(CarlibFont.bodyMedium(.semibold))
+                                    .font(CarlibFont.bodyMedium(.medium))
                             }
                         }
                         Text(claim.description)
@@ -44,10 +43,10 @@ struct GarageClaimDetailView: View {
                         VStack(alignment: .leading, spacing: CarlibSpacing.xs) {
                             Text(verbatim: L10n.ClaimDetail.sectionVehicle)
                                 .font(CarlibFont.headingSmall())
-                            infoRow(icon: "car.fill", text: "\(vehicle.brand) \(vehicle.model)")
-                            infoRow(icon: "number", text: vehicle.licensePlate)
+                            infoRow(icon: .carFill, text: "\(vehicle.brand) \(vehicle.model)")
+                            infoRow(icon: .hashtag, text: vehicle.licensePlate)
                             if let year = vehicle.year {
-                                infoRow(icon: "calendar", text: "\(year)")
+                                infoRow(icon: .calendarLine, text: "\(year)")
                             }
                         }
                     }
@@ -66,8 +65,7 @@ struct GarageClaimDetailView: View {
                                         .frame(width: 120, height: 90)
                                         .overlay {
                                             VStack(spacing: 4) {
-                                                Image(systemName: "photo")
-                                                    .foregroundStyle(.secondary)
+                                                RemixIcon.imageLine.view(size: 18, color: .secondary)
                                                 Text(photo.caption)
                                                     .font(CarlibFont.caption())
                                                     .foregroundStyle(.secondary)
@@ -83,9 +81,7 @@ struct GarageClaimDetailView: View {
                 // Location
                 CarlibCard(variant: .flat) {
                     HStack(spacing: CarlibSpacing.sm) {
-                        Image(systemName: "mappin.circle.fill")
-                            .font(.title3)
-                            .foregroundStyle(.brandYellow)
+                        RemixIcon.mapPinFill.view(size: 20, color: .brandYellow)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(verbatim: L10n.GarageClaimDetail.sectionLocation)
                                 .font(CarlibFont.caption(.medium))
@@ -100,7 +96,7 @@ struct GarageClaimDetailView: View {
                 // Actions
                 if isAvailable {
                     VStack(spacing: CarlibSpacing.sm) {
-                        CarlibButton(label: L10n.GarageClaimDetail.actionAccept, icon: "checkmark.circle.fill", variant: .primary) {
+                        CarlibButton(label: L10n.GarageClaimDetail.actionAccept, icon: .checkboxCircleFill, variant: .primary) {
                             showAcceptDialog = true
                         }
                         CarlibButton(label: L10n.GarageClaimDetail.actionRefuse, variant: .ghost) {
@@ -110,7 +106,7 @@ struct GarageClaimDetailView: View {
                     }
                     .padding(.horizontal, CarlibSpacing.screenHorizontal)
                 } else {
-                    CarlibButton(label: L10n.GarageClaimDetail.actionUpdateStatus, icon: "arrow.triangle.2.circlepath", variant: .secondary) {
+                    CarlibButton(label: L10n.GarageClaimDetail.actionUpdateStatus, icon: .refreshLine, variant: .secondary) {
                         showStatusDialog = true
                     }
                     .padding(.horizontal, CarlibSpacing.screenHorizontal)
@@ -147,11 +143,9 @@ struct GarageClaimDetailView: View {
         }
     }
 
-    private func infoRow(icon: String, text: String) -> some View {
+    private func infoRow(icon: RemixIcon, text: String) -> some View {
         HStack(spacing: CarlibSpacing.xs) {
-            Image(systemName: icon)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            icon.view(size: 14, color: .secondary)
                 .frame(width: 20)
             Text(text)
                 .font(CarlibFont.bodySmall())

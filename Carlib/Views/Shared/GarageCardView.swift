@@ -25,18 +25,18 @@ struct GarageCardView: View {
     private var compactView: some View {
         CarlibCard(variant: .elevated) {
             VStack(alignment: .leading, spacing: CarlibSpacing.xs) {
-                // Photo placeholder
-                RoundedRectangle(cornerRadius: CarlibRadius.sm)
-                    .fill(Color(.systemGray5))
-                    .frame(width: 160, height: 90)
-                    .overlay {
-                        Image(systemName: "building.2.fill")
-                            .font(.title2)
-                            .foregroundStyle(.secondary)
-                    }
+                // Photo
+                DummyImage(
+                    kind: .garage,
+                    seed: garage.id.uuidString,
+                    pixelWidth: 480,
+                    pixelHeight: 270
+                )
+                .frame(width: 160, height: 90)
+                .clipShape(RoundedRectangle(cornerRadius: CarlibRadius.sm))
 
                 Text(garage.name)
-                    .font(CarlibFont.bodySmall(.semibold))
+                    .font(CarlibFont.bodySmall(.medium))
                     .lineLimit(1)
 
                 HStack(spacing: CarlibSpacing.xxs) {
@@ -59,19 +59,19 @@ struct GarageCardView: View {
     private var fullView: some View {
         CarlibCard(variant: .flat) {
             HStack(spacing: CarlibSpacing.md) {
-                // Photo placeholder
-                RoundedRectangle(cornerRadius: CarlibRadius.sm)
-                    .fill(Color(.systemGray5))
-                    .frame(width: 80, height: 80)
-                    .overlay {
-                        Image(systemName: "building.2.fill")
-                            .font(.title3)
-                            .foregroundStyle(.secondary)
-                    }
+                // Photo
+                DummyImage(
+                    kind: .garage,
+                    seed: garage.id.uuidString,
+                    pixelWidth: 240,
+                    pixelHeight: 240
+                )
+                .frame(width: 80, height: 80)
+                .clipShape(RoundedRectangle(cornerRadius: CarlibRadius.sm))
 
                 VStack(alignment: .leading, spacing: CarlibSpacing.xxs) {
                     Text(garage.name)
-                        .font(CarlibFont.bodyLarge(.semibold))
+                        .font(CarlibFont.bodyLarge(.medium))
                         .lineLimit(1)
 
                     HStack(spacing: CarlibSpacing.xs) {
@@ -116,12 +116,10 @@ struct GarageCardView: View {
 
     private var ratingView: some View {
         HStack(spacing: 2) {
-            Image(systemName: "star.fill")
-                .font(.system(size: 10))
-                .foregroundStyle(.brandYellow)
+            RemixIcon.starFill.view(size: 11, color: .brandYellow)
             if let rating = garage.rating {
                 Text(String(format: "%.1f", rating))
-                    .font(CarlibFont.caption(.semibold))
+                    .font(CarlibFont.caption(.medium))
             }
             Text("(\(garage.reviewCount))")
                 .font(CarlibFont.caption())

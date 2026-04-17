@@ -1,15 +1,15 @@
 import SwiftUI
 
 /// Carlib typography scale — Aeonik (CoType Foundry).
-/// Polestar-inspired: clean grotesque, minimal, confident.
+/// Revolut-inspired: light carousel headlines, bold form titles, clean hierarchy.
 ///
-/// Font files required in Resources/Fonts/:
+/// Font files in Resources/Fonts/:
 ///   - Aeonik-Regular.otf
 ///   - Aeonik-Medium.otf
 ///   - Aeonik-Bold.otf
-///   - Aeonik-Light.otf (optional)
+///   - Aeonik-Light.otf
 ///
-/// These must also be listed in Info.plist under UIAppFonts.
+/// Registered in project.yml under UIAppFonts.
 /// If Aeonik is not installed, falls back to system font.
 enum CarlibFont {
 
@@ -69,75 +69,94 @@ enum CarlibFont {
         }
     }
 
-    // MARK: - Display (main greeting, hero)
+    // MARK: - Revolut-style Scale
 
-    static func display(_ weight: Font.Weight = .bold) -> Font {
-        font(size: 32, weight: weight)
+    // Large Title — carousel headlines, hero text, greeting
+    // Revolut: ~28pt medium
+    static func largeTitle(_ weight: Font.Weight = .medium) -> Font {
+        font(size: 28, weight: weight)
     }
 
-    // MARK: - Title (card titles, section names)
+    // Title 1 — form/action page titles ("Create your account", "Phone number")
+    // Revolut: ~26pt medium
+    static func title1(_ weight: Font.Weight = .medium) -> Font {
+        font(size: 26, weight: weight)
+    }
 
-    static func title(_ weight: Font.Weight = .medium) -> Font {
+    // Title 2 — section headers, card titles
+    // Revolut: ~22pt medium
+    static func title2(_ weight: Font.Weight = .medium) -> Font {
         font(size: 22, weight: weight)
     }
 
-    // MARK: - Body (descriptions)
-
-    static func body(_ weight: Font.Weight = .regular) -> Font {
-        font(size: 16, weight: weight)
+    // Title 3 — subsection headers, tile titles
+    // Revolut: ~17pt medium
+    static func title3(_ weight: Font.Weight = .medium) -> Font {
+        font(size: 17, weight: weight)
     }
 
-    // MARK: - Caption (labels, dates)
+    // Body — primary text, descriptions, input values
+    // Revolut: ~15pt regular
+    static func body(_ weight: Font.Weight = .regular) -> Font {
+        font(size: 15, weight: weight)
+    }
 
-    static func caption(_ weight: Font.Weight = .regular) -> Font {
+    // Callout — button labels, form labels, links
+    // Revolut: ~14pt medium
+    static func callout(_ weight: Font.Weight = .medium) -> Font {
+        font(size: 14, weight: weight)
+    }
+
+    // Footnote — helper text, timestamps, subtitles
+    // Revolut: ~13pt regular, often muted gray
+    static func footnote(_ weight: Font.Weight = .regular) -> Font {
         font(size: 13, weight: weight)
     }
 
-    // MARK: - Label (section headers — uppercase + letter-spacing)
-
-    static func label() -> Font {
-        font(size: 11, weight: .medium)
+    // Caption — badges, uppercase labels, smallest readable text
+    // Bumped from 11 to 13 for post-accident stress context readability
+    static func caption(_ weight: Font.Weight = .medium) -> Font {
+        font(size: 13, weight: weight)
     }
 
-    // MARK: - Tile Typography
+    // MARK: - Special Styles
 
-    static func tileTitle() -> Font {
-        font(size: 15, weight: .medium)
+    // Hero number — decorative large stat
+    static func heroNumber() -> Font {
+        font(size: 48, weight: .bold)
     }
 
-    static func tileStatus() -> Font {
-        font(size: 13, weight: .regular)
-    }
-
-    // MARK: - Hero (decorative large number)
-
-    static func heroLarge() -> Font {
-        font(size: 72, weight: .bold)
-    }
-
-    static func heroStatus() -> Font {
-        font(size: 18, weight: .medium)
+    // Amount — financial/numeric display
+    static func amount(_ weight: Font.Weight = .bold) -> Font {
+        font(size: 36, weight: weight)
     }
 
     // MARK: - Legacy API
 
-    static func displayLarge(_ weight: Font.Weight = .bold) -> Font { display(weight) }
-    static func displayMedium(_ weight: Font.Weight = .bold) -> Font { display(weight) }
-    static func headingLarge(_ weight: Font.Weight = .semibold) -> Font { title(weight) }
-    static func headingMedium(_ weight: Font.Weight = .semibold) -> Font { title(weight) }
-    static func headingSmall(_ weight: Font.Weight = .semibold) -> Font { font(size: 17, weight: weight) }
-    static func bodyLarge(_ weight: Font.Weight = .regular) -> Font { font(size: 17, weight: weight) }
-    static func bodyMedium(_ weight: Font.Weight = .regular) -> Font { font(size: 15, weight: weight) }
-    static func bodySmall(_ weight: Font.Weight = .regular) -> Font { caption(weight) }
+    static func display(_ weight: Font.Weight = .medium) -> Font { largeTitle(weight) }
+    static func displayLarge(_ weight: Font.Weight = .medium) -> Font { largeTitle(weight) }
+    static func displayMedium(_ weight: Font.Weight = .medium) -> Font { title1(weight) }
+    static func title(_ weight: Font.Weight = .medium) -> Font { title2(weight) }
+    static func headingLarge(_ weight: Font.Weight = .medium) -> Font { title1(weight) }
+    static func headingMedium(_ weight: Font.Weight = .medium) -> Font { title2(weight) }
+    static func headingSmall(_ weight: Font.Weight = .medium) -> Font { title3(weight) }
+    static func bodyLarge(_ weight: Font.Weight = .regular) -> Font { body(weight) }
+    static func bodyMedium(_ weight: Font.Weight = .regular) -> Font { body(weight) }
+    static func bodySmall(_ weight: Font.Weight = .regular) -> Font { footnote(weight) }
+    static func label() -> Font { caption(.medium) }
+    static func tileTitle() -> Font { title3() }
+    static func tileStatus() -> Font { footnote() }
+    static func heroLarge() -> Font { font(size: 72, weight: .medium) }
+    static func heroStatus() -> Font { title3(.medium) }
 }
 
-// MARK: - Swiss-style section header modifier
+// MARK: - Section header modifier
 
 extension View {
     func sectionHeaderStyle() -> some View {
         self
-            .font(CarlibFont.label())
-            .tracking(1)
+            .font(CarlibFont.caption(.medium))
+            .tracking(0.8)
             .textCase(.uppercase)
             .foregroundStyle(Color.carlibLabel)
     }
@@ -149,15 +168,15 @@ extension View {
 enum AeonikDebug {
     static func printAvailableFonts() {
         for family in UIFont.familyNames.sorted() {
-            if family.localizedCaseInsensitiveContains("aeonik") {
-                print("📝 Font family: \(family)")
+            if family.localizedCaseInsensitiveContains("Aeonik") {
+                print("Font family: \(family)")
                 for name in UIFont.fontNames(forFamilyName: family) {
-                    print("   → \(name)")
+                    print("   > \(name)")
                 }
             }
         }
-        if !UIFont.familyNames.contains(where: { $0.localizedCaseInsensitiveContains("aeonik") }) {
-            print("⚠️ Aeonik not found — using system font fallback")
+        if !UIFont.familyNames.contains(where: { $0.localizedCaseInsensitiveContains("Aeonik") }) {
+            print("WARNING: Aeonik not found — using system font fallback")
         }
     }
 }

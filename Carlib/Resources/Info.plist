@@ -28,15 +28,28 @@
 	<string>Carlib utilise votre position pour trouver les garages à proximité.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Carlib accède à vos photos pour joindre des images à votre déclaration de sinistre.</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>remixicon.ttf</string>
+		<string>Aeonik-Regular.otf</string>
+		<string>Aeonik-Medium.otf</string>
+		<string>Aeonik-Bold.otf</string>
+		<string>Aeonik-Light.otf</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>arm64</string>
+		<string>armv7</string>
 	</array>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 </dict>
 </plist>

@@ -8,19 +8,14 @@ struct VehicleDetailView: View {
         List {
             Section {
                 HStack(spacing: 14) {
-                    Circle()
-                        .fill(Color.tileSecondary)
+                    CarBrandLogo(brand: vehicle.brand, size: 44)
                         .frame(width: 56, height: 56)
-                        .overlay {
-                            Image(systemName: CarlibIcon.car)
-                                .font(.system(size: 24))
-                                .foregroundStyle(.carlibPrimaryBlue)
-                        }
+                        .background(Color.tileSecondary, in: Circle())
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(verbatim: "\(vehicle.brand) \(vehicle.model)")
-                            .font(CarlibFont.title(.bold))
-                            .foregroundStyle(.white)
+                            .font(CarlibFont.title())
+                            .foregroundStyle(.carlibDark)
                         if let year = vehicle.year {
                             Text(verbatim: "\(year)")
                                 .font(CarlibFont.caption())
@@ -52,7 +47,7 @@ struct VehicleDetailView: View {
             Spacer()
             Text(verbatim: value)
                 .font(CarlibFont.body(.medium))
-                .foregroundStyle(.white)
+                .foregroundStyle(.carlibDark)
         }
     }
 }

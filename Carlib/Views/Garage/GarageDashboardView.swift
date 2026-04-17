@@ -14,22 +14,22 @@ struct GarageDashboardView: View {
                         DashboardKPICard(
                             title: L10n.GarageDashboard.kpiNew,
                             value: "\(claimStore.availableClaims.count)",
-                            icon: "doc.badge.plus"
+                            icon: .fileAddLine
                         )
                         DashboardKPICard(
                             title: L10n.GarageDashboard.kpiInProgress,
                             value: "\(claimStore.garageClaims.filter { $0.status == .repairing }.count)",
-                            icon: "wrench.fill"
+                            icon: .toolsFill
                         )
                         DashboardKPICard(
                             title: L10n.GarageDashboard.kpiTodayAppointments,
                             value: "\(claimStore.slotsForDate(.now).filter { !$0.isAvailable }.count)",
-                            icon: "calendar"
+                            icon: .calendarLine
                         )
                         DashboardKPICard(
                             title: L10n.GarageDashboard.kpiCompletedThisMonth,
                             value: "\(claimStore.pastClaims.filter { $0.status == .completed }.count)",
-                            icon: "checkmark.circle.fill"
+                            icon: .checkboxCircleFill
                         )
                     }
                     .padding(.horizontal, CarlibSpacing.screenHorizontal)
@@ -68,9 +68,7 @@ struct GarageDashboardView: View {
                         if todaySlots.isEmpty {
                             CarlibCard(variant: .flat) {
                                 HStack(spacing: CarlibSpacing.sm) {
-                                    Image(systemName: "calendar.badge.checkmark")
-                                        .font(.title3)
-                                        .foregroundStyle(.brandYellow)
+                                    RemixIcon.calendarCheckFill.view(size: 20, color: .brandYellow)
                                     Text(verbatim: L10n.GarageDashboard.todayEmpty)
                                         .font(CarlibFont.bodySmall())
                                         .foregroundStyle(.secondary)
@@ -83,7 +81,7 @@ struct GarageDashboardView: View {
                                     HStack {
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text("\(slot.startTime.timeFormatted) — \(slot.endTime.timeFormatted)")
-                                                .font(CarlibFont.bodyMedium(.semibold))
+                                                .font(CarlibFont.bodyMedium(.medium))
                                         }
                                         Spacer()
                                         CarlibStatusBadge(bookingStatus: .confirmed)
@@ -105,14 +103,12 @@ struct GarageDashboardView: View {
 struct DashboardKPICard: View {
     let title: String
     let value: String
-    let icon: String
+    let icon: RemixIcon
 
     var body: some View {
         CarlibCard(variant: .elevated) {
             VStack(alignment: .leading, spacing: CarlibSpacing.xs) {
-                Image(systemName: icon)
-                    .font(.title2)
-                    .foregroundStyle(.brandYellow)
+                icon.view(size: 22, color: .brandYellow)
                 Text(value)
                     .font(CarlibFont.displayMedium())
                 Text(title)

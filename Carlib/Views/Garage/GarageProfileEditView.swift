@@ -58,8 +58,7 @@ struct GarageProfileEditView: View {
                                     .foregroundStyle(.primary)
                                 Spacer()
                                 if selectedSpecialties.contains(specialty) {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(.carlibPrimaryBlue)
+                                    RemixIcon.checkLine.view(size: 16, color: .carlibPrimaryBlue)
                                 }
                             }
                         }
@@ -77,7 +76,7 @@ struct GarageProfileEditView: View {
                         // In-memory only for MVP — no persistence
                         dismiss()
                     }
-                    .fontWeight(.semibold)
+                    .fontWeight(.medium)
                 }
             }
         }

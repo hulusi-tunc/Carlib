@@ -58,7 +58,7 @@ struct BookingFlowView: View {
                                     } label: {
                                         VStack(spacing: 4) {
                                             Text(slot.startTime.timeFormatted)
-                                                .font(CarlibFont.body(.semibold))
+                                                .font(CarlibFont.body(.medium))
                                             Text("— \(slot.endTime.timeFormatted)")
                                                 .font(CarlibFont.caption())
                                                 .foregroundStyle(.carlibSecondary)
@@ -84,7 +84,7 @@ struct BookingFlowView: View {
                 // Confirm button
                 CarlibButton(
                     label: L10n.Booking.confirm,
-                    icon: "calendar.badge.plus",
+                    icon: .calendarEventLine,
                     variant: .primary,
                     isDisabled: selectedSlotId == nil
                 ) {
