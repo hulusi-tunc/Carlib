@@ -176,44 +176,24 @@ struct VehicleCard3D: View {
 
     var body: some View {
         ZStack {
-            // Card background with perspective
             RoundedRectangle(cornerRadius: 24)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 0.12, green: 0.12, blue: 0.14),
-                            Color(red: 0.08, green: 0.08, blue: 0.09)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
+                .fill(Color.tileSecondary)
                 .overlay {
                     RoundedRectangle(cornerRadius: 24)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [
-                                    Color.white.opacity(0.12),
-                                    Color.white.opacity(0.03)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
+                        .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
                 }
 
             VStack(alignment: .leading, spacing: 0) {
-                // Top: Default badge + actions
+                // Top: Default badge + set-default action
                 HStack {
                     if isDefault {
                         Text("DEFAULT")
                             .font(CarlibFont.label())
                             .tracking(1)
-                            .foregroundStyle(.carlibPrimaryBlue)
+                            .foregroundStyle(.brandYellow)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
-                            .background(Color.carlibPrimaryBlue.opacity(0.15), in: Capsule())
+                            .background(Color.brandYellow.opacity(0.15), in: Capsule())
                     }
                     Spacer()
                     if !isDefault {
@@ -231,10 +211,10 @@ struct VehicleCard3D: View {
 
                 Spacer()
 
-                // Center: Car visual
+                // Center: real brand logo, not a placeholder icon.
                 HStack {
                     Spacer()
-                    RemixIcon.carLine.view(size: 80, color: .white.opacity(0.15))
+                    CarBrandLogo(brand: vehicle.info.brand, size: 120)
                         .rotation3DEffect(.degrees(appeared ? 0 : -15), axis: (x: 0, y: 1, z: 0))
                         .scaleEffect(appeared ? 1.0 : 0.9)
                     Spacer()
@@ -242,30 +222,31 @@ struct VehicleCard3D: View {
 
                 Spacer()
 
-                // Bottom: Vehicle name + plate.
-                // Card has a fixed dark gradient background, so text must use literal
-                // white (not the adaptive .carlibDark) to stay visible in light mode.
+                // Bottom: nickname (optional), vehicle name, plate badge.
                 HStack(alignment: .bottom) {
                     VStack(alignment: .leading, spacing: 4) {
                         if let nickname = vehicle.nickname {
                             Text(nickname)
                                 .font(CarlibFont.caption(.medium))
-                                .foregroundStyle(.carlibPrimaryBlue)
+                                .foregroundStyle(.brandYellow)
                         }
-                        Text(vehicle.displayName)
+                        Text(verbatim: "\(vehicle.info.brand) \(vehicle.info.model)")
                             .font(CarlibFont.title())
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.carlibDark)
                     }
 
                     Spacer()
 
-                    // Plate badge
                     Text(vehicle.info.licensePlate)
                         .font(CarlibFont.caption(.medium))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.carlibDark)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+                        .background(Color.carlibScreenBg, in: RoundedRectangle(cornerRadius: 8))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
+                        }
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)
@@ -274,7 +255,7 @@ struct VehicleCard3D: View {
         .frame(height: 280)
         .padding(.horizontal, 24)
         .rotation3DEffect(.degrees(2), axis: (x: 1, y: 0, z: 0), perspective: 0.5)
-        .shadow(color: .carlibPrimaryBlue.opacity(isDefault ? 0.15 : 0), radius: 20, y: 10)
+        .shadow(color: .black.opacity(isDefault ? 0.10 : 0.05), radius: 20, y: 10)
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.1)) {
                 appeared = true
