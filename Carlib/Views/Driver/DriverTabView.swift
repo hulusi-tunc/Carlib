@@ -49,6 +49,12 @@ struct DriverTabView: View {
                 appState.pendingDriverTab = nil
             }
         }
+        .onAppear {
+            if let tab = appState.pendingDriverTab {
+                selectedTab = tab
+                appState.pendingDriverTab = nil
+            }
+        }
     }
 }
 

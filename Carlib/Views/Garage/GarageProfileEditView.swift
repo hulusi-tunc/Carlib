@@ -1,10 +1,15 @@
 import SwiftUI
+import PhotosUI
+import UIKit
 
 /// Garage profile edit — chip pickers and visual sliders instead of a
 /// generic form. Shop owners rarely edit this, so the first time they do
 /// it should feel guided and quick.
 struct GarageProfileEditView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(ClaimStore.self) private var claimStore
+
+    let garageId: UUID
 
     @State private var name: String
     @State private var address: String
@@ -12,14 +17,29 @@ struct GarageProfileEditView: View {
     @State private var phone: String
     @State private var coverageRadius: Double
     @State private var selectedSpecialties: Set<RepairSpecialty>
+    @State private var pendingDeletePhotoId: UUID?
 
-    init(garage: Garage) {
-        _name = State(initialValue: garage.name)
-        _address = State(initialValue: garage.address)
-        _dialCode = State(initialValue: garage.dialCode)
-        _phone = State(initialValue: garage.phone)
-        _coverageRadius = State(initialValue: garage.coverageRadiusKm)
-        _selectedSpecialties = State(initialValue: Set(garage.specialties))
+    // Photo source selection — "Take Photo" opens the camera, "Choose from
+    // Library" opens the system PhotosPicker. Both write the picked image
+    // into the garage's photos array via ClaimStore.
+    @State private var showPhotoSourceDialog = false
+    @State private var showCamera = false
+    @State private var presentLibrary = false
+    @State private var libraryPick: PhotosPickerItem?
+
+    init(garageId: UUID) {
+        self.garageId = garageId
+        let seed = MockData.garages.first(where: { $0.id == garageId }) ?? MockData.garages[0]
+        _name = State(initialValue: seed.name)
+        _address = State(initialValue: seed.address)
+        _dialCode = State(initialValue: seed.dialCode)
+        _phone = State(initialValue: seed.phone)
+        _coverageRadius = State(initialValue: seed.coverageRadiusKm)
+        _selectedSpecialties = State(initialValue: Set(seed.specialties))
+    }
+
+    private var photos: [PhotoAttachment] {
+        claimStore.garage(id: garageId)?.photos ?? []
     }
 
     private var country: CountryDialCode {
@@ -40,9 +60,13 @@ struct GarageProfileEditView: View {
                 .padding(.bottom, 40)
             }
             .background(Color.carlibScreenBg)
-            .navigationTitle(Text(verbatim: L10n.GarageProfileEdit.title))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(verbatim: L10n.GarageProfileEdit.title)
+                        .font(CarlibFont.body(.medium))
+                        .foregroundStyle(.carlibDark)
+                }
                 ToolbarItem(placement: .cancellationAction) {
                     Button(L10n.Common.cancel) { dismiss() }
                 }
@@ -86,11 +110,7 @@ struct GarageProfileEditView: View {
                     .padding(.horizontal, 14)
                     .frame(height: 48)
                     .frame(maxWidth: .infinity)
-                    .background(Color.carlibScreenBg, in: RoundedRectangle(cornerRadius: 12))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-                    }
+                    .background(Color.tileSecondary, in: RoundedRectangle(cornerRadius: 12))
             }
         }
     }
@@ -119,11 +139,7 @@ struct GarageProfileEditView: View {
             }
             .padding(.horizontal, 12)
             .frame(height: 48)
-            .background(Color.carlibScreenBg, in: RoundedRectangle(cornerRadius: 12))
-            .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-            }
+            .background(Color.tileSecondary, in: RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
         .onChange(of: dialCode) { _, _ in
@@ -148,11 +164,7 @@ struct GarageProfileEditView: View {
                 .font(CarlibFont.body())
                 .padding(.horizontal, 14)
                 .padding(.vertical, 14)
-                .background(Color.carlibScreenBg, in: RoundedRectangle(cornerRadius: 12))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-                }
+                .background(Color.tileSecondary, in: RoundedRectangle(cornerRadius: 12))
         }
     }
 
@@ -184,13 +196,6 @@ struct GarageProfileEditView: View {
                             isOn ? Color.brandYellow.opacity(0.2) : Color.tileSecondary,
                             in: Capsule()
                         )
-                        .overlay {
-                            Capsule()
-                                .strokeBorder(
-                                    isOn ? Color.brandYellow.opacity(0.5) : Color.carlibCardBorder,
-                                    lineWidth: 1
-                                )
-                        }
                     }
                     .buttonStyle(.pressable(scale: 0.95, haptic: .light))
                 }
@@ -237,41 +242,151 @@ struct GarageProfileEditView: View {
     private var photosCard: some View {
         editCard(
             title: "Photos",
-            subtitle: "Shops with 3+ photos get 40% more leads."
+            subtitle: "Shops with 3+ photos get 40% more leads. Tap × to remove."
         ) {
             LazyVGrid(columns: [GridItem(.flexible(), spacing: 10),
                                 GridItem(.flexible(), spacing: 10),
                                 GridItem(.flexible(), spacing: 10)], spacing: 10) {
-                // "Add" tile
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.brandYellow.opacity(0.1))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(
-                                style: StrokeStyle(lineWidth: 1.5, dash: [6])
-                            )
-                            .foregroundStyle(Color.brandYellow.opacity(0.5))
-                    }
-                    .overlay {
-                        VStack(spacing: 6) {
-                            RemixIcon.addLine.view(size: 22, color: .brandYellow)
-                            Text(verbatim: "Add")
-                                .font(CarlibFont.caption(.medium))
-                                .foregroundStyle(.carlibDark)
-                        }
-                    }
-                    .aspectRatio(1, contentMode: .fit)
-
-                // Placeholder slots
-                ForEach(0..<2, id: \.self) { _ in
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.tileSecondary)
-                        .overlay {
-                            RemixIcon.imageLine.view(size: 22, color: .carlibSecondary)
-                        }
-                        .aspectRatio(1, contentMode: .fit)
+                addPhotoTile
+                ForEach(photos) { photo in
+                    photoTile(for: photo)
                 }
             }
+        }
+        .confirmationDialog(
+            Text(verbatim: "Remove this photo?"),
+            isPresented: Binding(
+                get: { pendingDeletePhotoId != nil },
+                set: { if !$0 { pendingDeletePhotoId = nil } }
+            )
+        ) {
+            Button("Remove", role: .destructive) {
+                if let id = pendingDeletePhotoId {
+                    withAnimation(.spring(response: 0.35)) {
+                        claimStore.removePhoto(fromGarage: garageId, photoId: id)
+                    }
+                }
+                pendingDeletePhotoId = nil
+            }
+            Button("Cancel", role: .cancel) {
+                pendingDeletePhotoId = nil
+            }
+        }
+    }
+
+    private var addPhotoTile: some View {
+        Button {
+            showPhotoSourceDialog = true
+        } label: {
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.brandYellow.opacity(0.1))
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(
+                        style: StrokeStyle(lineWidth: 1.5, dash: [6])
+                    )
+                    .foregroundStyle(Color.brandYellow.opacity(0.5))
+                VStack(spacing: 6) {
+                    RemixIcon.addLine.view(size: 22, color: .brandYellow)
+                    Text(verbatim: "Add")
+                        .font(CarlibFont.caption(.medium))
+                        .foregroundStyle(.carlibDark)
+                }
+            }
+            .aspectRatio(1, contentMode: .fit)
+            .contentShape(RoundedRectangle(cornerRadius: 12))
+        }
+        .buttonStyle(.pressable(scale: 0.95, haptic: .light))
+        .confirmationDialog(
+            Text(verbatim: "Add a photo"),
+            isPresented: $showPhotoSourceDialog,
+            titleVisibility: .visible
+        ) {
+            // "Take Photo" only appears when a real camera is available —
+            // the simulator won't offer a source type camera, so we guard
+            // to avoid showing a button that would do nothing.
+            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                Button("Take Photo") {
+                    showCamera = true
+                }
+            }
+            Button("Choose from Library") {
+                // Null-out then present so the sheet reopens cleanly after
+                // a previous selection.
+                libraryPick = nil
+                // PhotosPicker is bound to $libraryPick via .photosPicker —
+                // setting `showLibrary` isn't needed since we use the
+                // built-in isPresented form below.
+                presentLibrary = true
+            }
+            Button("Cancel", role: .cancel) { }
+        }
+        .photosPicker(
+            isPresented: $presentLibrary,
+            selection: $libraryPick,
+            matching: .images,
+            photoLibrary: .shared()
+        )
+        .onChange(of: libraryPick) { _, newItem in
+            guard let newItem else { return }
+            Task {
+                if let data = try? await newItem.loadTransferable(type: Data.self) {
+                    await MainActor.run {
+                        withAnimation(.spring(response: 0.35)) {
+                            claimStore.addPhoto(
+                                toGarage: garageId,
+                                photo: PhotoAttachment(imageData: data)
+                            )
+                        }
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    }
+                }
+                await MainActor.run { libraryPick = nil }
+            }
+        }
+        .fullScreenCover(isPresented: $showCamera) {
+            CameraPicker { image in
+                showCamera = false
+                guard let image, let data = image.jpegData(compressionQuality: 0.9) else { return }
+                withAnimation(.spring(response: 0.35)) {
+                    claimStore.addPhoto(
+                        toGarage: garageId,
+                        photo: PhotoAttachment(imageData: data)
+                    )
+                }
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            }
+            .ignoresSafeArea()
+        }
+    }
+
+    private func photoTile(for photo: PhotoAttachment) -> some View {
+        Group {
+            if let data = photo.imageData, let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                DummyImage(
+                    kind: .garage,
+                    seed: photo.id.uuidString,
+                    pixelWidth: 240,
+                    pixelHeight: 240
+                )
+            }
+        }
+        .aspectRatio(1, contentMode: .fill)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(alignment: .topTrailing) {
+            Button {
+                pendingDeletePhotoId = photo.id
+            } label: {
+                RemixIcon.closeLine.view(size: 14, color: .white)
+                    .padding(6)
+                    .background(Color.black.opacity(0.55), in: Circle())
+            }
+            .buttonStyle(.pressable(scale: 0.9, haptic: .light))
+            .padding(6)
         }
     }
 
@@ -299,10 +414,6 @@ struct GarageProfileEditView: View {
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 16))
-        .overlay {
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-        }
     }
 }
 
@@ -352,6 +463,46 @@ private struct WrappingHStackEdit: Layout {
     }
 }
 
+// MARK: - Camera Picker
+//
+// Thin UIViewControllerRepresentable around UIImagePickerController for the
+// camera source. PhotosPicker handles the library side, but iOS still has
+// no pure-SwiftUI camera capture, so this UIKit bridge stays minimal.
+private struct CameraPicker: UIViewControllerRepresentable {
+    let onImage: (UIImage?) -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onImage: onImage)
+    }
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = context.coordinator
+        picker.allowsEditing = false
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let onImage: (UIImage?) -> Void
+        init(onImage: @escaping (UIImage?) -> Void) { self.onImage = onImage }
+
+        func imagePickerController(
+            _ picker: UIImagePickerController,
+            didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+        ) {
+            onImage(info[.originalImage] as? UIImage)
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            onImage(nil)
+        }
+    }
+}
+
 #Preview {
-    GarageProfileEditView(garage: MockData.garages[0])
+    GarageProfileEditView(garageId: MockData.garages[0].id)
+        .environment(ClaimStore())
 }

@@ -1,28 +1,25 @@
 import SwiftUI
 import MapKit
 
-/// Collapsed panel height — tall enough to fit the search field, header row,
-/// and one carousel card with breathing room.
-private let kCollapsedPanelHeight: CGFloat = 320
+/// Small detent height — sized to fit search + carousel card + page dots.
+private let kSmallDetentHeight: CGFloat = 300
 
-/// Shops tab — full-screen map with an in-view bottom panel.
+/// Fixed card height so the carousel ScrollView doesn't inherit extra
+/// vertical space from the panel.
+private let kCarouselCardHeight: CGFloat = 118
+
+/// Shops tab — full-screen map with a native iOS `.sheet` overlay.
 ///
-/// The panel replaces a prior native `.sheet`, which covered the `TabView` tab
-/// bar and left users with no way to leave the tab. Because the panel lives
-/// inside the tab's own view hierarchy, the tab bar stays visible and
-/// tappable at all times.
-///
-/// - Collapsed state: horizontal paging carousel of garage cards. Swiping a
-///   card snaps to the next one and pans the map to focus it.
-/// - Expanded state: vertical list of all garages.
-/// - Tapping a map pin focuses that garage and collapses the panel.
-/// - Tapping a card pushes `GarageDetailView` inside the panel's own nav stack
-///   (which forces the panel to expand so the detail view has full space).
+/// Uses `.presentationDetents` for Apple-Maps-style snap physics and a native
+/// drag indicator. At the small detent the map is interactive (`presentation
+/// BackgroundInteraction`); at `.large` the sheet fully covers the screen —
+/// including the TabView's tab bar, since that's standard iOS sheet behavior.
 struct GarageSearchView: View {
     private let garages = MockData.garages
 
     @State private var selectedGarageId: UUID?
-    @State private var panelState: PanelState = .collapsed
+    @State private var selectedDetent: PresentationDetent = .height(kSmallDetentHeight)
+    @State private var sheetPresented = true
     @State private var cameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 48.856, longitude: 2.370),
@@ -31,37 +28,41 @@ struct GarageSearchView: View {
     )
 
     var body: some View {
-        GeometryReader { proxy in
-            ZStack(alignment: .bottom) {
-                Map(position: $cameraPosition) {
-                    ForEach(garages) { garage in
-                        Annotation(garage.name, coordinate: garage.location, anchor: .bottom) {
-                            Button {
-                                focus(garageId: garage.id)
-                            } label: {
-                                pinLabel(for: garage)
-                            }
-                            .buttonStyle(.plain)
-                        }
+        Map(position: $cameraPosition) {
+            ForEach(garages) { garage in
+                Annotation(garage.name, coordinate: garage.location, anchor: .bottom) {
+                    Button {
+                        focus(garageId: garage.id)
+                    } label: {
+                        pinLabel(for: garage)
                     }
+                    .buttonStyle(.plain)
                 }
-                .mapStyle(.standard(elevation: .flat))
-                .mapControlVisibility(.hidden)
-                .ignoresSafeArea()
-
-                ShopsBottomPanel(
-                    garages: garages,
-                    selectedGarageId: $selectedGarageId,
-                    panelState: $panelState
-                )
-                .frame(height: panelState == .expanded ? proxy.size.height - 16 : kCollapsedPanelHeight)
-                .padding(.horizontal, 12)
-                .padding(.bottom, 10)
-                .animation(.spring(response: 0.4, dampingFraction: 0.85), value: panelState)
             }
         }
+        .mapStyle(.standard(elevation: .flat))
+        .mapControlVisibility(.hidden)
+        .ignoresSafeArea()
         .toolbar(.hidden, for: .navigationBar)
+        .sheet(isPresented: $sheetPresented) {
+            ShopsSheetContent(
+                garages: garages,
+                selectedGarageId: $selectedGarageId,
+                selectedDetent: $selectedDetent
+            )
+            .presentationDetents(
+                [.height(kSmallDetentHeight), .large],
+                selection: $selectedDetent
+            )
+            .presentationDragIndicator(.visible)
+            .presentationBackgroundInteraction(
+                .enabled(upThrough: .height(kSmallDetentHeight))
+            )
+            .presentationContentInteraction(.scrolls)
+            .interactiveDismissDisabled()
+        }
         .onAppear {
+            sheetPresented = true
             if selectedGarageId == nil {
                 selectedGarageId = garages.first?.id
             }
@@ -80,10 +81,10 @@ struct GarageSearchView: View {
     }
 
     private func focus(garageId: UUID) {
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-            selectedGarageId = garageId
-            if panelState == .expanded {
-                panelState = .collapsed // collapse panel when a pin is tapped
+        selectedGarageId = garageId
+        if selectedDetent == .large {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                selectedDetent = .height(kSmallDetentHeight)
             }
         }
     }
@@ -112,22 +113,17 @@ struct GarageSearchView: View {
     }
 }
 
-enum PanelState {
-    case collapsed
-    case expanded
-}
+// MARK: - Sheet Content
 
-// MARK: - Bottom Panel
-
-private struct ShopsBottomPanel: View {
+private struct ShopsSheetContent: View {
     let garages: [Garage]
     @Binding var selectedGarageId: UUID?
-    @Binding var panelState: PanelState
+    @Binding var selectedDetent: PresentationDetent
 
     @State private var searchText = ""
     @State private var navigationPath = NavigationPath()
 
-    private var isExpanded: Bool { panelState == .expanded }
+    private var isExpanded: Bool { selectedDetent == .large }
 
     /// Filter garages by name or address. Selection always refers to an ID in
     /// the filtered list; if the selected garage falls out of the filter, the
@@ -144,12 +140,10 @@ private struct ShopsBottomPanel: View {
     var body: some View {
         NavigationStack(path: $navigationPath) {
             VStack(spacing: 0) {
-                dragHandle
-
                 searchField
                     .padding(.horizontal, 20)
-                    .padding(.top, 4)
-                    .padding(.bottom, 10)
+                    .padding(.top, 6)
+                    .padding(.bottom, 6)
 
                 if isExpanded {
                     listView
@@ -157,6 +151,7 @@ private struct ShopsBottomPanel: View {
                     carouselView
                 }
             }
+            .background(Color.carlibScreenBg)
             .navigationDestination(for: UUID.self) { garageId in
                 if let garage = garages.first(where: { $0.id == garageId }) {
                     GarageDetailView(garage: garage)
@@ -173,65 +168,24 @@ private struct ShopsBottomPanel: View {
                     .background(Color.carlibScreenBg)
                 }
             }
+            .toolbar(.hidden, for: .navigationBar)
         }
         .tint(.carlibDark)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.08), lineWidth: 0.5)
-        }
-        .shadow(color: .black.opacity(0.28), radius: 18, y: 6)
         .onChange(of: searchText) { _, _ in
-            // If the currently selected garage was filtered out, snap to the first match.
             if let id = selectedGarageId,
                !filteredGarages.contains(where: { $0.id == id }) {
                 selectedGarageId = filteredGarages.first?.id
             }
         }
         .onChange(of: navigationPath.count) { _, count in
-            // When a detail view is pushed, force the panel to expanded so the
-            // pushed view has full vertical space.
-            if count > 0 && panelState != .expanded {
+            // When a detail view is pushed, expand the sheet so the pushed
+            // view has full vertical space.
+            if count > 0 && selectedDetent != .large {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                    panelState = .expanded
+                    selectedDetent = .large
                 }
             }
         }
-    }
-
-    // MARK: - Drag handle
-
-    private var dragHandle: some View {
-        VStack(spacing: 0) {
-            Capsule()
-                .fill(Color.carlibLabel.opacity(0.4))
-                .frame(width: 36, height: 5)
-                .padding(.top, 8)
-                .padding(.bottom, 8)
-        }
-        .frame(maxWidth: .infinity)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            // Block tap-to-collapse when a detail view is pushed.
-            guard navigationPath.isEmpty else { return }
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                panelState = isExpanded ? .collapsed : .expanded
-            }
-        }
-        .gesture(
-            DragGesture()
-                .onEnded { value in
-                    guard navigationPath.isEmpty else { return }
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                        if value.translation.height < -40 {
-                            panelState = .expanded
-                        } else if value.translation.height > 40 {
-                            panelState = .collapsed
-                        }
-                    }
-                }
-        )
     }
 
     // MARK: - Search field (custom, not native `.searchable`)
@@ -263,10 +217,10 @@ private struct ShopsBottomPanel: View {
         .background(Color.tileSecondary.opacity(0.6), in: Capsule())
     }
 
-    // MARK: - Collapsed: horizontal paging carousel
+    // MARK: - Small detent: horizontal paging carousel
 
     private var carouselView: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(verbatim: "\(filteredGarages.count) shop\(filteredGarages.count == 1 ? "" : "s") nearby")
                     .font(CarlibFont.caption(.medium))
@@ -276,7 +230,7 @@ private struct ShopsBottomPanel: View {
                 Spacer()
                 Button {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                        panelState = .expanded
+                        selectedDetent = .large
                     }
                 } label: {
                     HStack(spacing: 4) {
@@ -307,14 +261,37 @@ private struct ShopsBottomPanel: View {
                     }
                     .scrollTargetLayout()
                 }
+                .frame(height: kCarouselCardHeight)
                 .scrollTargetBehavior(.viewAligned)
                 .scrollPosition(id: $selectedGarageId)
                 .contentMargins(.horizontal, 20, for: .scrollContent)
+
+                pageDots
             }
         }
     }
 
-    // MARK: - Expanded: vertical list
+    /// Small dot row below the carousel so the user can see there are more
+    /// cards to swipe through.
+    @ViewBuilder
+    private var pageDots: some View {
+        if filteredGarages.count > 1 {
+            HStack(spacing: 6) {
+                ForEach(filteredGarages) { garage in
+                    let isActive = garage.id == selectedGarageId
+                    Capsule()
+                        .fill(isActive ? Color.carlibDark : Color.carlibLabel.opacity(0.3))
+                        .frame(width: isActive ? 16 : 6, height: 6)
+                        .animation(.easeInOut(duration: 0.2), value: selectedGarageId)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.top, 6)
+            .padding(.bottom, 14)
+        }
+    }
+
+    // MARK: - Large detent: vertical list
 
     private var listView: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -325,7 +302,7 @@ private struct ShopsBottomPanel: View {
                 Spacer()
                 Button {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                        panelState = .collapsed
+                        selectedDetent = .height(kSmallDetentHeight)
                     }
                 } label: {
                     HStack(spacing: 4) {
@@ -391,17 +368,17 @@ private struct ShopsBottomPanel: View {
 
     // MARK: - Navigation helper
 
-    /// Expands the panel (so the detail view has full vertical space and the
-    /// nav back button is comfortably visible), then pushes.
+    /// Expands the sheet so the detail view has full vertical space, then
+    /// pushes onto the nav stack.
     private func openDetail(garageId: UUID) {
         withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-            panelState = .expanded
+            selectedDetent = .large
         }
         navigationPath.append(garageId)
     }
 }
 
-// MARK: - Carousel card (collapsed state)
+// MARK: - Carousel card (small detent)
 
 private struct CarouselGarageCard: View {
     let garage: Garage
@@ -462,7 +439,7 @@ private struct CarouselGarageCard: View {
     }
 }
 
-// MARK: - List row (expanded state)
+// MARK: - List row (large detent)
 
 private struct ListGarageRow: View {
     let garage: Garage

@@ -941,9 +941,8 @@ private struct DayHoursRow: View {
                     .labelsHidden()
                     .tint(.brandYellow)
 
-                    if day.isOpen {
-                        RemixIcon.arrowRightSLine.view(size: 18, color: .carlibSecondary)
-                    }
+                    RemixIcon.arrowRightSLine.view(size: 18, color: .carlibSecondary)
+                        .opacity(day.isOpen ? 1 : 0)
                 }
             }
         }

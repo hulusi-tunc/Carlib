@@ -203,18 +203,13 @@ struct VehicleCard3D: View {
         ZStack {
             RoundedRectangle(cornerRadius: 24)
                 .fill(Color.tileSecondary)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 24)
-                        .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-                }
 
             VStack(alignment: .leading, spacing: 0) {
                 // Top: Default badge + set-default action
                 HStack {
                     if isDefault {
-                        Text("DEFAULT")
-                            .font(CarlibFont.label())
-                            .tracking(1)
+                        Text("Default")
+                            .font(CarlibFont.caption(.medium))
                             .foregroundStyle(.brandYellow)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
@@ -268,10 +263,6 @@ struct VehicleCard3D: View {
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(Color.carlibScreenBg, in: RoundedRectangle(cornerRadius: 8))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-                        }
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)

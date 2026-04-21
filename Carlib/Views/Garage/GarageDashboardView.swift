@@ -41,6 +41,7 @@ struct GarageDashboardView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: .infinity, alignment: .top)
+                    .opacity(0.2)
                     .ignoresSafeArea(edges: .top)
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
@@ -58,6 +59,16 @@ struct GarageDashboardView: View {
                     .padding(.bottom, 40)
                 }
             }
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Image("CarlibLogo")
+                        .renderingMode(.original)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 16)
+                        .accessibilityLabel("Carlib")
+                }
+            }
             .navigationDestination(for: GarageDashboardDestination.self) { dest in
                 switch dest {
                 case .claimDetail(let id):
@@ -71,7 +82,7 @@ struct GarageDashboardView: View {
         }
     }
 
-    // MARK: - Status Banner (slim, replaces huge pulse)
+// MARK: - Status Banner (slim, replaces huge pulse)
 
     /// Single-row compact header that sets the tone without eating the
     /// fold. Kicker dot + counts + brand-yellow primary action.
@@ -98,9 +109,9 @@ struct GarageDashboardView: View {
                     HStack(spacing: 6) {
                         Text(verbatim: "Review")
                             .font(CarlibFont.caption(.medium))
-                        RemixIcon.arrowRightLine.view(size: 14, color: .white)
+                        RemixIcon.arrowRightLine.view(size: 14, color: .carlibScreenBg)
                     }
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.carlibScreenBg)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 7)
                     .background(Color.carlibDark, in: Capsule())
@@ -304,10 +315,6 @@ struct GarageDashboardView: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-        .overlay {
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-        }
     }
 
     // MARK: - Today's Schedule (inline preview)
@@ -341,10 +348,6 @@ struct GarageDashboardView: View {
                     }
                 }
                 .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 14)
-                        .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-                }
             }
         }
     }
@@ -418,10 +421,6 @@ struct GarageDashboardView: View {
                     }
                 }
                 .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 14)
-                        .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-                }
             }
         }
     }

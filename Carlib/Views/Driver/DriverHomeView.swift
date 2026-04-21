@@ -12,6 +12,7 @@ enum DriverHomeDestination: Hashable {
 /// Currently ships only the empty "file" status header at the top.
 struct DriverHomeView: View {
     @Environment(ClaimStore.self) private var claimStore
+    @Environment(\.colorScheme) private var colorScheme
     @State private var path = NavigationPath()
 
     var body: some View {
@@ -19,14 +20,14 @@ struct DriverHomeView: View {
             ZStack(alignment: .top) {
                 Color.carlibScreenBg.ignoresSafeArea()
 
-                // Faded yellow dot pattern anchored to the top of the screen.
-                // Bleeds into the status bar area and fades out as it goes
-                // down. Sits behind the scrolling content so it stays put
-                // while the file section scrolls.
+                // Warm halftone wash anchored to the top. The asset catalog
+                // ships both light and dark variants, so the asset system picks
+                // the right one automatically based on the active appearance.
                 Image("HomeTopBg")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: .infinity, alignment: .top)
+                    .opacity(0.2)
                     .ignoresSafeArea(edges: .top)
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
@@ -42,10 +43,21 @@ struct DriverHomeView: View {
                         recentFilesSection
                             .padding(.horizontal, 20)
                     }
-                    .padding(.top, 20)
+                    .padding(.top, 4)
                     .padding(.bottom, 40)
                 }
             }
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Image("CarlibLogo")
+                        .renderingMode(.original)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 16)
+                        .accessibilityLabel("Carlib")
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: DriverHomeDestination.self) { destination in
                 switch destination {
                 case .claimDetail(let id):
@@ -65,7 +77,7 @@ struct DriverHomeView: View {
         }
     }
 
-    /// Rendered when a deep-linked claim id is no longer in the store —
+/// Rendered when a deep-linked claim id is no longer in the store —
     /// keeps the navigation stack from pushing onto a blank scene.
     private var missingClaimPlaceholder: some View {
         ContentUnavailableView {
@@ -309,10 +321,6 @@ struct DriverHomeView: View {
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.carlibAccent, in: RoundedRectangle(cornerRadius: 12))
-        .overlay {
-            RoundedRectangle(cornerRadius: 12)
-                .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-        }
     }
 
     private func garageActionButton(icon: RemixIcon, action: @escaping () -> Void) -> some View {
@@ -378,26 +386,29 @@ struct DriverHomeView: View {
     // MARK: - Report Damage CTA (Section 2)
 
     /// Full-width tile that primes the user to start a new declaration.
-    /// Yellow gradient bleeds across the tile with the road-barricade
-    /// illustration sitting on the right. A frosted glass arrow button
-    /// pins to the right edge. Figma 132:421.
+    /// Cream→yellow gradient bleeds across the tile with the road-barricade
+    /// illustration sitting on the right. Tile stays bright in both themes
+    /// on purpose: brand yellow is mode-agnostic, and the fixed `.black`
+    /// copy/icons need a light surface to sit on. Figma 132:421.
     private var reportDamageCTA: some View {
         Button {
             path.append(DriverHomeDestination.createReport)
         } label: {
             ZStack {
-                // Layer 1 — base tile color (under the gradient so the
-                // light/dark tile token still shows through any transparency)
-                Color.tileSecondary
+                // Layer 1 — cream→yellow gradient, drawn in code so it
+                // adapts the same way in light and dark mode (yellow is
+                // intentionally fixed across themes).
+                LinearGradient(
+                    stops: [
+                        .init(color: Color(red: 1.0, green: 0.985, blue: 0.93), location: 0),
+                        .init(color: Color(red: 1.0, green: 0.97, blue: 0.82), location: 0.45),
+                        .init(color: .brandYellow, location: 1.0),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
 
-                // Layer 2 — yellow gradient blob, full bleed
-                Image("ReportCtaGradient")
-                    .resizable()
-                    .scaledToFill()
-                    .allowsHitTesting(false)
-                    .accessibilityHidden(true)
-
-                // Layer 3 — barricades, anchored to the right edge
+                // Layer 2 — barricades, anchored to the right edge
                 Image("ReportCtaBarricades")
                     .resizable()
                     .scaledToFit()
@@ -405,7 +416,7 @@ struct DriverHomeView: View {
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
 
-                // Layer 4 — foreground content
+                // Layer 3 — foreground content
                 HStack(spacing: 16) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(verbatim: L10n.DriverHome.reportCtaTitle)
@@ -420,9 +431,9 @@ struct DriverHomeView: View {
 
                     Spacer(minLength: 0)
 
-                    // Frosted glass arrow button — ultra-thin material
-                    // tinted with 40% white to match the 76% white + 2.1pt
-                    // blur from the Figma spec.
+                    // Frosted glass arrow button — tinted white chip over
+                    // the yellow gradient, readable in both themes because
+                    // the tile itself is always bright.
                     ZStack {
                         Circle().fill(.ultraThinMaterial)
                         Circle().fill(Color.white.opacity(0.4))
@@ -436,6 +447,28 @@ struct DriverHomeView: View {
             .clipShape(RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.pressable(scale: 0.97, haptic: .medium))
+    }
+
+    /// Paris map texture behind the Find Body Shop tile icon. The PNG
+    /// is a light-mode asset (light bg + grey streets), so in dark mode
+    /// we invert the colors and dim it so the streets read as a subtle
+    /// dark pattern on the dark tile instead of painting a light square.
+    @ViewBuilder
+    private var findShopMapOverlay: some View {
+        let image = Image("FindShopMap")
+            .resizable()
+            .scaledToFill()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+
+        if colorScheme == .dark {
+            image
+                .colorInvert()
+                .opacity(0.35)
+        } else {
+            image
+        }
     }
 
     // MARK: - Shortcuts Row (Section 3)
@@ -453,17 +486,14 @@ struct DriverHomeView: View {
 
             // Find Body Shop tile — same shape but with the Paris map
             // texture pinned to the bottom of the tile, behind the icon.
+            // In dark mode the texture is inverted so its light streets
+            // flip to dark streets on the dark tile fill.
             shortcutTile(
                 title: L10n.DriverHome.shortcutFindShopTitle,
                 subtitle: L10n.DriverHome.shortcutFindShopSubtitle,
                 icon: .map2Fill,
                 backgroundOverlay: {
-                    Image("FindShopMap")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
+                    findShopMapOverlay
                 },
                 action: { path.append(DriverHomeDestination.garageSearch) }
             )

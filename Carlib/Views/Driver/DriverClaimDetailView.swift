@@ -49,6 +49,15 @@ struct DriverClaimDetailView: View {
                 .padding(.bottom, 40)
             }
         }
+        .background(alignment: .top) {
+            LinearGradient(
+                colors: [statusColor.opacity(0.12), statusColor.opacity(0.04), Color.carlibScreenBg],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 380)
+            .ignoresSafeArea(edges: .top)
+        }
         .background(Color.carlibScreenBg)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
@@ -111,14 +120,6 @@ struct DriverClaimDetailView: View {
         .frame(maxWidth: .infinity)
         .padding(.top, 16)
         .padding(.bottom, 32)
-        .background(
-            LinearGradient(
-                colors: [statusColor.opacity(0.12), statusColor.opacity(0.04), Color.carlibScreenBg],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea(edges: .top)
-        )
     }
 
     // MARK: - Vehicle Card

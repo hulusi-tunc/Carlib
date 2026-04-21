@@ -16,14 +16,9 @@ struct GarageClaimsListView: View {
     var body: some View {
         NavigationStack(path: $path) {
             VStack(spacing: 0) {
-                Picker(L10n.GarageClaims.filter, selection: $selectedFilter) {
-                    ForEach(GarageClaimFilter.allCases, id: \.self) { filter in
-                        Text(filter.localizedName)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal, CarlibSpacing.screenHorizontal)
-                .padding(.vertical, CarlibSpacing.sm)
+                filterSwitcher
+                    .padding(.horizontal, CarlibSpacing.screenHorizontal)
+                    .padding(.vertical, CarlibSpacing.sm)
 
                 if filteredClaims.isEmpty {
                     ContentUnavailableView {
@@ -64,6 +59,38 @@ struct GarageClaimsListView: View {
                 }
             }
         }
+    }
+
+    /// Pill-shaped segmented control matching the one on the Schedule page:
+    /// a `tileSecondary` capsule background with the selected tab rendered as
+    /// a white capsule with a soft shadow. Feels native (like iOS 26's
+    /// Calendar / List switcher) but adopts our tokens.
+    private var filterSwitcher: some View {
+        HStack(spacing: 4) {
+            ForEach(GarageClaimFilter.allCases, id: \.self) { filter in
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) {
+                        selectedFilter = filter
+                    }
+                } label: {
+                    Text(verbatim: filter.localizedName)
+                        .font(CarlibFont.callout(.medium))
+                        .foregroundStyle(selectedFilter == filter ? .carlibDark : .carlibSecondary)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 40)
+                        .background {
+                            if selectedFilter == filter {
+                                Capsule()
+                                    .fill(Color.carlibScreenBg)
+                                    .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
+                            }
+                        }
+                }
+                .buttonStyle(.pressable(scale: 0.97, haptic: .light))
+            }
+        }
+        .padding(4)
+        .background(Color.tileSecondary, in: Capsule())
     }
 }
 

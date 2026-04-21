@@ -9,12 +9,14 @@ final class ClaimStore {
     var timeSlots: [TimeSlot]
     var bookings: [Booking]
     var vehicles: [Vehicle]
+    var garages: [Garage]
 
     init() {
         self.claims = MockData.claims
         self.timeSlots = MockData.timeSlots
         self.bookings = []
         self.vehicles = MockData.vehicles
+        self.garages = MockData.garages
     }
 
     // MARK: - Vehicle
@@ -136,6 +138,29 @@ final class ClaimStore {
 
     func availableSlots(for garageId: UUID) -> [TimeSlot] {
         timeSlots.filter { $0.garageId == garageId && $0.isAvailable && !$0.isBlocked }
+    }
+
+    // MARK: - Garage Mutations
+
+    func garage(id: UUID) -> Garage? {
+        garages.first(where: { $0.id == id })
+    }
+
+    func addPhoto(toGarage garageId: UUID, photo: PhotoAttachment = PhotoAttachment()) {
+        guard let idx = garages.firstIndex(where: { $0.id == garageId }) else { return }
+        // Explicit reassignment — nested struct mutations through a subscript
+        // don't always trip @Observable's observation registrar cleanly, so we
+        // take a copy, mutate, and write back to guarantee views re-render.
+        var updated = garages[idx]
+        updated.photos.append(photo)
+        garages[idx] = updated
+    }
+
+    func removePhoto(fromGarage garageId: UUID, photoId: UUID) {
+        guard let idx = garages.firstIndex(where: { $0.id == garageId }) else { return }
+        var updated = garages[idx]
+        updated.photos.removeAll { $0.id == photoId }
+        garages[idx] = updated
     }
 
     // MARK: - Booking Mutations

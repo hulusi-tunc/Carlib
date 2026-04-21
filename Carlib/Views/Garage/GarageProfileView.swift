@@ -7,7 +7,11 @@ struct GarageProfileView: View {
     @Environment(AppState.self) private var appState
     @Environment(ClaimStore.self) private var claimStore
     @State private var showEditSheet = false
-    private let garage = MockData.garages[0]
+    private let garageId = MockData.garages[0].id
+
+    private var garage: Garage {
+        claimStore.garage(id: garageId) ?? MockData.garages[0]
+    }
 
     private var completedRepairs: Int {
         claimStore.claims.filter {
@@ -49,7 +53,7 @@ struct GarageProfileView: View {
                 }
             }
             .sheet(isPresented: $showEditSheet) {
-                GarageProfileEditView(garage: garage)
+                GarageProfileEditView(garageId: garage.id)
             }
         }
     }
@@ -154,10 +158,6 @@ struct GarageProfileView: View {
         }
         .padding(14)
         .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-        .overlay {
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-        }
     }
 
     // MARK: - Quick stats
@@ -236,10 +236,6 @@ struct GarageProfileView: View {
             }
             .padding(14)
             .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-            .overlay {
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-            }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -282,10 +278,6 @@ struct GarageProfileView: View {
             }
             .padding(14)
             .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-            .overlay {
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-            }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -344,10 +336,6 @@ struct GarageProfileView: View {
             }
             .padding(14)
             .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-            .overlay {
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-            }
         }
     }
 
@@ -411,6 +399,28 @@ struct GarageProfileView: View {
 
     private var settingsFooter: some View {
         VStack(spacing: 10) {
+            NavigationLink {
+                SettingsView()
+            } label: {
+                HStack(spacing: 12) {
+                    RemixIcon.settings3Line.view(size: 18, color: .carlibDark)
+                        .frame(width: 28, height: 28)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(verbatim: L10n.Settings.profileRowTitle)
+                            .font(CarlibFont.body(.medium))
+                            .foregroundStyle(.carlibDark)
+                        Text(verbatim: L10n.Settings.profileRowSubtitle)
+                            .font(CarlibFont.footnote())
+                            .foregroundStyle(.carlibSecondary)
+                    }
+                    Spacer()
+                    RemixIcon.arrowRightLine.view(size: 16, color: .carlibSecondary)
+                }
+                .padding(14)
+                .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
+            }
+            .buttonStyle(.plain)
+
             Button(role: .destructive) {
                 appState.signOut()
             } label: {
@@ -423,10 +433,6 @@ struct GarageProfileView: View {
                 }
                 .padding(14)
                 .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 14)
-                        .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-                }
             }
             .buttonStyle(.plain)
         }

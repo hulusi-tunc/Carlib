@@ -1,18 +1,17 @@
 import SwiftUI
 
-/// Revolut-style onboarding with Instagram Stories interactions:
-/// - Tap right side → next slide
-/// - Tap left side → previous slide
-/// - Long press → pause
-/// - Auto-advances every 4 seconds
-/// - Loops back to first after last
+/// Instagram-Stories-style onboarding carousel:
+/// - Tap right half → next slide
+/// - Tap left half → previous slide
+/// - Long-press → pause
+/// - Auto-advances every 4s, loops after the last
 ///
-/// Visual: a large yellow splash graphic fills the screen, the headline sits
-/// top-left, and two capsule buttons pin to the bottom. Works in both light
-/// and dark mode — the splash PNG has alpha so it overlays either bg cleanly.
+/// Each slide has a full-bleed photo background with a white-to-transparent
+/// gradient overlay at the top so the progress bars, "Welcome to Carlib"
+/// header and headline remain legible in black. Two pinned buttons at the
+/// bottom — Create account (primary) and Log in (secondary).
 struct WelcomeCarouselView: View {
     @Environment(AppState.self) private var appState
-    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var currentPage = 0
     @State private var storyProgress: CGFloat = 0
@@ -21,65 +20,69 @@ struct WelcomeCarouselView: View {
     @State private var showSignUp = false
     @State private var timer: Timer?
 
-    // Ambient splash animation — breathe scale + subtle rotational sway
-    // to make the background feel alive. Honors Reduce Motion.
-    @State private var splashScale: CGFloat = 1.10
-    @State private var splashRotation: Double = -2
-
-    // Per-slide hero illustration float — slow up/down bob so the foreground
-    // artwork doesn't feel static against the breathing splash.
-    @State private var heroFloat: CGFloat = -4
-
     private let slideDuration: TimeInterval = 4.0
 
-    /// Per-slide content. Only slide 1 currently ships with illustrations —
-    /// the rest will get their own hero assets in a later pass.
     private struct Slide {
         let headline: String
-        let heroAsset: String?
-        let inlineEmoji: String?  // small image beside the headline
+        let backgroundAsset: String
     }
 
     private let slides: [Slide] = [
-        Slide(
-            headline: "Declare your accident in minutes",
-            heroAsset: "WelcomeHero1",
-            inlineEmoji: "WelcomeClipboard"
-        ),
-        Slide(headline: "Find a body shop nearby", heroAsset: nil, inlineEmoji: nil),
-        Slide(headline: "Track repairs in real-time", heroAsset: nil, inlineEmoji: nil),
-        Slide(headline: "Trusted by garages across France", heroAsset: nil, inlineEmoji: nil),
+        Slide(headline: "Declare your accident in minutes", backgroundAsset: "WelcomeBg1"),
+        Slide(headline: "Find a garage nearby", backgroundAsset: "WelcomeBg2"),
+        Slide(headline: "Track repairs in real-time", backgroundAsset: "WelcomeBg3"),
+        Slide(headline: "Trusted by garages in France", backgroundAsset: "WelcomeBg4"),
     ]
 
     private var slideCount: Int { slides.count }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            // Base screen background — adaptive.
-            Color.carlibScreenBg.ignoresSafeArea()
+            // Photo — sized larger than the screen so it always bleeds past
+            // the safe area on every edge (notch, bottom home indicator).
+            // GeometryReader gives us the safe area insets so we can extend
+            // the frame and offset it back into place.
+            GeometryReader { proxy in
+                let extraW = proxy.safeAreaInsets.leading + proxy.safeAreaInsets.trailing
+                let extraH = proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom
+                Image(slides[currentPage].backgroundAsset)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(
+                        width: proxy.size.width + extraW,
+                        height: proxy.size.height + extraH
+                    )
+                    .clipped()
+                    .offset(
+                        x: -proxy.safeAreaInsets.leading,
+                        y: -proxy.safeAreaInsets.top
+                    )
+                    .transition(.opacity)
+                    .id(currentPage)
+                    .accessibilityHidden(true)
+            }
+            .ignoresSafeArea()
 
-            // Yellow splash graphic — sits behind content, full-bleed.
-            // Slow breathing scale + subtle sway gives the page an ambient,
-            // living feel without distracting from the content.
-            Image("OnboardingSplash")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .clipped()
-                .scaleEffect(splashScale)
-                .rotationEffect(.degrees(splashRotation))
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
-                .accessibilityHidden(true)
-                .onAppear(perform: startSplashAnimation)
+            // White → transparent gradient on the top so the progress
+            // bars, kicker and headline stay legible in black over the photo.
+            LinearGradient(
+                stops: [
+                    .init(color: .white, location: 0),
+                    .init(color: .white.opacity(0), location: 0.386),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            .allowsHitTesting(false)
 
+            // Content — sibling of the backgrounds, respects safe area
+            // because it has no `.ignoresSafeArea()` of its own.
             VStack(alignment: .leading, spacing: 0) {
-                // ── Stories progress bar ──
                 progressBar
                     .padding(.horizontal, 24)
                     .padding(.top, 12)
 
-                // ── Header: "Welcome to" + inline yellow Carlib wordmark ──
                 HStack(spacing: 6) {
                     Text(verbatim: "Welcome to")
                         .font(CarlibFont.footnote())
@@ -95,48 +98,20 @@ struct WelcomeCarouselView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
 
-                // ── Headline — left-aligned, updates per slide ──
-                // For slides with an inlineEmoji, we concatenate a trailing
-                // Text(Image) into the headline so the image flows with the
-                // last word and wraps naturally — giving us a true inline
-                // glyph next to "minutes" rather than a sibling in an HStack.
-                // The image's rendered size is determined by its asset scale
-                // (2x → 32pt tall), which is set in Contents.json.
-                headlineText
-                    .font(.custom("Aeonik-Medium", size: 34))
-                    .foregroundStyle(.carlibDark)
+                Text(verbatim: slides[currentPage].headline)
+                    .font(CarlibFont.largeTitle(.medium))
+                    .foregroundStyle(.black)
                     .lineLimit(nil)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 24)
                     .padding(.top, 12)
+                    .id(currentPage)
+                    .transition(.opacity)
 
-                // ── Hero illustration (slide-specific) ──
-                // Fixed-height slot so the gesture layer below it gets the rest.
-                // Only slide 1 currently has an asset; other slides render an
-                // empty Spacer of the same height so the layout doesn't jump.
-                Group {
-                    if let hero = slides[currentPage].heroAsset {
-                        Image(hero)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 320)
-                            .offset(y: heroFloat)
-                            .accessibilityHidden(true)
-                            .transition(.opacity)
-                            .id(currentPage) // re-animate on slide change
-                    } else {
-                        Color.clear.frame(height: 320)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.top, 28)
-                .onAppear(perform: startHeroFloat)
-
-                // ── Invisible gesture layer filling remaining space ──
-                // Fills the middle so tap/long-press work on the splash area
-                // without stealing taps from progress bars, header, or buttons.
+                // Gesture layer fills the remaining space so tap/long-press
+                // work over the photo without stealing from the progress
+                // bars, header or CTAs.
                 GeometryReader { geo in
                     HStack(spacing: 0) {
                         Color.clear
@@ -156,36 +131,29 @@ struct WelcomeCarouselView: View {
                         .onEnded { _ in resume() }
                 )
 
-                // ── Persistent auth buttons ──
                 VStack(spacing: 12) {
-                    Button {
+                    CarlibButton(
+                        label: "Create account",
+                        variant: .primary
+                    ) {
                         stopTimer()
                         showSignUp = true
-                    } label: {
-                        Text(verbatim: L10n.Auth.createAccount)
-                            .font(CarlibFont.body(.medium))
-                            .foregroundStyle(colorScheme == .dark ? .black : .white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 54)
-                            .background(Color.carlibDark, in: Capsule())
                     }
 
-                    Button {
+                    CarlibButton(
+                        label: "Log in",
+                        variant: .secondary
+                    ) {
                         stopTimer()
                         showSignIn = true
-                    } label: {
-                        Text(verbatim: "Log in")
-                            .font(CarlibFont.body(.medium))
-                            .foregroundStyle(.carlibDark)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 54)
-                            .background(Color.tileSecondary, in: Capsule())
                     }
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
+        .preferredColorScheme(.light)
         .onAppear { startTimer() }
         .onDisappear { stopTimer() }
         .sheet(isPresented: $showSignIn) {
@@ -198,73 +166,20 @@ struct WelcomeCarouselView: View {
         }
     }
 
-    // MARK: - Headline with Inline Emoji
-    // Text concatenation lets the inline image behave as a glyph that wraps
-    // with the last word of the headline. Two Text values joined with `+`
-    // share their parent's `.font()`, `.foregroundStyle()`, and line layout.
-    private var headlineText: Text {
-        let slide = slides[currentPage]
-        let base = Text(verbatim: slide.headline)
-        if let emoji = slide.inlineEmoji {
-            return base + Text(verbatim: " ") + Text(Image(emoji))
-        }
-        return base
-    }
-
     // MARK: - Progress Bar
-    // Single outer GeometryReader computes the total width, then each bar gets an
-    // explicit width so the HStack layout is deterministic (nesting GeometryReader
-    // inside a ForEach confuses HStack distribution).
+
     private var progressBar: some View {
-        GeometryReader { geo in
-            let spacing: CGFloat = 4
-            let totalSpacing = spacing * CGFloat(slideCount - 1)
-            let barWidth = max(0, (geo.size.width - totalSpacing) / CGFloat(slideCount))
-
-            HStack(spacing: spacing) {
-                ForEach(0..<slideCount, id: \.self) { i in
-                    ZStack(alignment: .leading) {
+        HStack(spacing: 4) {
+            ForEach(0..<slideCount, id: \.self) { i in
+                Capsule()
+                    .fill(Color.black.opacity(0.15))
+                    .frame(height: 3)
+                    .overlay(alignment: .leading) {
                         Capsule()
-                            .fill(Color.carlibDark.opacity(0.15))
-                            .frame(width: barWidth, height: 3)
-                        Capsule()
-                            .fill(Color.carlibDark)
-                            .frame(width: barWidth * fillFraction(for: i), height: 3)
+                            .fill(Color.black)
+                            .scaleEffect(x: fillFraction(for: i), y: 1, anchor: .leading)
                     }
-                }
             }
-        }
-        .frame(height: 3)
-    }
-
-    // MARK: - Ambient Splash Animation
-
-    /// Starts the slow breathing + sway on the splash background.
-    /// - Scale oscillates 1.10 → 1.18 (subtle zoom)
-    /// - Rotation oscillates -2° → +2° (gentle sway)
-    /// - Duration 7s per half-cycle, 14s full cycle, eased both ways
-    /// - Reduce Motion: holds a single mid-scale pose with no animation.
-    private func startSplashAnimation() {
-        if reduceMotion {
-            splashScale = 1.14
-            splashRotation = 0
-            return
-        }
-        withAnimation(.easeInOut(duration: 7).repeatForever(autoreverses: true)) {
-            splashScale = 1.18
-            splashRotation = 2
-        }
-    }
-
-    /// Slow float on the per-slide hero illustration — gentle bob up and
-    /// down, 4s per half-cycle. Honors Reduce Motion.
-    private func startHeroFloat() {
-        if reduceMotion {
-            heroFloat = 0
-            return
-        }
-        withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
-            heroFloat = 4
         }
     }
 
@@ -275,7 +190,7 @@ struct WelcomeCarouselView: View {
             if currentPage < slideCount - 1 {
                 currentPage += 1
             } else {
-                currentPage = 0 // loop
+                currentPage = 0
             }
         }
         storyProgress = 0
@@ -292,24 +207,15 @@ struct WelcomeCarouselView: View {
         restartTimer()
     }
 
-    private func pause() {
-        isPaused = true
-    }
-
-    private func resume() {
-        isPaused = false
-    }
+    private func pause() { isPaused = true }
+    private func resume() { isPaused = false }
 
     // MARK: - Progress Bar Logic
 
     private func fillFraction(for index: Int) -> CGFloat {
-        if index < currentPage {
-            return 1
-        } else if index == currentPage {
-            return storyProgress
-        } else {
-            return 0
-        }
+        if index < currentPage { return 1 }
+        if index == currentPage { return storyProgress }
+        return 0
     }
 
     private func startTimer() {
@@ -318,12 +224,8 @@ struct WelcomeCarouselView: View {
         timer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { _ in
             Task { @MainActor in
                 guard !isPaused else { return }
-
                 storyProgress += 0.03 / slideDuration
-
-                if storyProgress >= 1.0 {
-                    goNext()
-                }
+                if storyProgress >= 1.0 { goNext() }
             }
         }
     }
@@ -339,14 +241,7 @@ struct WelcomeCarouselView: View {
     }
 }
 
-#Preview("Light") {
+#Preview {
     WelcomeCarouselView()
         .environment(AppState())
-        .preferredColorScheme(.light)
-}
-
-#Preview("Dark") {
-    WelcomeCarouselView()
-        .environment(AppState())
-        .preferredColorScheme(.dark)
 }

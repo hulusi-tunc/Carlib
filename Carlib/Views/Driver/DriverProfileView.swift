@@ -8,16 +8,31 @@ struct DriverProfileView: View {
     @Environment(AppState.self) private var appState
     @Environment(ClaimStore.self) private var claimStore
 
-    // Demo identity — real data flows through `appState.currentUser` once
-    // the auth service is wired up. For the MVP prototype we hard-code
-    // Sophie so the screenshots stay consistent across the app.
-    private let driverName = "Sophie Durand"
-    private let driverEmail = "sophie.durand@email.com"
     private let driverDialCode = "+33"
     private let driverPhone = "6 12 34 56 78"
-    private let memberSince = "Mar 2026"
 
     @State private var showEditSheet = false
+    @State private var pushSettings = false
+    @State private var pushGarage = false
+    @State private var showAddVehicle = false
+
+    private var driverName: String {
+        let name = appState.currentUser?.fullName ?? ""
+        return name.isEmpty ? "Driver" : name
+    }
+
+    private var driverEmail: String {
+        appState.currentUser?.email ?? ""
+    }
+
+    private var avatarSeed: String {
+        appState.currentUser?.id.uuidString ?? "driver-default"
+    }
+
+    private var memberSince: String {
+        guard let date = appState.currentUser?.createdAt else { return "—" }
+        return date.formatted(.dateTime.month(.abbreviated).year().locale(Locale(identifier: "en_US")))
+    }
 
     private var totalClaims: Int { claimStore.claims.count }
     private var activeClaims: Int { claimStore.activeClaims.count }
@@ -42,14 +57,23 @@ struct DriverProfileView: View {
             .navigationTitle(Text(verbatim: L10n.Profile.title))
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showEditSheet = true
-                    } label: {
-                        Text(verbatim: L10n.DriverProfileEdit.edit)
-                            .font(CarlibFont.callout(.medium))
-                            .foregroundStyle(.carlibDark)
+                    HStack(spacing: 6) {
+                        NavigationLink {
+                            SettingsView()
+                        } label: {
+                            RemixIcon.settings3Line.view(size: 20, color: .carlibDark)
+                        }
+                        .buttonStyle(.pressable(scale: 0.92, haptic: .light))
+
+                        Button {
+                            showEditSheet = true
+                        } label: {
+                            Text(verbatim: "Edit Profile")
+                                .font(CarlibFont.body(.medium))
+                                .foregroundStyle(.carlibDark)
+                        }
+                        .buttonStyle(.pressable(scale: 0.96, haptic: .light))
                     }
-                    .buttonStyle(.pressable(scale: 0.96, haptic: .light))
                 }
             }
             .sheet(isPresented: $showEditSheet) {
@@ -59,6 +83,22 @@ struct DriverProfileView: View {
                     dialCode: driverDialCode,
                     phone: driverPhone
                 )
+            }
+            .navigationDestination(isPresented: $pushSettings) {
+                SettingsView()
+            }
+            .navigationDestination(isPresented: $pushGarage) {
+                MyGarageView()
+            }
+            .sheet(isPresented: $showAddVehicle) {
+                AddVehicleSheet()
+            }
+            .onAppear {
+                #if DEBUG
+                if DebugScreenshotFlags.sheet != nil {
+                    pushSettings = true
+                }
+                #endif
             }
         }
     }
@@ -72,14 +112,14 @@ struct DriverProfileView: View {
         HStack(spacing: 14) {
             DummyImage(
                 kind: .person,
-                seed: "sophie-durand",
+                seed: avatarSeed,
                 pixelWidth: 240,
                 pixelHeight: 240
             )
             .frame(width: 72, height: 72)
             .clipShape(Circle())
             .overlay {
-                Circle().strokeBorder(Color.white.opacity(0.4), lineWidth: 2)
+                Circle().strokeBorder(Color.carlibDark.opacity(0.12), lineWidth: 2)
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -100,7 +140,7 @@ struct DriverProfileView: View {
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(Color.white.opacity(0.6), in: Capsule())
+                .background(Color.carlibScreenBg.opacity(0.6), in: Capsule())
                 .padding(.top, 2)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -156,32 +196,31 @@ struct DriverProfileView: View {
     // MARK: - Vehicles (the centerpiece)
 
     /// The driver's vehicles are the most important actionable content on
-    /// this page — so they get their own section with large tappable rows
-    /// and a "Manage" link that routes to `MyGarageView`.
+    /// this page — so they get their own section with large tappable rows,
+    /// a "Manage" link (top-right of the header) that routes to `MyGarageView`,
+    /// and an "Add new vehicle" CTA at the bottom that opens AddVehicleSheet.
     private var vehiclesSection: some View {
         VStack(alignment: .leading, spacing: 9) {
             sectionHeader("My vehicles", actionLabel: "Manage") {
-                // Handled by the NavigationLink wrapper below — using a
-                // separate button keeps the header consistent with other
-                // sections.
+                pushGarage = true
             }
 
             VStack(spacing: 8) {
                 ForEach(claimStore.vehicles) { vehicle in
                     NavigationLink {
-                        VehicleDetailView(vehicle: vehicle.info)
+                        VehicleDetailView(vehicle: vehicle)
                     } label: {
                         vehicleRow(vehicle)
                     }
                     .buttonStyle(.plain)
                 }
 
-                NavigationLink {
-                    MyGarageView()
+                Button {
+                    showAddVehicle = true
                 } label: {
                     HStack {
                         RemixIcon.addLine.view(size: 16, color: .carlibDark)
-                        Text(verbatim: "Manage vehicles")
+                        Text(verbatim: "Add new vehicle")
                             .font(CarlibFont.callout(.medium))
                             .foregroundStyle(.carlibDark)
                         Spacer()
@@ -214,11 +253,10 @@ struct DriverProfileView: View {
                         .font(CarlibFont.body(.medium))
                         .foregroundStyle(.carlibDark)
                     if vehicle.isDefault {
-                        Text(verbatim: "DEFAULT")
+                        Text(verbatim: "Default")
                             .font(CarlibFont.caption(.medium))
-                            .tracking(0.8)
                             .foregroundStyle(.black)
-                            .padding(.horizontal, 6)
+                            .padding(.horizontal, 8)
                             .padding(.vertical, 2)
                             .background(Color.brandYellow, in: Capsule())
                     }
@@ -245,10 +283,6 @@ struct DriverProfileView: View {
         }
         .padding(14)
         .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-        .overlay {
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-        }
         .contentShape(Rectangle())
     }
 
@@ -268,12 +302,12 @@ struct DriverProfileView: View {
             .buttonStyle(.plain)
 
             NavigationLink {
-                NotificationSettingsView()
+                SettingsView()
             } label: {
                 linkRow(
-                    icon: .notificationLine,
-                    title: L10n.Profile.preferences,
-                    subtitle: "Push, status updates, matches"
+                    icon: .settings3Line,
+                    title: L10n.Settings.profileRowTitle,
+                    subtitle: L10n.Settings.profileRowSubtitle
                 )
             }
             .buttonStyle(.plain)
@@ -300,10 +334,6 @@ struct DriverProfileView: View {
         }
         .padding(14)
         .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-        .overlay {
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-        }
         .contentShape(Rectangle())
     }
 
@@ -324,10 +354,6 @@ struct DriverProfileView: View {
                 aboutRow(icon: .informationLine, title: L10n.ProfileAbout.version, trailing: "0.1.0")
             }
             .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-            .overlay {
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-            }
         }
     }
 
@@ -373,10 +399,6 @@ struct DriverProfileView: View {
             }
             .padding(14)
             .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-            .overlay {
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-            }
         }
         .buttonStyle(.plain)
     }

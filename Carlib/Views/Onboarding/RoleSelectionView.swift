@@ -71,7 +71,7 @@ struct RoleSelectionView: View {
                         .frame(height: 54)
                         .background(
                             selectedRole != nil ? Color.brandYellow : Color.tileSecondary,
-                            in: RoundedRectangle(cornerRadius: 14)
+                            in: Capsule()
                         )
                 }
                 .disabled(selectedRole == nil)

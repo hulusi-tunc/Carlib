@@ -169,11 +169,7 @@ struct DriverProfileEditView: View {
                     .padding(.horizontal, 14)
                     .frame(height: 48)
                     .frame(maxWidth: .infinity)
-                    .background(Color.carlibScreenBg, in: RoundedRectangle(cornerRadius: 12))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-                    }
+                    .background(Color.tileSecondary, in: RoundedRectangle(cornerRadius: 12))
             }
         }
     }
@@ -202,11 +198,7 @@ struct DriverProfileEditView: View {
             }
             .padding(.horizontal, 12)
             .frame(height: 48)
-            .background(Color.carlibScreenBg, in: RoundedRectangle(cornerRadius: 12))
-            .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-            }
+            .background(Color.tileSecondary, in: RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
         .onChange(of: dialCode) { _, _ in
@@ -233,11 +225,7 @@ struct DriverProfileEditView: View {
                 .font(CarlibFont.body())
                 .padding(.horizontal, 14)
                 .padding(.vertical, 14)
-                .background(Color.carlibScreenBg, in: RoundedRectangle(cornerRadius: 12))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-                }
+                .background(Color.tileSecondary, in: RoundedRectangle(cornerRadius: 12))
         }
     }
 
@@ -265,10 +253,6 @@ struct DriverProfileEditView: View {
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.tileSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 16))
-        .overlay {
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Color.carlibCardBorder, lineWidth: 1)
-        }
     }
 }
 
