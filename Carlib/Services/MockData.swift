@@ -30,9 +30,15 @@ enum MockData {
         color: "Noir Intense"
     )
 
+    static let vehicleC3 = VehicleInfo(
+        licensePlate: "FG-012-HI",
+        brand: "Citroën",
+        model: "C3",
+        year: 2023,
+        color: "Rouge Élixir"
+    )
+
     // MARK: - User Vehicles
-    // Realistic household: one daily driver, one secondary. Multi-vehicle is an edge
-    // case the UI should handle, but the seed models the common case.
 
     static let vehicles: [Vehicle] = [
         Vehicle(
@@ -44,6 +50,12 @@ enum MockData {
         Vehicle(
             id: UUID(uuidString: "20000002-0000-0000-0000-000000000002")!,
             info: vehicleClio,
+            nickname: "Weekend",
+            isDefault: false
+        ),
+        Vehicle(
+            id: UUID(uuidString: "20000003-0000-0000-0000-000000000003")!,
+            info: vehicleC3,
             nickname: nil,
             isDefault: false
         ),
@@ -58,8 +70,13 @@ enum MockData {
             address: "47 rue de la Roquette, 75011 Paris",
             location: CLLocationCoordinate2D(latitude: 48.8566, longitude: 2.3746),
             phone: "01 43 55 12 34",
-            specialties: [.bodywork, .painting],
-            photos: [],
+            specialties: [.bodywork, .painting, .detailing],
+            photos: [
+                PhotoAttachment(caption: "Devanture"),
+                PhotoAttachment(caption: "Baie de carrosserie"),
+                PhotoAttachment(caption: "Cabine de peinture"),
+                PhotoAttachment(caption: "Espace d'accueil"),
+            ],
             isAvailable: true,
             coverageRadiusKm: 15
         ),
@@ -96,6 +113,36 @@ enum MockData {
             isAvailable: false,
             coverageRadiusKm: 8
         ),
+        Garage(
+            id: UUID(uuidString: "00000005-0000-0000-0000-000000000005")!,
+            name: "Atelier des Batignolles",
+            address: "38 rue des Batignolles, 75017 Paris",
+            location: CLLocationCoordinate2D(latitude: 48.8847, longitude: 2.3218),
+            phone: "01 42 93 56 18",
+            specialties: [.bodywork, .painting, .mechanics, .windshield, .detailing],
+            photos: [
+                PhotoAttachment(caption: "Façade atelier"),
+                PhotoAttachment(caption: "Cabine de peinture"),
+                PhotoAttachment(caption: "Zone carrosserie"),
+                PhotoAttachment(caption: "Accueil client"),
+            ],
+            isAvailable: true,
+            coverageRadiusKm: 25
+        ),
+        Garage(
+            id: UUID(uuidString: "00000006-0000-0000-0000-000000000006")!,
+            name: "Carrosserie République",
+            address: "5 rue de Bretagne, 75003 Paris",
+            location: CLLocationCoordinate2D(latitude: 48.8632, longitude: 2.3621),
+            phone: "01 48 87 24 65",
+            specialties: [.detailing],
+            photos: [
+                PhotoAttachment(caption: "Atelier detailing"),
+                PhotoAttachment(caption: "Finition"),
+            ],
+            isAvailable: true,
+            coverageRadiusKm: 12
+        ),
     ]
 
     /// Simulated distances from user (km).
@@ -104,6 +151,18 @@ enum MockData {
         UUID(uuidString: "00000002-0000-0000-0000-000000000002")!: 1.8,
         UUID(uuidString: "00000003-0000-0000-0000-000000000003")!: 5.1,
         UUID(uuidString: "00000004-0000-0000-0000-000000000004")!: 8.4,
+        UUID(uuidString: "00000005-0000-0000-0000-000000000005")!: 3.6,
+        UUID(uuidString: "00000006-0000-0000-0000-000000000006")!: 0.9,
+    ]
+
+    /// Years the shop has been operating (shown in Garage Profile stats).
+    static let garageYearsActive: [UUID: Int] = [
+        UUID(uuidString: "00000001-0000-0000-0000-000000000001")!: 12,
+        UUID(uuidString: "00000002-0000-0000-0000-000000000002")!: 27,
+        UUID(uuidString: "00000003-0000-0000-0000-000000000003")!: 6,
+        UUID(uuidString: "00000004-0000-0000-0000-000000000004")!: 4,
+        UUID(uuidString: "00000005-0000-0000-0000-000000000005")!: 18,
+        UUID(uuidString: "00000006-0000-0000-0000-000000000006")!: 3,
     ]
 
     // MARK: - Claims
@@ -219,7 +278,7 @@ enum MockData {
             location: CLLocationCoordinate2D(latitude: 48.8490, longitude: 2.3780),
             vehicleInfo: vehicle308,
             assignedGarageId: UUID(uuidString: "00000001-0000-0000-0000-000000000001")!,
-            bookingStatus: .confirmed,
+            bookingStatus: .rescheduled,
             driverName: "Sophie Laurent",
             driverPhone: "+33 6 78 90 12 34",
             createdAt: .daysFromNow(-2),
@@ -301,7 +360,7 @@ enum MockData {
             createdAt: .daysFromNow(-21),
             updatedAt: .daysFromNow(-2)
         ),
-        // Cancelled
+        // Cancelled by driver — insurer took it over directly
         Claim(
             id: UUID(uuidString: "10000006-0000-0000-0000-000000000006")!,
             status: .cancelled,
@@ -309,8 +368,98 @@ enum MockData {
             description: "Sinistre annulé — prise en charge directe par l'assurance",
             photos: [],
             vehicleInfo: vehicleClio,
+            bookingStatus: .cancelledByDriver,
             createdAt: .daysFromNow(-14),
             updatedAt: .daysFromNow(-12)
+        ),
+        // In progress — just arrived at the shop, diagnostic underway
+        Claim(
+            id: UUID(uuidString: "10000013-0000-0000-0000-000000000013")!,
+            status: .inProgress,
+            accidentType: .collision,
+            description: "Choc latéral droit — longeron à évaluer après démontage",
+            photos: [
+                PhotoAttachment(caption: "Longeron"),
+                PhotoAttachment(caption: "Portière avant"),
+            ],
+            location: CLLocationCoordinate2D(latitude: 48.8560, longitude: 2.3710),
+            vehicleInfo: vehicleGolf,
+            assignedGarageId: UUID(uuidString: "00000001-0000-0000-0000-000000000001")!,
+            bookingStatus: .arrivedAtGarage,
+            repairStatus: .diagnostic,
+            driverName: "Camille Rousseau",
+            driverPhone: "+33 6 54 32 10 98",
+            createdAt: .daysFromNow(-4),
+            updatedAt: .hoursFromNow(-2)
+        ),
+        // In progress — waiting on parts from the supplier
+        Claim(
+            id: UUID(uuidString: "10000014-0000-0000-0000-000000000014")!,
+            status: .inProgress,
+            accidentType: .collision,
+            description: "Pare-chocs avant et optique gauche à remplacer",
+            photos: [
+                PhotoAttachment(caption: "Pare-chocs"),
+                PhotoAttachment(caption: "Optique gauche"),
+                PhotoAttachment(caption: "Calandre"),
+            ],
+            location: CLLocationCoordinate2D(latitude: 48.8480, longitude: 2.3760),
+            vehicleInfo: vehicle308,
+            assignedGarageId: UUID(uuidString: "00000002-0000-0000-0000-000000000002")!,
+            bookingStatus: .vehicleDroppedOff,
+            repairStatus: .waitingParts,
+            driverName: "Julien Martin",
+            driverPhone: "+33 6 44 55 66 77",
+            createdAt: .daysFromNow(-6),
+            updatedAt: .daysFromNow(-1)
+        ),
+        // Repairing — quality check before pickup
+        Claim(
+            id: UUID(uuidString: "10000015-0000-0000-0000-000000000015")!,
+            status: .repairing,
+            accidentType: .collision,
+            description: "Aile arrière gauche redressée et repeinte",
+            photos: [
+                PhotoAttachment(caption: "Aile arrière"),
+                PhotoAttachment(caption: "Zone repeinte"),
+            ],
+            location: CLLocationCoordinate2D(latitude: 48.8540, longitude: 2.3705),
+            vehicleInfo: vehicleClio,
+            assignedGarageId: UUID(uuidString: "00000001-0000-0000-0000-000000000001")!,
+            bookingStatus: .vehicleDroppedOff,
+            repairStatus: .qualityCheck,
+            driverName: "Nadia Benali",
+            driverPhone: "+33 6 33 22 11 00",
+            createdAt: .daysFromNow(-9),
+            updatedAt: .hoursFromNow(-6)
+        ),
+        // Expired — declined by nearby shops, request timed out
+        Claim(
+            id: UUID(uuidString: "10000016-0000-0000-0000-000000000016")!,
+            status: .expired,
+            accidentType: .parking,
+            description: "Éraflure mineure sur parking — aucun garage n'a répondu dans les délais",
+            photos: [
+                PhotoAttachment(caption: "Éraflure portière"),
+            ],
+            vehicleInfo: vehicleC3,
+            createdAt: .daysFromNow(-32),
+            updatedAt: .daysFromNow(-18)
+        ),
+        // Cancelled by garage — shop had to decline after accepting
+        Claim(
+            id: UUID(uuidString: "10000017-0000-0000-0000-000000000017")!,
+            status: .cancelled,
+            accidentType: .collision,
+            description: "Annulée par le garage — atelier en sous-effectif cette semaine",
+            photos: [
+                PhotoAttachment(caption: "Aile avant"),
+            ],
+            vehicleInfo: vehicleClio,
+            assignedGarageId: UUID(uuidString: "00000003-0000-0000-0000-000000000003")!,
+            bookingStatus: .cancelledByGarage,
+            createdAt: .daysFromNow(-8),
+            updatedAt: .daysFromNow(-5)
         ),
     ]
 

@@ -247,7 +247,7 @@ struct ClaimCardView: View {
                     .aspectRatio(contentMode: .fill)
             } else {
                 AsyncImage(
-                    url: URL(string: "https://picsum.photos/seed/\(photo.id.uuidString)/200/200"),
+                    url: DummyImage.claimPhotoURL(photoId: photo.id, pixelWidth: 200, pixelHeight: 200),
                     transaction: Transaction(animation: .easeOut(duration: 0.2))
                 ) { phase in
                     switch phase {
@@ -277,7 +277,7 @@ struct ClaimCardView: View {
                     .aspectRatio(contentMode: .fit)
             } else {
                 AsyncImage(
-                    url: URL(string: "https://picsum.photos/seed/\(photo.id.uuidString)/800/800")
+                    url: DummyImage.claimPhotoURL(photoId: photo.id, pixelWidth: 800, pixelHeight: 800)
                 ) { phase in
                     switch phase {
                     case .success(let image):

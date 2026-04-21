@@ -5,12 +5,19 @@ import SwiftUI
 /// and a completeness nudge so owners keep the profile sharp.
 struct GarageProfileView: View {
     @Environment(AppState.self) private var appState
+    @Environment(ClaimStore.self) private var claimStore
     @State private var showEditSheet = false
     private let garage = MockData.garages[0]
 
-    // Demo values — real data will come from the store once we wire it up.
-    private let completedRepairs = 12
-    private let yearsActive = 3
+    private var completedRepairs: Int {
+        claimStore.claims.filter {
+            $0.assignedGarageId == garage.id && $0.status == .completed
+        }.count
+    }
+
+    private var yearsActive: Int {
+        MockData.garageYearsActive[garage.id] ?? 1
+    }
 
     var body: some View {
         NavigationStack {
@@ -105,7 +112,7 @@ struct GarageProfileView: View {
         var filled = 3 // name, address, phone always set from mock
         if !garage.specialties.isEmpty { filled += 1 }
         if garage.coverageRadiusKm > 0 { filled += 1 }
-        // photos missing for MVP
+        if !garage.photos.isEmpty { filled += 1 }
         let total = 6
         return Int((Double(filled) / Double(total)) * 100)
     }
@@ -346,8 +353,10 @@ struct GarageProfileView: View {
 
     // MARK: - Photos
 
-    /// Horizontal photo carousel with an "add" affordance as the first
-    /// tile when the shop has no photos yet.
+    /// Horizontal photo carousel. When the shop has photos we render them
+    /// with an "Add" affordance up front; when it doesn't, we only show the
+    /// single add tile so the empty state reads as an invitation, not a grid
+    /// of placeholders.
     private var photosSection: some View {
         VStack(alignment: .leading, spacing: 9) {
             sectionHeader("Photos", action: { showEditSheet = true }, actionLabel: "Manage")
@@ -355,8 +364,8 @@ struct GarageProfileView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     addPhotoTile
-                    ForEach(0..<3, id: \.self) { index in
-                        placeholderPhotoTile(index: index)
+                    ForEach(garage.photos) { photo in
+                        photoTile(for: photo)
                     }
                 }
             }
@@ -387,10 +396,10 @@ struct GarageProfileView: View {
         .buttonStyle(.pressable(scale: 0.97, haptic: .light))
     }
 
-    private func placeholderPhotoTile(index: Int) -> some View {
+    private func photoTile(for photo: PhotoAttachment) -> some View {
         DummyImage(
             kind: .garage,
-            seed: "\(garage.id.uuidString)-\(index)",
+            seed: photo.id.uuidString,
             pixelWidth: 240,
             pixelHeight: 240
         )
@@ -497,4 +506,5 @@ private struct WrappingHStack: Layout {
 #Preview {
     GarageProfileView()
         .environment(AppState())
+        .environment(ClaimStore())
 }

@@ -283,7 +283,7 @@ struct GarageClaimDetailView: View {
                 Image(uiImage: image).resizable().aspectRatio(contentMode: .fill)
             } else {
                 AsyncImage(
-                    url: URL(string: "https://picsum.photos/seed/\(photo.id.uuidString)/600/450"),
+                    url: DummyImage.claimPhotoURL(photoId: photo.id, pixelWidth: 600, pixelHeight: 450),
                     transaction: Transaction(animation: .easeOut(duration: 0.25))
                 ) { phase in
                     switch phase {

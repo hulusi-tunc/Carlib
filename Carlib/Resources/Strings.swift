@@ -104,6 +104,35 @@ enum L10n {
         static let stageLabel = "Stage"
         static func stageProgress(_ current: Int, _ total: Int) -> String { "Stage \(current) of \(total)" }
 
+        // Empty ("all clear") state
+        static let emptyFileKicker = "All clear"
+        static let emptyFileHeadline = "Nothing on file right now."
+
+        // Shared CTAs & labels on the file card
+        static let viewClaim = "View claim"
+        static let comePickUp = "Come pick it up"
+        static func distanceAway(_ km: Double) -> String { String(format: "%.1f km away", km) }
+        static func readyBy(_ date: String) -> String { "Ready \(date)" }
+
+        // Report Damage CTA (section 2)
+        static let reportCtaTitle = "Report damage"
+        static let reportCtaBody = "Declare in a few minutes\nand find a garage nearby"
+
+        // Shortcuts (section 3)
+        static let shortcutMyGarageTitle = "My Garage"
+        static func shortcutMyGarageCars(_ count: Int) -> String {
+            count == 1 ? "1 car" : "\(count) cars"
+        }
+        static let shortcutFindShopTitle = "Find Body Shop"
+        static let shortcutFindShopSubtitle = "Near you"
+
+        // Recent files (section 4)
+        static let recentFilesTitle = "Recent Files"
+        static let recentFilesSeeAll = "See all files"
+        static let recentStatusCompleted = "Completed"
+        static let recentStatusCancelled = "Cancelled"
+        static let recentFallbackTitle = "Claim"
+
         // Legacy aliases — keep other views compiling
         static func greeting(_ name: String) -> String { "Hello, \(name)" }
         static let subtitle = "How can we help you today?"

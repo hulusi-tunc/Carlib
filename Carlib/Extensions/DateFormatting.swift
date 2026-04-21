@@ -8,6 +8,11 @@ extension Date {
         formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).locale(Self.enLocale))
     }
 
+    /// "Apr 7" style — month + day only, for list rows where the weekday is clutter.
+    var monthDayFormatted: String {
+        formatted(.dateTime.month(.abbreviated).day().locale(Self.enLocale))
+    }
+
     /// "April 7, 2026"
     var longFormatted: String {
         formatted(.dateTime.month(.wide).day().year().locale(Self.enLocale))

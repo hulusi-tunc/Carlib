@@ -77,7 +77,7 @@ struct PhotoLightboxView: View {
                 .aspectRatio(contentMode: .fit)
         } else {
             AsyncImage(
-                url: URL(string: "https://picsum.photos/seed/\(photo.id.uuidString)/1200/1200"),
+                url: DummyImage.claimPhotoURL(photoId: photo.id, pixelWidth: 1200, pixelHeight: 1200),
                 transaction: Transaction(animation: .easeOut(duration: 0.25))
             ) { phase in
                 switch phase {
