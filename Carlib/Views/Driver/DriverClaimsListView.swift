@@ -25,8 +25,15 @@ struct DriverClaimsListView: View {
             } else {
                 ScrollView {
                     VStack(spacing: CarlibSpacing.sm) {
+                        // View-based push — the surrounding stack (Profile)
+                        // uses view-based NavigationLinks too, and mixing in a
+                        // value-based `.navigationDestination(for: UUID.self)`
+                        // here was causing the detail to push and this list
+                        // to re-appear on top of it.
                         ForEach(pastClaims) { claim in
-                            NavigationLink(value: claim.id) {
+                            NavigationLink {
+                                DriverClaimDetailView(claim: claim)
+                            } label: {
                                 ClaimCardView(claim: claim)
                             }
                             .buttonStyle(.plain)
@@ -39,11 +46,6 @@ struct DriverClaimsListView: View {
         }
         .navigationTitle(Text(verbatim: L10n.DriverClaims.title))
         .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(for: UUID.self) { claimId in
-            if let claim = claimStore.claims.first(where: { $0.id == claimId }) {
-                DriverClaimDetailView(claim: claim)
-            }
-        }
     }
 }
 
