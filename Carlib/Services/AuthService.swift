@@ -2,7 +2,8 @@ import SwiftUI
 import AuthenticationServices
 
 /// Handles authentication — Sign in with Apple + email/password.
-/// Mock implementation for MVP (no backend).
+/// Placeholder implementation: email/password validates against `DefaultUsers`.
+/// Replace with real backend before ship.
 @MainActor @Observable
 final class AuthService {
     var isLoading = false
@@ -40,17 +41,22 @@ final class AuthService {
         }
     }
 
-    // MARK: - Email Sign Up (mock)
+    // MARK: - Email Sign Up (placeholder — password is not persisted)
 
     func signUp(fullName: String, email: String, password: String) async -> User? {
         isLoading = true
         errorMessage = nil
 
-        // Simulate network delay
         try? await Task.sleep(for: .seconds(1))
 
         guard !email.isEmpty, password.count >= 8 else {
             errorMessage = "Invalid email or password (8+ characters)"
+            isLoading = false
+            return nil
+        }
+
+        if DefaultUsers.hasEmail(email) {
+            errorMessage = "An account with this email already exists"
             isLoading = false
             return nil
         }
@@ -62,7 +68,7 @@ final class AuthService {
         return user
     }
 
-    // MARK: - Email Sign In (mock)
+    // MARK: - Email Sign In
 
     func signIn(email: String, password: String) async -> User? {
         isLoading = true
@@ -70,26 +76,32 @@ final class AuthService {
 
         try? await Task.sleep(for: .seconds(1))
 
-        // Mock: accept any non-empty credentials
         guard !email.isEmpty, !password.isEmpty else {
-            errorMessage = "Please enter email and password"
+            errorMessage = L10n.SignIn.errorInvalid
             isLoading = false
             return nil
         }
 
-        // Check if we have a stored user with this email
-        if let stored = KeychainManager.loadUser(), stored.email == email {
+        if let seed = DefaultUsers.authenticate(email: email, password: password) {
+            KeychainManager.saveToken("email_\(UUID().uuidString)")
+            KeychainManager.saveUser(seed)
+            isLoading = false
+            return seed
+        }
+
+        // Returning sign-up user: we never persisted their password, so accept
+        // any password as long as the Keychain-stored email matches.
+        if let stored = KeychainManager.loadUser(),
+           stored.email.lowercased() == email.lowercased(),
+           !DefaultUsers.hasEmail(stored.email) {
             KeychainManager.saveToken("email_\(UUID().uuidString)")
             isLoading = false
             return stored
         }
 
-        // Mock: create a new user for any valid credentials
-        let user = User(fullName: "User", email: email)
-        KeychainManager.saveToken("email_\(UUID().uuidString)")
-        KeychainManager.saveUser(user)
+        errorMessage = L10n.SignIn.errorInvalid
         isLoading = false
-        return user
+        return nil
     }
 
     // MARK: - Update User Role
