@@ -49,7 +49,9 @@ struct MyGarageView: View {
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
-                .frame(height: 300)
+                // Extra height gives the card shadow room on top and bottom;
+                // TabView clips any shadow that extends outside its bounds.
+                .frame(height: 340)
 
                 if claimStore.vehicles.count > 1 {
                     pageDots
