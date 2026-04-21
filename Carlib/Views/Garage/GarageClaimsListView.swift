@@ -4,6 +4,7 @@ import SwiftUI
 struct GarageClaimsListView: View {
     @Environment(ClaimStore.self) private var claimStore
     @State private var selectedFilter: GarageClaimFilter = .available
+    @State private var path = NavigationPath()
 
     private var filteredClaims: [Claim] {
         switch selectedFilter {
@@ -13,7 +14,7 @@ struct GarageClaimsListView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             VStack(spacing: 0) {
                 Picker(L10n.GarageClaims.filter, selection: $selectedFilter) {
                     ForEach(GarageClaimFilter.allCases, id: \.self) { filter in
@@ -43,14 +44,16 @@ struct GarageClaimsListView: View {
                     ScrollView {
                         VStack(spacing: CarlibSpacing.sm) {
                             ForEach(filteredClaims) { claim in
-                                NavigationLink(value: claim.id) {
-                                    ClaimCardView(claim: claim, showGarage: false)
-                                }
-                                .buttonStyle(.plain)
+                                GarageClaimRow(
+                                    claim: claim,
+                                    filter: selectedFilter,
+                                    path: $path
+                                )
                             }
                         }
                         .padding(.horizontal, CarlibSpacing.screenHorizontal)
                         .padding(.top, CarlibSpacing.sm)
+                        .padding(.bottom, CarlibSpacing.md)
                     }
                 }
             }
@@ -60,6 +63,55 @@ struct GarageClaimsListView: View {
                     GarageClaimDetailView(claim: claim)
                 }
             }
+        }
+    }
+}
+
+/// Row wrapper so each claim owns its own status-sheet state independently.
+private struct GarageClaimRow: View {
+    let claim: Claim
+    let filter: GarageClaimFilter
+    @Binding var path: NavigationPath
+    @Environment(ClaimStore.self) private var claimStore
+    @State private var showStatusSheet = false
+
+    var body: some View {
+        ClaimCardView(
+            claim: claim,
+            showGarage: false,
+            enablePhotoLightbox: true,
+            actions: cardActions
+        )
+        .contentShape(RoundedRectangle(cornerRadius: 14))
+        .onTapGesture {
+            path.append(claim.id)
+        }
+        .sheet(isPresented: $showStatusSheet) {
+            RepairStatusSheet(currentStatus: claim.repairStatus) { newStatus in
+                claimStore.updateRepairStatus(id: claim.id, to: newStatus)
+            }
+        }
+    }
+
+    private var cardActions: ClaimCardView.Actions {
+        switch filter {
+        case .available:
+            return .request(
+                accept: {
+                    claimStore.acceptClaim(
+                        id: claim.id,
+                        garageId: MockData.garages[0].id
+                    )
+                },
+                decline: {
+                    claimStore.declineClaim(id: claim.id)
+                }
+            )
+        case .accepted:
+            return .inProgress(
+                currentStatus: claim.repairStatus,
+                update: { showStatusSheet = true }
+            )
         }
     }
 }

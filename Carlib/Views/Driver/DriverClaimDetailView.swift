@@ -223,15 +223,6 @@ struct DriverClaimDetailView: View {
                     }
 
                     Spacer()
-
-                    if let rating = garage.rating {
-                        HStack(spacing: 2) {
-                            RemixIcon.starFill.view(size: 14, color: .brandYellow)
-                            Text(String(format: "%.1f", rating))
-                                .font(CarlibFont.caption(.medium))
-                                .foregroundStyle(.carlibDark)
-                        }
-                    }
                 }
                 .padding(16)
 
@@ -239,14 +230,13 @@ struct DriverClaimDetailView: View {
 
                 // Contact row — tappable
                 Button {
-                    let digits = garage.phone.filter(\.isNumber)
-                    if let url = URL(string: "tel://\(digits)") {
-                        UIApplication.shared.open(url)
-                    }
+                    callGarage(garage)
                 } label: {
                     HStack(spacing: 12) {
                         RemixIcon.phoneLine.view(size: 18, color: .carlibPrimaryBlue)
-                        Text(verbatim: garage.phone)
+                        Text(verbatim: CountryDialCode.from(dialCode: garage.dialCode).flag)
+                            .font(.system(size: 16))
+                        Text(verbatim: garage.formattedPhone)
                             .font(CarlibFont.body())
                             .foregroundStyle(.carlibDark)
                         Spacer()
@@ -272,10 +262,7 @@ struct DriverClaimDetailView: View {
                     variant: .primary
                 ) {
                     if let garage {
-                        let digits = garage.phone.filter(\.isNumber)
-                        if let url = URL(string: "tel://\(digits)") {
-                            UIApplication.shared.open(url)
-                        }
+                        callGarage(garage)
                     }
                 }
             }
@@ -295,6 +282,13 @@ struct DriverClaimDetailView: View {
     }
 
     // MARK: - Helpers
+
+    private func callGarage(_ garage: Garage) {
+        let e164 = "\(garage.dialCode)\(garage.phone)".filter { $0.isNumber || $0 == "+" }
+        if let url = URL(string: "tel://\(e164)") {
+            UIApplication.shared.open(url)
+        }
+    }
 
     private var statusColor: Color {
         switch claim.status {

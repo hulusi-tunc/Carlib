@@ -4,6 +4,7 @@ import Foundation
 struct TimeSlot: Identifiable, Codable {
     let id: UUID
     var garageId: UUID
+    var claimId: UUID?
     var date: Date
     var startTime: Date
     var endTime: Date
@@ -13,6 +14,7 @@ struct TimeSlot: Identifiable, Codable {
     init(
         id: UUID = UUID(),
         garageId: UUID = UUID(),
+        claimId: UUID? = nil,
         date: Date = .now,
         startTime: Date = .now,
         endTime: Date = .now,
@@ -21,6 +23,7 @@ struct TimeSlot: Identifiable, Codable {
     ) {
         self.id = id
         self.garageId = garageId
+        self.claimId = claimId
         self.date = date
         self.startTime = startTime
         self.endTime = endTime

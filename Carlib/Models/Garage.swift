@@ -7,11 +7,10 @@ struct Garage: Identifiable, Codable {
     var name: String
     var address: String
     var location: CLLocationCoordinate2D
+    var dialCode: String
     var phone: String
     var specialties: [RepairSpecialty]
     var photos: [PhotoAttachment]
-    var rating: Double?
-    var reviewCount: Int
     var isAvailable: Bool
     var coverageRadiusKm: Double
 
@@ -20,11 +19,10 @@ struct Garage: Identifiable, Codable {
         name: String = "",
         address: String = "",
         location: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0),
+        dialCode: String = CountryDialCode.default.dialCode,
         phone: String = "",
         specialties: [RepairSpecialty] = [],
         photos: [PhotoAttachment] = [],
-        rating: Double? = nil,
-        reviewCount: Int = 0,
         isAvailable: Bool = true,
         coverageRadiusKm: Double = 20
     ) {
@@ -32,13 +30,19 @@ struct Garage: Identifiable, Codable {
         self.name = name
         self.address = address
         self.location = location
+        self.dialCode = dialCode
         self.phone = phone
         self.specialties = specialties
         self.photos = photos
-        self.rating = rating
-        self.reviewCount = reviewCount
         self.isAvailable = isAvailable
         self.coverageRadiusKm = coverageRadiusKm
+    }
+
+    /// National digits joined with the dial code for display / `tel:` links.
+    var formattedPhone: String {
+        phone.trimmingCharacters(in: .whitespaces).isEmpty
+            ? ""
+            : "\(dialCode) \(phone)"
     }
 }
 

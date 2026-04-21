@@ -39,15 +39,10 @@ struct GarageCardView: View {
                     .font(CarlibFont.bodySmall(.medium))
                     .lineLimit(1)
 
-                HStack(spacing: CarlibSpacing.xxs) {
-                    ratingView
-                    if let distance {
-                        Text("•")
-                            .foregroundStyle(.secondary)
-                        Text(String(format: "%.1f km", distance))
-                            .font(CarlibFont.caption())
-                            .foregroundStyle(.secondary)
-                    }
+                if let distance {
+                    Text(String(format: "%.1f km", distance))
+                        .font(CarlibFont.caption())
+                        .foregroundStyle(.secondary)
                 }
             }
             .frame(width: 160)
@@ -74,15 +69,10 @@ struct GarageCardView: View {
                         .font(CarlibFont.bodyLarge(.medium))
                         .lineLimit(1)
 
-                    HStack(spacing: CarlibSpacing.xs) {
-                        ratingView
-                        if let distance {
-                            Text("•")
-                                .foregroundStyle(.secondary)
-                            Text(String(format: "%.1f km", distance))
-                                .font(CarlibFont.bodySmall())
-                                .foregroundStyle(.secondary)
-                        }
+                    if let distance {
+                        Text(String(format: "%.1f km", distance))
+                            .font(CarlibFont.bodySmall())
+                            .foregroundStyle(.secondary)
                     }
 
                     // Specialties chips
@@ -112,20 +102,6 @@ struct GarageCardView: View {
         }
     }
 
-    // MARK: - Subviews
-
-    private var ratingView: some View {
-        HStack(spacing: 2) {
-            RemixIcon.starFill.view(size: 11, color: .brandYellow)
-            if let rating = garage.rating {
-                Text(String(format: "%.1f", rating))
-                    .font(CarlibFont.caption(.medium))
-            }
-            Text("(\(garage.reviewCount))")
-                .font(CarlibFont.caption())
-                .foregroundStyle(.secondary)
-        }
-    }
 }
 
 #Preview("Full") {

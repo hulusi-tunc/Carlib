@@ -413,17 +413,7 @@ private struct CarouselGarageCard: View {
                     .lineLimit(1)
 
                 HStack(spacing: 6) {
-                    RemixIcon.starFill.view(size: 12, color: .brandYellow)
-                    if let rating = garage.rating {
-                        Text(String(format: "%.1f", rating))
-                            .font(CarlibFont.footnote(.medium))
-                            .foregroundStyle(.carlibDark)
-                    }
-                    Text(verbatim: "(\(garage.reviewCount))")
-                        .font(CarlibFont.footnote())
-                        .foregroundStyle(.carlibSecondary)
-                    Text(verbatim: "·")
-                        .foregroundStyle(.carlibSecondary)
+                    RemixIcon.mapPinLine.view(size: 12, color: .carlibSecondary)
                     Text(verbatim: String(format: "%.1f km", MockData.distance(for: garage.id)))
                         .font(CarlibFont.footnote())
                         .foregroundStyle(.carlibSecondary)
@@ -485,14 +475,7 @@ private struct ListGarageRow: View {
                     .lineLimit(1)
 
                 HStack(spacing: 6) {
-                    RemixIcon.starFill.view(size: 11, color: .brandYellow)
-                    if let rating = garage.rating {
-                        Text(String(format: "%.1f", rating))
-                            .font(CarlibFont.footnote(.medium))
-                            .foregroundStyle(.carlibDark)
-                    }
-                    Text(verbatim: "·")
-                        .foregroundStyle(.carlibSecondary)
+                    RemixIcon.mapPinLine.view(size: 11, color: .carlibSecondary)
                     Text(verbatim: String(format: "%.1f km", MockData.distance(for: garage.id)))
                         .font(CarlibFont.footnote())
                         .foregroundStyle(.carlibSecondary)

@@ -44,6 +44,8 @@ enum L10n {
         static let seeAll = "See All"
         static let cancel = "Cancel"
         static let save = "Save"
+        static let delete = "Delete"
+        static let done = "Done"
     }
 
     // MARK: - Driver Home — The File (editorial)
@@ -207,7 +209,6 @@ enum L10n {
     // MARK: - Garage Detail
 
     enum GarageDetail {
-        static let reviews = "reviews"
         static func coverage(_ km: Int) -> String {
             "\(km) km radius"
         }
@@ -269,11 +270,11 @@ enum L10n {
     enum GarageClaims {
         static let title = "Claims"
         static let filter = "Filter"
-        static let filterAvailable = "Available"
+        static let filterAvailable = "Requests"
         static let filterAccepted = "My Cases"
-        static let emptyAvailableTitle = "No claims available"
+        static let emptyAvailableTitle = "No new requests"
         static let emptyAcceptedTitle = "No active cases"
-        static let emptyAvailableDescription = "Claims in your area will appear here."
+        static let emptyAvailableDescription = "New requests from drivers in your area will appear here."
         static let emptyAcceptedDescription = "Cases you've accepted will appear here."
     }
 
@@ -297,16 +298,80 @@ enum L10n {
     enum GaragePlanning {
         static let title = "Schedule"
         static let week = "Week"
-        static let emptyTitle = "No time slots"
-        static let emptyDescription = "Add your availability to receive vehicles."
+        static let emptyTitle = "Nothing scheduled"
+        static let emptyDescription = "Add an appointment or block time off for this day."
         static let add = "Add"
-        static let slotBlocked = "Blocked"
-        static let slotAvailable = "Available"
-        static let slotBooked = "Booked"
         static let addDate = "Date"
-        static let addStart = "Start Time"
-        static let addEnd = "End Time"
-        static let addTitle = "New Time Slot"
+        static let addStart = "Start"
+        static let addEnd = "End"
+        static let addTitle = "New appointment"
+
+        // Slot kinds
+        static let appointment = "Appointment"
+        static let appointmentSubtitle = "Vehicle drop-off"
+        static let blocked = "Blocked"
+        static let blockedSubtitle = "Time unavailable"
+
+        // Mode switcher
+        static let modeCalendar = "Calendar"
+        static let modeHours = "Hours"
+
+        // Calendar hero
+        static let bayBooked = "bay booked"
+        static let baysBooked = "bays booked"
+        static let dayClosed = "Closed today"
+        static let dayClosedDescription = "Open this day in weekly hours to accept bookings."
+        static let overbookedWarning = "Over capacity — you've booked more than this day allows."
+
+        // Today / labels
+        static let today = "Today"
+        static let todayCapacity = "Today's capacity"
+
+        // Actions (list)
+        static let addAppointment = "Add appointment"
+        static let blockTime = "Block time"
+
+        // Actions (slot sheet)
+        static let slotDetailsTitle = "Details"
+        static let actionMarkArrived = "Mark as arrived"
+        static let actionReschedule = "Reschedule"
+        static let actionCancelAppt = "Cancel appointment"
+        static let actionRemoveBlock = "Remove block"
+        static let actionEditBlock = "Edit time"
+        static let actionCall = "Call"
+        static let actionMessage = "Message"
+        static let actionOpenClaim = "Open claim"
+
+        // Claim context on slots
+        static let walkInTitle = "Walk-in appointment"
+        static let walkInSubtitle = "No claim linked"
+        static let customer = "Customer"
+        static let vehicle = "Vehicle"
+        static let accidentType = "Accident"
+        static let claimDescription = "Description"
+        static let claimStatus = "Claim status"
+
+        // Block time sheet
+        static let blockTimeTitle = "Block time"
+        static let blockAllDay = "All day"
+        static let blockReason = "Reason"
+        static let blockReasonLunch = "Lunch break"
+        static let blockReasonVacation = "Vacation"
+        static let blockReasonTraining = "Staff training"
+        static let blockReasonMaintenance = "Shop maintenance"
+        static let blockReasonOther = "Other"
+
+        // Weekly hours
+        static let hoursTitle = "Weekly hours"
+        static let hoursDescription = "Default opening hours for every week. Exceptions can be set on the calendar."
+        static let closed = "Closed"
+        static let bays = "bays"
+        static let bay = "bay"
+        static let editHoursTitle = "Edit hours"
+        static let openTime = "Opens at"
+        static let closeTime = "Closes at"
+        static let capacity = "Daily capacity"
+        static let capacityHint = "Max vehicles you can take that day."
     }
 
     // MARK: - Garage Profile
@@ -324,7 +389,6 @@ enum L10n {
         static let addPhotos = "Add Photos"
         static let sectionStats = "Statistics"
         static let statsCompleted = "Repairs Completed"
-        static let statsRating = "Average Rating"
     }
 
     // MARK: - Claim Status
@@ -427,6 +491,25 @@ enum L10n {
         static let coverageRadius = "Coverage Radius (km)"
         static let specialties = "Specialties"
         static let save = "Save Changes"
+    }
+
+    // MARK: - Driver Profile Edit
+
+    enum DriverProfileEdit {
+        static let title = "Edit Profile"
+        static let sectionIdentity = "Personal info"
+        static let sectionIdentitySubtitle = "How you appear to the body shops you work with."
+        static let name = "Full name"
+        static let namePlaceholder = "e.g. Sophie Durand"
+        static let email = "Email"
+        static let emailPlaceholder = "you@email.com"
+        static let phone = "Phone"
+        static let sectionAvatar = "Profile photo"
+        static let sectionAvatarSubtitle = "Shops see this when you book an appointment."
+        static let changePhoto = "Change photo"
+        static let removePhoto = "Remove"
+        static let save = "Save changes"
+        static let edit = "Edit"
     }
 
     // MARK: - Splash

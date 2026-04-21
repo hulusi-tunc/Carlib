@@ -60,8 +60,6 @@ enum MockData {
             phone: "01 43 55 12 34",
             specialties: [.bodywork, .painting],
             photos: [],
-            rating: 4.5,
-            reviewCount: 47,
             isAvailable: true,
             coverageRadiusKm: 15
         ),
@@ -73,8 +71,6 @@ enum MockData {
             phone: "01 44 67 89 01",
             specialties: [.bodywork, .painting, .mechanics, .windshield],
             photos: [],
-            rating: 4.8,
-            reviewCount: 89,
             isAvailable: true,
             coverageRadiusKm: 20
         ),
@@ -86,8 +82,6 @@ enum MockData {
             phone: "01 55 28 90 12",
             specialties: [.bodywork, .mechanics],
             photos: [],
-            rating: 4.2,
-            reviewCount: 23,
             isAvailable: true,
             coverageRadiusKm: 10
         ),
@@ -99,8 +93,6 @@ enum MockData {
             phone: "01 43 42 11 22",
             specialties: [.bodywork],
             photos: [],
-            rating: 3.9,
-            reviewCount: 12,
             isAvailable: false,
             coverageRadiusKm: 8
         ),
@@ -142,8 +134,59 @@ enum MockData {
             ],
             location: CLLocationCoordinate2D(latitude: 48.8601, longitude: 2.3500),
             vehicleInfo: vehicle308,
-            createdAt: .daysFromNow(-1),
-            updatedAt: .daysFromNow(-1)
+            createdAt: .hoursFromNow(-2),
+            updatedAt: .hoursFromNow(-2)
+        ),
+        // Matched — inbound request fresh in the inbox
+        Claim(
+            id: UUID(uuidString: "10000010-0000-0000-0000-000000000010")!,
+            status: .matched,
+            accidentType: .collision,
+            description: "Collision par l'arrière à un feu rouge, coffre enfoncé",
+            photos: [
+                PhotoAttachment(caption: "Coffre"),
+                PhotoAttachment(caption: "Pare-chocs arrière"),
+            ],
+            location: CLLocationCoordinate2D(latitude: 48.8558, longitude: 2.3700),
+            vehicleInfo: vehicleGolf,
+            driverName: "Marie Bernard",
+            driverPhone: "+33 6 45 67 89 10",
+            createdAt: .hoursFromNow(-4),
+            updatedAt: .hoursFromNow(-4)
+        ),
+        // Submitted — minor glass break, been waiting a while
+        Claim(
+            id: UUID(uuidString: "10000011-0000-0000-0000-000000000011")!,
+            status: .submitted,
+            accidentType: .vandalism,
+            description: "Vitre latérale arrière brisée pendant la nuit",
+            photos: [
+                PhotoAttachment(caption: "Vitre cassée"),
+            ],
+            location: CLLocationCoordinate2D(latitude: 48.8470, longitude: 2.3820),
+            vehicleInfo: vehicleClio,
+            driverName: "Thomas Petit",
+            driverPhone: "+33 6 98 76 54 32",
+            createdAt: .hoursFromNow(-12),
+            updatedAt: .hoursFromNow(-12)
+        ),
+        // Matched — urgent, just came in
+        Claim(
+            id: UUID(uuidString: "10000012-0000-0000-0000-000000000012")!,
+            status: .matched,
+            accidentType: .collision,
+            description: "Aile avant droite à remplacer suite à choc latéral",
+            photos: [
+                PhotoAttachment(caption: "Aile avant droite"),
+                PhotoAttachment(caption: "Détail dommage"),
+                PhotoAttachment(caption: "Plaque arrachée"),
+            ],
+            location: CLLocationCoordinate2D(latitude: 48.8590, longitude: 2.3680),
+            vehicleInfo: vehicle308,
+            driverName: "Léa Moreau",
+            driverPhone: "+33 6 11 22 33 44",
+            createdAt: .hoursFromNow(-1),
+            updatedAt: .hoursFromNow(-1)
         ),
         // Accepted — garage assigned, booking pending
         Claim(
@@ -159,8 +202,67 @@ enum MockData {
             vehicleInfo: vehicleClio,
             assignedGarageId: UUID(uuidString: "00000001-0000-0000-0000-000000000001")!,
             bookingStatus: .confirmed,
+            driverName: "Laurent Cassagne",
+            driverPhone: "+33 6 12 34 56 78",
             createdAt: .daysFromNow(-3),
             updatedAt: .daysFromNow(-1)
+        ),
+        // Accepted — second appointment today at our garage
+        Claim(
+            id: UUID(uuidString: "10000007-0000-0000-0000-000000000007")!,
+            status: .accepted,
+            accidentType: .parking,
+            description: "Portière arrière enfoncée sur parking de supermarché",
+            photos: [
+                PhotoAttachment(caption: "Portière arrière"),
+            ],
+            location: CLLocationCoordinate2D(latitude: 48.8490, longitude: 2.3780),
+            vehicleInfo: vehicle308,
+            assignedGarageId: UUID(uuidString: "00000001-0000-0000-0000-000000000001")!,
+            bookingStatus: .confirmed,
+            driverName: "Sophie Laurent",
+            driverPhone: "+33 6 78 90 12 34",
+            createdAt: .daysFromNow(-2),
+            updatedAt: .daysFromNow(0)
+        ),
+        // Accepted — appointment tomorrow at our garage
+        Claim(
+            id: UUID(uuidString: "10000008-0000-0000-0000-000000000008")!,
+            status: .accepted,
+            accidentType: .collision,
+            description: "Aile avant droite cabossée suite à collision latérale",
+            photos: [
+                PhotoAttachment(caption: "Aile avant droite"),
+                PhotoAttachment(caption: "Vue générale"),
+            ],
+            location: CLLocationCoordinate2D(latitude: 48.8525, longitude: 2.3695),
+            vehicleInfo: vehicleGolf,
+            assignedGarageId: UUID(uuidString: "00000001-0000-0000-0000-000000000001")!,
+            bookingStatus: .pending,
+            driverName: "Philippe Durand",
+            driverPhone: "+33 6 23 45 67 89",
+            createdAt: .daysFromNow(-1),
+            updatedAt: .daysFromNow(0)
+        ),
+        // In repair — already at our garage
+        Claim(
+            id: UUID(uuidString: "10000009-0000-0000-0000-000000000009")!,
+            status: .repairing,
+            accidentType: .vandalism,
+            description: "Rayures multiples sur capot et pare-chocs avant",
+            photos: [
+                PhotoAttachment(caption: "Capot"),
+                PhotoAttachment(caption: "Pare-chocs"),
+            ],
+            location: CLLocationCoordinate2D(latitude: 48.8548, longitude: 2.3702),
+            vehicleInfo: vehicleClio,
+            assignedGarageId: UUID(uuidString: "00000001-0000-0000-0000-000000000001")!,
+            bookingStatus: .vehicleDroppedOff,
+            repairStatus: .repairing,
+            driverName: "Inès Moreau",
+            driverPhone: "+33 6 89 01 23 45",
+            createdAt: .daysFromNow(-5),
+            updatedAt: .daysFromNow(0)
         ),
         // In repair
         Claim(
@@ -239,35 +341,49 @@ enum MockData {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: .now)
 
-        return (0..<5).flatMap { dayOffset -> [TimeSlot] in
-            guard let date = calendar.date(byAdding: .day, value: dayOffset, to: today) else { return [] }
-            return [
-                TimeSlot(
-                    garageId: garageId,
-                    date: date,
-                    startTime: calendar.date(bySettingHour: 9, minute: 0, second: 0, of: date) ?? date,
-                    endTime: calendar.date(bySettingHour: 10, minute: 30, second: 0, of: date) ?? date,
-                    isAvailable: dayOffset != 1,
-                    isBlocked: false
-                ),
-                TimeSlot(
-                    garageId: garageId,
-                    date: date,
-                    startTime: calendar.date(bySettingHour: 11, minute: 0, second: 0, of: date) ?? date,
-                    endTime: calendar.date(bySettingHour: 12, minute: 30, second: 0, of: date) ?? date,
-                    isAvailable: true,
-                    isBlocked: dayOffset == 3
-                ),
-                TimeSlot(
-                    garageId: garageId,
-                    date: date,
-                    startTime: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: date) ?? date,
-                    endTime: calendar.date(bySettingHour: 15, minute: 30, second: 0, of: date) ?? date,
-                    isAvailable: dayOffset != 0,
-                    isBlocked: false
-                ),
-            ]
+        func slot(
+            dayOffset: Int,
+            startHour: Int,
+            startMinute: Int = 0,
+            endHour: Int,
+            endMinute: Int = 0,
+            claimId: UUID? = nil,
+            isBlocked: Bool = false
+        ) -> TimeSlot? {
+            guard let date = calendar.date(byAdding: .day, value: dayOffset, to: today) else { return nil }
+            return TimeSlot(
+                garageId: garageId,
+                claimId: claimId,
+                date: date,
+                startTime: calendar.date(bySettingHour: startHour, minute: startMinute, second: 0, of: date) ?? date,
+                endTime: calendar.date(bySettingHour: endHour, minute: endMinute, second: 0, of: date) ?? date,
+                isAvailable: false,
+                isBlocked: isBlocked
+            )
         }
+
+        let laurentId = UUID(uuidString: "10000003-0000-0000-0000-000000000003")!
+        let sophieId  = UUID(uuidString: "10000007-0000-0000-0000-000000000007")!
+        let philippeId = UUID(uuidString: "10000008-0000-0000-0000-000000000008")!
+        let inesId    = UUID(uuidString: "10000009-0000-0000-0000-000000000009")!
+
+        return [
+            // Today — 2 linked appointments + 1 lunch block + 1 walk-in
+            slot(dayOffset: 0, startHour: 9,  endHour: 10, endMinute: 30, claimId: laurentId),
+            slot(dayOffset: 0, startHour: 11, endHour: 12, claimId: sophieId),
+            slot(dayOffset: 0, startHour: 12, endHour: 13, isBlocked: true),
+            slot(dayOffset: 0, startHour: 15, endHour: 16, endMinute: 30),
+
+            // Tomorrow — 1 linked + 1 unlinked
+            slot(dayOffset: 1, startHour: 9,  endHour: 10, endMinute: 30, claimId: philippeId),
+            slot(dayOffset: 1, startHour: 14, endHour: 15),
+
+            // In 2 days — linked repair follow-up
+            slot(dayOffset: 2, startHour: 10, endHour: 11, endMinute: 30, claimId: inesId),
+
+            // In 3 days — afternoon block (training)
+            slot(dayOffset: 3, startHour: 14, endHour: 18, isBlocked: true),
+        ].compactMap { $0 }
     }
 
     // MARK: - Helpers

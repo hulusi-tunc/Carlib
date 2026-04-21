@@ -14,21 +14,8 @@ struct GarageDetailView: View {
                     Text(garage.name)
                         .font(CarlibFont.headingLarge())
 
-                    HStack(spacing: CarlibSpacing.sm) {
-                        HStack(spacing: 4) {
-                            RemixIcon.starFill.view(size: 14, color: .brandYellow)
-                            if let rating = garage.rating {
-                                Text(String(format: "%.1f", rating))
-                                    .font(CarlibFont.bodyMedium(.medium))
-                            }
-                            Text("(\(garage.reviewCount) \(L10n.GarageDetail.reviews))")
-                                .font(CarlibFont.bodySmall())
-                                .foregroundStyle(.secondary)
-                        }
-
-                        Text("•")
-                            .foregroundStyle(.secondary)
-
+                    HStack(spacing: 4) {
+                        RemixIcon.mapPinLine.view(size: 14, color: .carlibSecondary)
                         Text(String(format: "%.1f km", MockData.distance(for: garage.id)))
                             .font(CarlibFont.bodySmall())
                             .foregroundStyle(.secondary)
@@ -58,7 +45,7 @@ struct GarageDetailView: View {
                     VStack(alignment: .leading, spacing: CarlibSpacing.sm) {
                         infoRow(icon: .mapPinFill, text: garage.address)
                         Divider()
-                        infoRow(icon: .phoneFill, text: garage.phone)
+                        infoRow(icon: .phoneFill, text: garage.formattedPhone)
                         Divider()
                         infoRow(icon: .focus2Line, text: L10n.GarageDetail.coverage(Int(garage.coverageRadiusKm)))
                     }

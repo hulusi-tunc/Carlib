@@ -13,6 +13,8 @@ struct Claim: Identifiable, Codable {
     var assignedGarageId: UUID?
     var bookingStatus: BookingStatus?
     var repairStatus: RepairStatus?
+    var driverName: String?
+    var driverPhone: String?
     var createdAt: Date
     var updatedAt: Date
 
@@ -27,6 +29,8 @@ struct Claim: Identifiable, Codable {
         assignedGarageId: UUID? = nil,
         bookingStatus: BookingStatus? = nil,
         repairStatus: RepairStatus? = nil,
+        driverName: String? = nil,
+        driverPhone: String? = nil,
         createdAt: Date = .now,
         updatedAt: Date = .now
     ) {
@@ -40,6 +44,8 @@ struct Claim: Identifiable, Codable {
         self.assignedGarageId = assignedGarageId
         self.bookingStatus = bookingStatus
         self.repairStatus = repairStatus
+        self.driverName = driverName
+        self.driverPhone = driverPhone
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }

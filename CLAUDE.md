@@ -35,7 +35,11 @@ xcodebuild -project Carlib.xcodeproj -scheme Carlib -destination 'generic/platfo
 open Carlib.xcodeproj
 ```
 
+**If `xcodebuild` fails with "tool 'xcodebuild' requires Xcode…":** the active developer dir points to CommandLineTools. Prefix the command with `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` (e.g. `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild … build`) or run `sudo xcode-select -s /Applications/Xcode.app` once.
+
 **Important:** XcodeGen regenerates `Info.plist` from `project.yml` — do NOT edit `Info.plist` directly. Add Info.plist keys under `targets.Carlib.info.properties` in `project.yml` instead (e.g., `UIAppFonts`, usage descriptions).
+
+**No test target exists.** The scheme builds the app only; don't waste time hunting for `swift test` / `xcodebuild test` recipes.
 
 ## Architecture
 
@@ -124,6 +128,17 @@ Design philosophy: **Custom** buttons/cards/badges/text fields. **Native iOS** f
 - **Editing `project.yml`** requires running `xcodegen generate` and reopening Xcode. Resources under `Carlib/Resources/Fonts` are picked up automatically.
 - **SwiftUI environment objects:** Any view that uses `ClaimStore` must provide it in `#Preview` — missing environment crashes previews.
 - **`@Observable` pattern:** Use `@Environment(ClaimStore.self) private var claimStore`, not `@ObservedObject`. Classes are marked `@Observable`, not `ObservableObject`.
+- **Tab-switching from within a tab:** Use `appState.pendingGarageTab = .claims` / `appState.pendingDriverTab = .home`. The `GarageTabView` / `DriverTabView` observes these and flips the native `TabView` selection. Inside a tab use `path.append(...)` to push onto the tab's own nav stack instead.
+- **No rating / review system.** It was removed because it's absent from the PRD; `Garage.rating` / `reviewCount` no longer exist. Do not reintroduce stars, review counts, or a "Reputation" section without confirming with the product owner — design-quality review explicitly flagged this feature as out of scope.
+
+## Figma / design source
+
+The product design lives in a Figma file that the Claude Figma MCP server edits. Key references:
+
+- **File:** `Carlib — App Design` — `fileKey` `71sAiKhZ2mWg1I7NSzORg3`
+- **Icon library:** `HT icon lib (Copy)` — a **remote team library** subscribed to the file. Discover icons via `search_design_system` with `includeLibraryKeys: ["lk-1cc70db821d4c22449c51299d022329fc13768343adeda4016d85a2fb010b94860ca4f96523c3ef6ad20af979ce0f5d032399958bb00692bb6f960ca5f3292dd"]`. Naming mirrors Remixicon (`home-4-line`, `notification-line`, `moon-line`, etc.).
+- **Other libraries subscribed:** Apple's `iOS and iPadOS 26` UI kit — prefer real Apple components (Status bar - iPhone, Toolbar - Top - Sheet, Toggle - Switch, Tab Bar - iPhone) for iOS chrome instead of drawing primitives.
+- **Frame naming convention:** `NN — Role · Screen` (e.g., `24 — Declaration · Confirmation`, `33 — Garage · Dashboard`). Keep the numbering stable so the Driver flow reads top-to-bottom in Section 1.
 
 ## Docs
 

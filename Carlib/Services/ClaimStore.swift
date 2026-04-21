@@ -109,6 +109,24 @@ final class ClaimStore {
         timeSlots.append(slot)
     }
 
+    func removeTimeSlot(id: UUID) {
+        timeSlots.removeAll { $0.id == id }
+    }
+
+    func setSlotBlocked(id: UUID, blocked: Bool) {
+        guard let idx = timeSlots.firstIndex(where: { $0.id == id }) else { return }
+        timeSlots[idx].isBlocked = blocked
+        if blocked {
+            timeSlots[idx].isAvailable = false
+        }
+    }
+
+    func updateSlotTimes(id: UUID, start: Date, end: Date) {
+        guard let idx = timeSlots.firstIndex(where: { $0.id == id }) else { return }
+        timeSlots[idx].startTime = start
+        timeSlots[idx].endTime = end
+    }
+
     func slotsForDate(_ date: Date, garageId: UUID? = nil) -> [TimeSlot] {
         timeSlots.filter {
             Calendar.current.isDate($0.date, inSameDayAs: date)
