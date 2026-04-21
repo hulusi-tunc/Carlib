@@ -160,6 +160,17 @@ private struct ShopsBottomPanel: View {
             .navigationDestination(for: UUID.self) { garageId in
                 if let garage = garages.first(where: { $0.id == garageId }) {
                     GarageDetailView(garage: garage)
+                } else {
+                    ContentUnavailableView {
+                        Label {
+                            Text(verbatim: "Shop not found")
+                        } icon: {
+                            RemixIcon.storeLine.view(size: 48, color: .carlibSecondary)
+                        }
+                    } description: {
+                        Text(verbatim: "This body shop is no longer available.")
+                    }
+                    .background(Color.carlibScreenBg)
                 }
             }
         }

@@ -485,12 +485,19 @@ enum MockData {
 
     // MARK: - Time Slots
 
+    /// Time slot seed for the booking flow. Every slot reflects its real state:
+    /// - `claimId != nil` → already booked, `isAvailable = false`
+    /// - `isBlocked == true` → lunch / vacation, `isAvailable = false`
+    /// - otherwise → open, `isAvailable = true`
+    ///
+    /// Multiple garages are seeded so the driver-side booking flow has options
+    /// across different shops, not just Carrosserie Dupont.
     static var timeSlots: [TimeSlot] {
-        let garageId = UUID(uuidString: "00000001-0000-0000-0000-000000000001")!
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: .now)
 
         func slot(
+            garageId: UUID,
             dayOffset: Int,
             startHour: Int,
             startMinute: Int = 0,
@@ -506,33 +513,79 @@ enum MockData {
                 date: date,
                 startTime: calendar.date(bySettingHour: startHour, minute: startMinute, second: 0, of: date) ?? date,
                 endTime: calendar.date(bySettingHour: endHour, minute: endMinute, second: 0, of: date) ?? date,
-                isAvailable: false,
+                isAvailable: claimId == nil && !isBlocked,
                 isBlocked: isBlocked
             )
         }
 
-        let laurentId = UUID(uuidString: "10000003-0000-0000-0000-000000000003")!
-        let sophieId  = UUID(uuidString: "10000007-0000-0000-0000-000000000007")!
+        let dupontId    = UUID(uuidString: "00000001-0000-0000-0000-000000000001")!
+        let martinId    = UUID(uuidString: "00000002-0000-0000-0000-000000000002")!
+        let expressId   = UUID(uuidString: "00000003-0000-0000-0000-000000000003")!
+        let batignollesId = UUID(uuidString: "00000005-0000-0000-0000-000000000005")!
+        let republiqueId  = UUID(uuidString: "00000006-0000-0000-0000-000000000006")!
+
+        let laurentId  = UUID(uuidString: "10000003-0000-0000-0000-000000000003")!
+        let sophieId   = UUID(uuidString: "10000007-0000-0000-0000-000000000007")!
         let philippeId = UUID(uuidString: "10000008-0000-0000-0000-000000000008")!
-        let inesId    = UUID(uuidString: "10000009-0000-0000-0000-000000000009")!
+        let inesId     = UUID(uuidString: "10000009-0000-0000-0000-000000000009")!
 
-        return [
-            // Today — 2 linked appointments + 1 lunch block + 1 walk-in
-            slot(dayOffset: 0, startHour: 9,  endHour: 10, endMinute: 30, claimId: laurentId),
-            slot(dayOffset: 0, startHour: 11, endHour: 12, claimId: sophieId),
-            slot(dayOffset: 0, startHour: 12, endHour: 13, isBlocked: true),
-            slot(dayOffset: 0, startHour: 15, endHour: 16, endMinute: 30),
+        var slots: [TimeSlot?] = []
 
-            // Tomorrow — 1 linked + 1 unlinked
-            slot(dayOffset: 1, startHour: 9,  endHour: 10, endMinute: 30, claimId: philippeId),
-            slot(dayOffset: 1, startHour: 14, endHour: 15),
+        // Carrosserie Dupont — signed-in garage. Dense today schedule with
+        // linked appointments so the Garage dashboard looks busy.
+        slots += [
+            // Today — 2 linked + 1 lunch block + 2 open walk-ins
+            slot(garageId: dupontId, dayOffset: 0, startHour: 9,  endHour: 10, endMinute: 30, claimId: laurentId),
+            slot(garageId: dupontId, dayOffset: 0, startHour: 11, endHour: 12, claimId: sophieId),
+            slot(garageId: dupontId, dayOffset: 0, startHour: 12, endHour: 13, isBlocked: true),
+            slot(garageId: dupontId, dayOffset: 0, startHour: 15, endHour: 16, endMinute: 30),
+            slot(garageId: dupontId, dayOffset: 0, startHour: 17, endHour: 18),
+            // Tomorrow — 1 linked + 2 open
+            slot(garageId: dupontId, dayOffset: 1, startHour: 9,  endHour: 10, endMinute: 30, claimId: philippeId),
+            slot(garageId: dupontId, dayOffset: 1, startHour: 11, endHour: 12),
+            slot(garageId: dupontId, dayOffset: 1, startHour: 14, endHour: 15, endMinute: 30),
+            // +2 days — linked repair follow-up + 1 open
+            slot(garageId: dupontId, dayOffset: 2, startHour: 10, endHour: 11, endMinute: 30, claimId: inesId),
+            slot(garageId: dupontId, dayOffset: 2, startHour: 14, endHour: 15),
+            // +3 days — training block + 1 open in morning
+            slot(garageId: dupontId, dayOffset: 3, startHour: 9,  endHour: 10, endMinute: 30),
+            slot(garageId: dupontId, dayOffset: 3, startHour: 14, endHour: 18, isBlocked: true),
+            // +4 to +6 days — open slots
+            slot(garageId: dupontId, dayOffset: 4, startHour: 9,  endHour: 10, endMinute: 30),
+            slot(garageId: dupontId, dayOffset: 4, startHour: 14, endHour: 15),
+            slot(garageId: dupontId, dayOffset: 5, startHour: 9,  endHour: 10, endMinute: 30),
+            slot(garageId: dupontId, dayOffset: 5, startHour: 15, endHour: 16, endMinute: 30),
+            slot(garageId: dupontId, dayOffset: 6, startHour: 10, endHour: 11, endMinute: 30),
+        ]
 
-            // In 2 days — linked repair follow-up
-            slot(dayOffset: 2, startHour: 10, endHour: 11, endMinute: 30, claimId: inesId),
+        // Garage Martin & Fils — open across the next 7 days for the driver flow.
+        for dayOffset in 1...7 {
+            slots.append(slot(garageId: martinId, dayOffset: dayOffset, startHour: 9,  endHour: 10))
+            slots.append(slot(garageId: martinId, dayOffset: dayOffset, startHour: 11, endHour: 12))
+            slots.append(slot(garageId: martinId, dayOffset: dayOffset, startHour: 14, endHour: 15))
+            slots.append(slot(garageId: martinId, dayOffset: dayOffset, startHour: 16, endHour: 17))
+        }
 
-            // In 3 days — afternoon block (training)
-            slot(dayOffset: 3, startHour: 14, endHour: 18, isBlocked: true),
-        ].compactMap { $0 }
+        // Auto Repair Express — sparser, has a Friday block.
+        for dayOffset in 1...5 {
+            slots.append(slot(garageId: expressId, dayOffset: dayOffset, startHour: 10, endHour: 11))
+            slots.append(slot(garageId: expressId, dayOffset: dayOffset, startHour: 15, endHour: 16))
+        }
+        slots.append(slot(garageId: expressId, dayOffset: 3, startHour: 13, endHour: 18, isBlocked: true))
+
+        // Atelier des Batignolles — busy shop, slots every morning and afternoon.
+        for dayOffset in 1...7 {
+            slots.append(slot(garageId: batignollesId, dayOffset: dayOffset, startHour: 9,  endHour: 10, endMinute: 30))
+            slots.append(slot(garageId: batignollesId, dayOffset: dayOffset, startHour: 14, endHour: 15, endMinute: 30))
+        }
+
+        // Carrosserie République — weekend-friendly detailing shop.
+        for dayOffset in 2...7 {
+            slots.append(slot(garageId: republiqueId, dayOffset: dayOffset, startHour: 11, endHour: 13))
+            slots.append(slot(garageId: republiqueId, dayOffset: dayOffset, startHour: 15, endHour: 17))
+        }
+
+        return slots.compactMap { $0 }
     }
 
     // MARK: - Helpers

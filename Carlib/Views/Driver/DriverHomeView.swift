@@ -51,6 +51,8 @@ struct DriverHomeView: View {
                 case .claimDetail(let id):
                     if let claim = claimStore.claims.first(where: { $0.id == id }) {
                         DriverClaimDetailView(claim: claim)
+                    } else {
+                        missingClaimPlaceholder
                     }
                 case .garageSearch:
                     GarageSearchView()
@@ -61,6 +63,21 @@ struct DriverHomeView: View {
                 }
             }
         }
+    }
+
+    /// Rendered when a deep-linked claim id is no longer in the store —
+    /// keeps the navigation stack from pushing onto a blank scene.
+    private var missingClaimPlaceholder: some View {
+        ContentUnavailableView {
+            Label {
+                Text(verbatim: L10n.DriverClaims.emptyTitle)
+            } icon: {
+                RemixIcon.inboxLine.view(size: 48, color: .carlibSecondary)
+            }
+        } description: {
+            Text(verbatim: L10n.DriverClaims.emptyDescription)
+        }
+        .background(Color.carlibScreenBg)
     }
 
     // MARK: - File Section
