@@ -61,7 +61,6 @@
 		A79E8D9EA48F6D8598224857 /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F2F54FDE5B7697A872C608 /* DateFormatting.swift */; };
 		ADE5DBDBF76A5DEC0B8AF7F2 /* LucideIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3220831D4A43F04603D42043 /* LucideIcon.swift */; };
 		AF5358640AB4EEBDC9652FBC /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67E942CFBE45A2D17B65704 /* AuthService.swift */; };
-		B26E6CBD5008049B777F528F /* DefaultUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10FFE38CDA3A057A2E3EC0DF /* DefaultUsers.swift */; };
 		B3DC822A27AA9DF3D5B08405 /* CarlibTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67A3A38888D36EC4C4F5FB5C /* CarlibTypography.swift */; };
 		B5A7A56DD00C38926FB17553 /* DummyImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E8F8C0C81A25C2ACE4143E /* DummyImage.swift */; };
 		BAAEB54A8647595DE3915E5B /* DriverClaimsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9D1E29F6EC119546A1BC2A /* DriverClaimsListView.swift */; };
@@ -101,7 +100,6 @@
 		0C01E8B78E6FFB1A0F7575FA /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		0E9D1E29F6EC119546A1BC2A /* DriverClaimsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverClaimsListView.swift; sourceTree = "<group>"; };
 		10EB238C465D71C2885F653C /* GarageClaimsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageClaimsListView.swift; sourceTree = "<group>"; };
-		10FFE38CDA3A057A2E3EC0DF /* DefaultUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultUsers.swift; sourceTree = "<group>"; };
 		148609A1283F43ADB7418572 /* GarageProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageProfileEditView.swift; sourceTree = "<group>"; };
 		17AE9A85DF483DF0FF10E0B3 /* GarageSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageSearchView.swift; sourceTree = "<group>"; };
 		17FAF9CE2E349B05B6275D0A /* Booking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Booking.swift; sourceTree = "<group>"; };
@@ -268,7 +266,6 @@
 			children = (
 				A67E942CFBE45A2D17B65704 /* AuthService.swift */,
 				0784D7D619C7186A60839DD3 /* ClaimStore.swift */,
-				10FFE38CDA3A057A2E3EC0DF /* DefaultUsers.swift */,
 				066AB08256CFD30F7698FBB3 /* KeychainManager.swift */,
 				5896D8564F05F375CF791EB4 /* MockData.swift */,
 			);
@@ -305,6 +302,7 @@
 				936E58C46545390400414D69 /* Auth */,
 				F4B71673D4318861106B2F72 /* Driver */,
 				032C3410AFC2CDF66ACE93A4 /* Garage */,
+				D6CF66988FE541C8AA4D5E75 /* Landing */,
 				70535AA4AE346F696BA1A019 /* Onboarding */,
 				7D4B5710CDF29766E7E97C17 /* Shared */,
 			);
@@ -344,6 +342,20 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		D6CF66988FE541C8AA4D5E75 /* Landing */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Landing;
+			sourceTree = "<group>";
+		};
+		E711B095D066BC2FFD46C867 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		F4B71673D4318861106B2F72 /* Driver */ = {
 			isa = PBXGroup;
 			children = (
@@ -373,6 +385,7 @@
 				18EF527C31776F07846A4C4B /* Models */,
 				004A0564E1222849047A4E5E /* Resources */,
 				5888242C38F964CC6CE996E3 /* Services */,
+				E711B095D066BC2FFD46C867 /* ViewModels */,
 				917FB24506EABC464A08F274 /* Views */,
 			);
 			path = Carlib;
@@ -493,7 +506,6 @@
 				A79E8D9EA48F6D8598224857 /* DateFormatting.swift in Sources */,
 				166B3B9E8A20EA5ED43F18DB /* DeclarationConfirmationView.swift in Sources */,
 				8790CC18EAB66A8EC1AB59AF /* DeclarationFlowView.swift in Sources */,
-				B26E6CBD5008049B777F528F /* DefaultUsers.swift in Sources */,
 				C01A48462777994E4C99BFB2 /* DriverClaimDetailView.swift in Sources */,
 				BAAEB54A8647595DE3915E5B /* DriverClaimsListView.swift in Sources */,
 				A582FEB66DCA717CF5A39915 /* DriverHomeView.swift in Sources */,
