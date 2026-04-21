@@ -32,7 +32,8 @@ struct MyGarageView: View {
             if claimStore.vehicles.isEmpty {
                 emptyGarage
             } else {
-                // 3D Car Card Carousel
+                // 3D Car Card Carousel. Page dots drawn custom below so they
+                // adapt to the light theme and don't hug the card edge.
                 TabView(selection: $selectedIndex) {
                     ForEach(Array(claimStore.vehicles.enumerated()), id: \.element.id) { index, vehicle in
                         VehicleCard3D(
@@ -47,8 +48,14 @@ struct MyGarageView: View {
                         .tag(index)
                     }
                 }
-                .tabViewStyle(.page(indexDisplayMode: .automatic))
-                .frame(height: 340)
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(height: 300)
+
+                if claimStore.vehicles.count > 1 {
+                    pageDots
+                        .padding(.top, 4)
+                        .padding(.bottom, 8)
+                }
 
                 // Vehicle info below card
                 if selectedIndex < claimStore.vehicles.count {
@@ -64,6 +71,22 @@ struct MyGarageView: View {
         .sheet(isPresented: $showAddVehicle) {
             AddVehicleSheet()
         }
+    }
+
+    // MARK: - Page Dots
+
+    /// Custom page indicator — SwiftUI's built-in dots use a white tint that
+    /// disappears against the light screen background.
+    private var pageDots: some View {
+        HStack(spacing: 6) {
+            ForEach(0..<claimStore.vehicles.count, id: \.self) { index in
+                Circle()
+                    .fill(index == selectedIndex ? Color.carlibDark : Color.carlibCardBorder)
+                    .frame(width: index == selectedIndex ? 8 : 6, height: index == selectedIndex ? 8 : 6)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: selectedIndex)
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Empty State
