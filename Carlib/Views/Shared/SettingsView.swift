@@ -174,7 +174,7 @@ struct SettingsView: View {
     ) -> some View {
         VStack(alignment: .leading, spacing: 9) {
             Text(verbatim: title)
-                .font(.custom("Aeonik-Medium", size: 17))
+                .font(CarlibFont.title3())
                 .foregroundStyle(.carlibDark)
             content()
             if let footer {

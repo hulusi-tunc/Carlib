@@ -41,7 +41,7 @@ struct SplashView: View {
             .ignoresSafeArea()
 
             Text(verbatim: "Carlib")
-                .font(.custom("Aeonik-Medium", size: 42))
+                .font(CarlibFont.splashHero())
                 .foregroundStyle(.white)
                 .opacity(wordmarkOpacity)
                 .scaleEffect(wordmarkScale * wordmarkBreathe)

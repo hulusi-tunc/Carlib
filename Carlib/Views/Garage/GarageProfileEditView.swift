@@ -96,7 +96,7 @@ struct GarageProfileEditView: View {
     private var phoneField: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(verbatim: "PHONE")
-                .font(.custom("Aeonik-Medium", size: 11))
+                .font(CarlibFont.micro(.medium))
                 .tracking(0.8)
                 .foregroundStyle(.carlibSecondary)
 
@@ -155,7 +155,7 @@ struct GarageProfileEditView: View {
     ) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(verbatim: label.uppercased())
-                .font(.custom("Aeonik-Medium", size: 11))
+                .font(CarlibFont.micro(.medium))
                 .tracking(0.8)
                 .foregroundStyle(.carlibSecondary)
 
@@ -213,7 +213,7 @@ struct GarageProfileEditView: View {
             VStack(spacing: 12) {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text(verbatim: "\(Int(coverageRadius))")
-                        .font(.custom("Aeonik-Medium", size: 36))
+                        .font(CarlibFont.statValueLarge())
                         .foregroundStyle(.carlibDark)
                     Text(verbatim: "km radius")
                         .font(CarlibFont.callout())
@@ -401,7 +401,7 @@ struct GarageProfileEditView: View {
         VStack(alignment: .leading, spacing: 14) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(verbatim: title)
-                    .font(.custom("Aeonik-Medium", size: 17))
+                    .font(CarlibFont.title3())
                     .foregroundStyle(.carlibDark)
                 if let subtitle {
                     Text(verbatim: subtitle)

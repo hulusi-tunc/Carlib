@@ -79,7 +79,7 @@ struct GarageClaimDetailView: View {
 
                 if let v = claim.vehicleInfo {
                     Text(verbatim: "\(v.brand) \(v.model)")
-                        .font(.custom("Aeonik-Medium", size: 26))
+                        .font(CarlibFont.title1())
                         .foregroundStyle(.carlibDark)
                     Text(verbatim: v.licensePlate)
                         .font(CarlibFont.footnote())

@@ -155,7 +155,7 @@ struct DriverProfileEditView: View {
     private var phoneField: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(verbatim: L10n.DriverProfileEdit.phone.uppercased())
-                .font(.custom("Aeonik-Medium", size: 11))
+                .font(CarlibFont.micro(.medium))
                 .tracking(0.8)
                 .foregroundStyle(.carlibSecondary)
 
@@ -214,7 +214,7 @@ struct DriverProfileEditView: View {
     ) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(verbatim: label.uppercased())
-                .font(.custom("Aeonik-Medium", size: 11))
+                .font(CarlibFont.micro(.medium))
                 .tracking(0.8)
                 .foregroundStyle(.carlibSecondary)
 
@@ -240,7 +240,7 @@ struct DriverProfileEditView: View {
         VStack(alignment: .leading, spacing: 14) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(verbatim: title)
-                    .font(.custom("Aeonik-Medium", size: 17))
+                    .font(CarlibFont.title3())
                     .foregroundStyle(.carlibDark)
                 if let subtitle {
                     Text(verbatim: subtitle)

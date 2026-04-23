@@ -84,7 +84,7 @@ struct RepairStatusSheet: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(verbatim: "Where are you?")
-                .font(.custom("Aeonik-Medium", size: 26))
+                .font(CarlibFont.title1())
                 .foregroundStyle(.carlibDark)
             Text(verbatim: "Tap to advance — the driver gets notified instantly.")
                 .font(CarlibFont.body())
@@ -121,7 +121,7 @@ struct RepairStatusSheet: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(verbatim: "Move to \(nextStage.localizedName)")
-                        .font(.custom("Aeonik-Medium", size: 20))
+                        .font(CarlibFont.sectionProminent())
                         .foregroundStyle(.carlibDark)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)

@@ -38,7 +38,7 @@ struct NotificationSettingsView: View {
     private var intro: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(verbatim: L10n.NotificationSettings.title)
-                .font(.custom("Aeonik-Medium", size: 22))
+                .font(CarlibFont.title2())
                 .foregroundStyle(.carlibDark)
             Text(verbatim: "Choose which updates Carlib sends to your device.")
                 .font(CarlibFont.footnote())

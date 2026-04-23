@@ -33,7 +33,7 @@ struct LanguagePickerView: View {
     private var intro: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(verbatim: L10n.Settings.sectionLanguage)
-                .font(.custom("Aeonik-Medium", size: 22))
+                .font(CarlibFont.title2())
                 .foregroundStyle(.carlibDark)
             Text(verbatim: L10n.Settings.languageNote)
                 .font(CarlibFont.footnote())

@@ -97,7 +97,7 @@ struct GarageProfileView: View {
                 .background(.black.opacity(0.35), in: Capsule())
 
                 Text(verbatim: garage.name)
-                    .font(.custom("Aeonik-Medium", size: 24))
+                    .font(CarlibFont.cardHero())
                     .foregroundStyle(.white)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
@@ -131,14 +131,14 @@ struct GarageProfileView: View {
                     .stroke(Color.brandYellow, style: StrokeStyle(lineWidth: 3, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                 Text(verbatim: "\(completeness)%")
-                    .font(.custom("Aeonik-Medium", size: 11))
+                    .font(CarlibFont.micro(.medium))
                     .foregroundStyle(.carlibDark)
             }
             .frame(width: 44, height: 44)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(verbatim: "Profile \(completeness)% complete")
-                    .font(.custom("Aeonik-Medium", size: 14))
+                    .font(CarlibFont.callout())
                     .foregroundStyle(.carlibDark)
                 Text(verbatim: "Add photos to make your listing stand out.")
                     .font(CarlibFont.footnote())
@@ -180,10 +180,10 @@ struct GarageProfileView: View {
     private func statBlock(value: String, label: String) -> some View {
         VStack(spacing: 2) {
             Text(verbatim: value)
-                .font(.custom("Aeonik-Medium", size: 18))
+                .font(CarlibFont.statValue())
                 .foregroundStyle(.carlibDark)
             Text(verbatim: label)
-                .font(.custom("Aeonik-Regular", size: 11))
+                .font(CarlibFont.micro())
                 .foregroundStyle(.carlibSecondary)
         }
         .frame(maxWidth: .infinity)
@@ -444,13 +444,13 @@ struct GarageProfileView: View {
     private func sectionHeader(_ title: String, action: (() -> Void)? = nil, actionLabel: String? = nil) -> some View {
         HStack {
             Text(verbatim: title)
-                .font(.custom("Aeonik-Medium", size: 17))
+                .font(CarlibFont.title3())
                 .foregroundStyle(.carlibDark)
             Spacer()
             if let action, let actionLabel {
                 Button(action: action) {
                     Text(verbatim: actionLabel)
-                        .font(.custom("Aeonik-Medium", size: 13))
+                        .font(CarlibFont.caption(.medium))
                         .foregroundStyle(.carlibDark)
                 }
                 .buttonStyle(.pressable(scale: 0.96, haptic: .light))

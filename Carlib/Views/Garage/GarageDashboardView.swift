@@ -3,7 +3,6 @@ import SwiftUI
 /// Navigation destinations reachable from the Garage dashboard.
 enum GarageDashboardDestination: Hashable {
     case claimDetail(UUID)
-    case planning
 }
 
 /// Garage dashboard — designed as a cockpit. A shop owner should see the
@@ -75,8 +74,6 @@ struct GarageDashboardView: View {
                     if let claim = claimStore.claims.first(where: { $0.id == id }) {
                         GarageClaimDetailView(claim: claim)
                     }
-                case .planning:
-                    GaragePlanningView()
                 }
             }
         }
@@ -177,10 +174,10 @@ struct GarageDashboardView: View {
         Button(action: action) {
             VStack(spacing: 2) {
                 Text(verbatim: value)
-                    .font(.custom("Aeonik-Medium", size: 22))
+                    .font(CarlibFont.title2())
                     .foregroundStyle(accent)
                 Text(verbatim: label)
-                    .font(.custom("Aeonik-Regular", size: 11))
+                    .font(CarlibFont.micro())
                     .foregroundStyle(.carlibSecondary)
             }
             .frame(maxWidth: .infinity)
@@ -364,10 +361,10 @@ struct GarageDashboardView: View {
             HStack(spacing: 14) {
                 VStack(spacing: 2) {
                     Text(verbatim: slot.startTime.timeFormatted)
-                        .font(.custom("Aeonik-Medium", size: 15))
+                        .font(CarlibFont.body(.medium))
                         .foregroundStyle(.carlibDark)
                     Text(verbatim: demoLabels[index % demoLabels.count])
-                        .font(.custom("Aeonik-Regular", size: 11))
+                        .font(CarlibFont.micro())
                         .foregroundStyle(.carlibSecondary)
                 }
                 .frame(width: 72, alignment: .leading)
@@ -377,7 +374,7 @@ struct GarageDashboardView: View {
                     .frame(width: 2, height: 28)
 
                 Text(verbatim: demoCustomers[index % demoCustomers.count])
-                    .font(.custom("Aeonik-Medium", size: 14))
+                    .font(CarlibFont.callout())
                     .foregroundStyle(.carlibDark)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .lineLimit(1)
@@ -436,10 +433,10 @@ struct GarageDashboardView: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(verbatim: vehicleTitle(claim))
-                        .font(.custom("Aeonik-Medium", size: 14))
+                        .font(CarlibFont.callout())
                         .foregroundStyle(.carlibDark)
                     Text(verbatim: claim.accidentType?.localizedName ?? "Repair")
-                        .font(.custom("Aeonik-Regular", size: 12))
+                        .font(CarlibFont.microBody())
                         .foregroundStyle(.carlibSecondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -472,7 +469,7 @@ struct GarageDashboardView: View {
     ) -> some View {
         HStack(spacing: 8) {
             Text(verbatim: title)
-                .font(.custom("Aeonik-Medium", size: 17))
+                .font(CarlibFont.title3())
                 .foregroundStyle(.carlibDark)
 
             if let badge {
@@ -489,7 +486,7 @@ struct GarageDashboardView: View {
             if let actionLabel, let action {
                 Button(action: action) {
                     Text(verbatim: actionLabel)
-                        .font(.custom("Aeonik-Medium", size: 13))
+                        .font(CarlibFont.caption(.medium))
                         .foregroundStyle(.carlibDark)
                 }
                 .buttonStyle(.pressable(scale: 0.96, haptic: .light))
@@ -504,10 +501,10 @@ struct GarageDashboardView: View {
                 .background(Color.brandYellow.opacity(0.12), in: Circle())
             VStack(alignment: .leading, spacing: 2) {
                 Text(verbatim: title)
-                    .font(.custom("Aeonik-Medium", size: 14))
+                    .font(CarlibFont.callout())
                     .foregroundStyle(.carlibDark)
                 Text(verbatim: subtitle)
-                    .font(.custom("Aeonik-Regular", size: 12))
+                    .font(CarlibFont.microBody())
                     .foregroundStyle(.carlibSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }

@@ -131,6 +131,48 @@ enum CarlibFont {
         font(size: 36, weight: weight)
     }
 
+    // MARK: - Off-scale tokens
+
+    // Splash wordmark — one-off hero on the launch screen.
+    static func splashHero() -> Font {
+        font(size: 42, weight: .medium)
+    }
+
+    // Hero card title (between title1/26 and title2/22) — used for
+    // the garage name on the profile hero card.
+    static func cardHero(_ weight: Font.Weight = .medium) -> Font {
+        font(size: 24, weight: weight)
+    }
+
+    // Prominent section / step title (between title2/22 and title3/17).
+    // Used for the repair-status step title in the bottom sheet.
+    static func sectionProminent(_ weight: Font.Weight = .medium) -> Font {
+        font(size: 20, weight: weight)
+    }
+
+    // Stat value (between title2/22 and title3/17) — used in the
+    // profile stats block.
+    static func statValue(_ weight: Font.Weight = .medium) -> Font {
+        font(size: 18, weight: weight)
+    }
+
+    // Large stat value at 36pt with flexible weight (the `amount`
+    // token defaults to bold; this one defaults to medium).
+    static func statValueLarge(_ weight: Font.Weight = .medium) -> Font {
+        font(size: 36, weight: weight)
+    }
+
+    // Micro label (smaller than caption/footnote at 13pt) — used for
+    // tight stat labels and dense secondary metadata.
+    static func micro(_ weight: Font.Weight = .regular) -> Font {
+        font(size: 11, weight: weight)
+    }
+
+    // Slightly larger than micro — used for secondary row subtitles.
+    static func microBody(_ weight: Font.Weight = .regular) -> Font {
+        font(size: 12, weight: weight)
+    }
+
     // MARK: - Legacy API
 
     static func display(_ weight: Font.Weight = .medium) -> Font { largeTitle(weight) }

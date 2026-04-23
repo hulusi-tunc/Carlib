@@ -3,7 +3,6 @@ import SwiftUI
 /// Navigation destinations reachable from the Home tab.
 enum DriverHomeDestination: Hashable {
     case claimDetail(UUID)
-    case garageSearch
     case myGarage
     case createReport
 }
@@ -12,8 +11,14 @@ enum DriverHomeDestination: Hashable {
 /// Currently ships only the empty "file" status header at the top.
 struct DriverHomeView: View {
     @Environment(ClaimStore.self) private var claimStore
+    @Environment(AppState.self) private var appState
     @Environment(\.colorScheme) private var colorScheme
-    @State private var path = NavigationPath()
+    // Typed path array (vs. the type-erased `NavigationPath`) — this is
+    // what makes SwiftUI see the `navigationDestination(for:)` declaration
+    // and the `path.append(...)` as matching. With `NavigationPath` in
+    // release builds we'd sometimes get "no matching navigationDestination"
+    // warnings and a white page + yellow triangle placeholder.
+    @State private var path: [DriverHomeDestination] = []
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -59,19 +64,30 @@ struct DriverHomeView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: DriverHomeDestination.self) { destination in
+                // Re-inject the @Observable environments at each branch. On
+                // TestFlight / release builds the navigationDestination
+                // closure can drop inherited env values during the compiler's
+                // optimization pass, which shows up as a white page +
+                // yellow-triangle crash when a pushed view reads them.
                 switch destination {
                 case .claimDetail(let id):
                     if let claim = claimStore.claims.first(where: { $0.id == id }) {
                         DriverClaimDetailView(claim: claim)
+                            .environment(claimStore)
+                            .environment(appState)
                     } else {
                         missingClaimPlaceholder
+                            .environment(claimStore)
+                            .environment(appState)
                     }
-                case .garageSearch:
-                    GarageSearchView()
                 case .myGarage:
                     MyGarageView()
+                        .environment(claimStore)
+                        .environment(appState)
                 case .createReport:
                     DeclarationFlowView()
+                        .environment(claimStore)
+                        .environment(appState)
                 }
             }
         }
@@ -90,6 +106,22 @@ struct DriverHomeView: View {
             Text(verbatim: L10n.DriverClaims.emptyDescription)
         }
         .background(Color.carlibScreenBg)
+    }
+
+    // MARK: - Garage actions (call / directions)
+
+    private func callGarage(_ garage: Garage) {
+        let e164 = "\(garage.dialCode)\(garage.phone)".filter { $0.isNumber || $0 == "+" }
+        if let url = URL(string: "tel://\(e164)") {
+            UIApplication.shared.open(url)
+        }
+    }
+
+    private func openMaps(for garage: Garage) {
+        let encoded = garage.address.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        if let url = URL(string: "http://maps.apple.com/?q=\(encoded)") {
+            UIApplication.shared.open(url)
+        }
     }
 
     // MARK: - File Section
@@ -140,7 +172,7 @@ struct DriverHomeView: View {
             kickerChip(color: .statusCompleted, label: L10n.DriverHome.emptyFileKicker)
 
             Text(verbatim: L10n.DriverHome.emptyFileHeadline)
-                .font(.custom("Aeonik-Medium", size: 22))
+                .font(CarlibFont.title2())
                 .foregroundStyle(.carlibDark)
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
@@ -198,7 +230,9 @@ struct DriverHomeView: View {
                     etaLabel: L10n.DriverHome.readyBy(etaDate.shortFormatted),
                     etaAccent: .brandYellow,
                     garageName: g.name,
-                    distance: L10n.DriverHome.distanceAway(MockData.distance(for: g.id))
+                    distance: L10n.DriverHome.distanceAway(MockData.distance(for: g.id)),
+                    onCall: { callGarage(g) },
+                    onDirections: { openMaps(for: g) }
                 )
             },
             ctaLabel: L10n.DriverHome.viewClaim,
@@ -220,7 +254,9 @@ struct DriverHomeView: View {
                     etaLabel: L10n.DriverHome.comePickUp,
                     etaAccent: .statusCompleted,
                     garageName: g.name,
-                    distance: L10n.DriverHome.distanceAway(MockData.distance(for: g.id))
+                    distance: L10n.DriverHome.distanceAway(MockData.distance(for: g.id)),
+                    onCall: { callGarage(g) },
+                    onDirections: { openMaps(for: g) }
                 )
             },
             ctaLabel: L10n.DriverHome.viewClaim,
@@ -257,7 +293,7 @@ struct DriverHomeView: View {
             // Row 2: headline (+ optional body)
             VStack(alignment: .leading, spacing: 4) {
                 Text(verbatim: headline)
-                    .font(.custom("Aeonik-Medium", size: 22))
+                    .font(CarlibFont.title2())
                     .foregroundStyle(.carlibDark)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
@@ -495,7 +531,7 @@ struct DriverHomeView: View {
                 backgroundOverlay: {
                     findShopMapOverlay
                 },
-                action: { path.append(DriverHomeDestination.garageSearch) }
+                action: { appState.pendingDriverTab = .shops }
             )
         }
     }
@@ -518,10 +554,10 @@ struct DriverHomeView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(verbatim: title)
-                            .font(.custom("Aeonik-Medium", size: 17))
+                            .font(CarlibFont.title3())
                             .foregroundStyle(.carlibDark)
                         Text(verbatim: subtitle)
-                            .font(.custom("Aeonik-Regular", size: 13))
+                            .font(CarlibFont.footnote())
                             .foregroundStyle(Color.brandYellow)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -554,17 +590,19 @@ struct DriverHomeView: View {
                 // Header row
                 HStack {
                     Text(verbatim: L10n.DriverHome.recentFilesTitle)
-                        .font(.custom("Aeonik-Medium", size: 17))
+                        .font(CarlibFont.title3())
                         .foregroundStyle(.carlibDark)
 
                     Spacer(minLength: 8)
 
-                    Button {
-                        // Will route to the full claims history once wired up.
+                    NavigationLink {
+                        DriverClaimsListView()
+                            .environment(claimStore)
+                            .environment(appState)
                     } label: {
                         HStack(spacing: 4) {
                             Text(verbatim: L10n.DriverHome.recentFilesSeeAll)
-                                .font(.custom("Aeonik-Medium", size: 14))
+                                .font(CarlibFont.callout())
                             RemixIcon.arrowRightLine.view(size: 16, color: .carlibDark)
                         }
                         .foregroundStyle(.carlibDark)
@@ -635,12 +673,12 @@ struct DriverHomeView: View {
     private func recentFileRow(date: String, title: String, status: RecentRowStatus) -> some View {
         HStack(spacing: 12) {
             Text(verbatim: date)
-                .font(.custom("Aeonik-Regular", size: 13))
+                .font(CarlibFont.footnote())
                 .foregroundStyle(.carlibSecondary)
                 .frame(width: 72, alignment: .leading)
 
             Text(verbatim: title)
-                .font(.custom("Aeonik-Medium", size: 15))
+                .font(CarlibFont.body(.medium))
                 .foregroundStyle(.carlibDark)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -656,7 +694,7 @@ struct DriverHomeView: View {
                 .fill(status.color)
                 .frame(width: 6, height: 6)
             Text(verbatim: status.label)
-                .font(.custom("Aeonik-Medium", size: 13))
+                .font(CarlibFont.caption(.medium))
                 .foregroundStyle(status.color)
         }
         .padding(.horizontal, 10)

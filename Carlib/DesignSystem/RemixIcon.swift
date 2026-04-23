@@ -3264,7 +3264,6 @@ extension RemixIcon {
 
         let format = UIGraphicsImageRendererFormat.default()
         format.opaque = false
-        format.scale = UIScreen.main.scale
         let renderer = UIGraphicsImageRenderer(size: canvas, format: format)
         let image = renderer.image { _ in
             string.draw(at: .zero)

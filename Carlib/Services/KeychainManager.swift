@@ -5,6 +5,7 @@ import Security
 enum KeychainManager {
     private static let service = "com.carlib.app"
 
+    @discardableResult
     static func save(key: String, data: Data) -> Bool {
         delete(key: key) // remove existing before saving
         let query: [String: Any] = [
