@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+/*
+ * Carlib design tokens — mirrors the iOS app's CarlibColors / CarlibFont
+ * so the web landing feels like it was cut from the same cloth.
+ *
+ * Source of truth for the mobile side: Carlib/DesignSystem/CarlibColors.swift
+ */
+@theme {
+  --font-sans: var(--font-aeonik), ui-sans-serif, system-ui, -apple-system,
+    Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+
+  /* Brand — golden yellow #F5B700 (same in light and dark on iOS) */
+  --color-brand-yellow: #f5b700;
+  --color-brand-yellow-dark: #cc9900;
+  --color-brand-yellow-soft: #fff3cd;
+
+  /* Surfaces — light theme only for the marketing page */
+  --color-screen: #ffffff;
+  --color-ink: #0a0a0a;
+  --color-ink-secondary: #666b73;
+  --color-ink-label: #8c9199;
+  --color-tile: #f1f1f4;
+  --color-border: #e8e8eb;
+
+  /* Status accents — mirror iOS CarlibColors statusXxx */
+  --color-status-submitted: #6194f2;
+  --color-status-matched: #f2b333;
+  --color-status-accepted: #40bfb3;
+  --color-status-progress: #668eeb;
+  --color-status-repairing: #f2a626;
+  --color-status-completed: #4dc76b;
+  --color-status-warning: #f2a700;
+
+  /* Radii — matches CarlibRadius on iOS */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+}
+
+/*
+ * Perimeter notification-card entrance — used by PerspectiveHero
+ * whenever the perspective toggle flips (Driver ↔ Shop) or when the
+ * user first starts scrolling into the hero. Keyframe-based so a
+ * React remount (via key change) re-runs the animation automatically.
+ */
+@keyframes notif-enter-left {
+  from { opacity: 0; transform: translate(-36px, 10px) scale(0.9); }
+  55%  { opacity: 1; transform: translate(3px, -2px) scale(1.02); }
+  to   { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+
+/*
+ * FeatureBento animated mockup keyframes:
+ *   pill-in     — text pop used when a step changes (pill labels, body copy)
+ *   photo-pop   — individual photo cell entrance when a slot fills
+ *   photo-sweep — diagonal shimmer over the actively-uploading cell
+ *   phone-ring  — ripple ring around the shop card's phone icon
+ */
+@keyframes pill-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes photo-pop {
+  from { opacity: 0; transform: scale(0.86); }
+  60%  { opacity: 1; transform: scale(1.04); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes photo-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+@keyframes phone-ring {
+  0%   { transform: scale(0.95); opacity: 0.6; }
+  60%  { opacity: 0.2; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+@keyframes req-slide {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes notif-enter-right {
+  from { opacity: 0; transform: translate(36px, 10px) scale(0.9); }
+  55%  { opacity: 1; transform: translate(-3px, -2px) scale(1.02); }
+  to   { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+
+/*
+ * Problem-section card illustrations — hover animations.
+ * Rays slow-spin, concentric shield outlines pulse outward like sonar,
+ * clock hand sweeps once per revolution. All are infinite so the cards
+ * feel alive even when no card is focused.
+ */
+/*
+ * Problem-section card illustrations.
+ * `phone-ring` is a subtle shake used by the rotary phone image in
+ * card 3 to evoke a phone ringing off the hook on hover.
+ */
+@keyframes phone-ring {
+  0%, 100% { transform: scale(1.06) rotate(0deg); }
+  20%      { transform: scale(1.06) rotate(-3deg); }
+  40%      { transform: scale(1.06) rotate(3deg); }
+  60%      { transform: scale(1.06) rotate(-2deg); }
+  80%      { transform: scale(1.06) rotate(2deg); }
+}
+
+/*
+ * Base layer — sensible defaults that we'd rather set globally than
+ * repeat on every element.
+ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+  }
+}
