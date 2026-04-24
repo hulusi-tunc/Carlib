@@ -58,7 +58,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const value: I18nValue = {
     locale,
     setLocale,
-    t: translations[locale],
+    // Each locale's dictionary is defined `as const` with literal types,
+    // so TS reads them as distinct types and refuses the union. Cast
+    // through Dictionary — the English copy is the canonical shape.
+    t: translations[locale] as Dictionary,
   };
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
