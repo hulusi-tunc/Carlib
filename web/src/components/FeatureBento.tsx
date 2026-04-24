@@ -44,76 +44,34 @@ export function FeatureBento() {
 
 type Step = {
   key: "submitted" | "matched" | "accepted" | "progress" | "completed";
-  short: string;
-  label: string;
   tint: string; // bg class
   tintText: string;
   tintSoft: string;
-  body: string;
   pill: string;
   pillSub: string;
 };
 
-const STEPS: Step[] = [
-  {
-    key: "submitted",
-    short: "Declare",
-    label: "Submitted",
-    tint: "bg-status-submitted",
-    tintText: "text-status-submitted",
-    tintSoft: "bg-status-submitted/15",
-    body: "Claim received — we're finding nearby body shops now.",
-    pill: "Claim submitted",
-    pillSub: "Looking for shops in Paris Est.",
-  },
-  {
-    key: "matched",
-    short: "Match",
-    label: "3 shops interested",
-    tint: "bg-status-matched",
-    tintText: "text-status-matched",
-    tintSoft: "bg-status-matched/15",
-    body: "Three shops raised their hand. Tap to compare slots.",
-    pill: "3 shops interested",
-    pillSub: "Tap to compare ratings and slots.",
-  },
-  {
-    key: "accepted",
-    short: "Accept",
-    label: "Drop-off confirmed",
-    tint: "bg-status-accepted",
-    tintText: "text-status-accepted",
-    tintSoft: "bg-status-accepted/15",
-    body: "North Auto Body · Thursday, 10:00.",
-    pill: "Drop-off confirmed",
-    pillSub: "Thursday 10:00 at North Auto Body.",
-  },
-  {
-    key: "progress",
-    short: "Repair",
-    label: "In repair",
-    tint: "bg-status-repairing",
-    tintText: "text-status-repairing",
-    tintSoft: "bg-status-repairing/15",
-    body: "Diagnostic done. Bumper + paint match in progress.",
-    pill: "Repair in progress",
-    pillSub: "Bumper + paint match · 1 day ETA.",
-  },
-  {
-    key: "completed",
-    short: "Ready",
-    label: "Ready for pickup",
-    tint: "bg-status-completed",
-    tintText: "text-status-completed",
-    tintSoft: "bg-status-completed/15",
-    body: "Your Peugeot 308 is ready to come home.",
-    pill: "Ready for pickup",
-    pillSub: "Your Peugeot is waiting at North Auto Body.",
-  },
-];
+/** Build the 5 status steps from the active locale's claim-step copy.
+ *  Tints + keys are static; pill/pillSub come from i18n. */
+function useClaimSteps(): Step[] {
+  const t = useT();
+  const tones = [
+    { key: "submitted", tint: "bg-status-submitted", tintText: "text-status-submitted", tintSoft: "bg-status-submitted/15" },
+    { key: "matched", tint: "bg-status-matched", tintText: "text-status-matched", tintSoft: "bg-status-matched/15" },
+    { key: "accepted", tint: "bg-status-accepted", tintText: "text-status-accepted", tintSoft: "bg-status-accepted/15" },
+    { key: "progress", tint: "bg-status-repairing", tintText: "text-status-repairing", tintSoft: "bg-status-repairing/15" },
+    { key: "completed", tint: "bg-status-completed", tintText: "text-status-completed", tintSoft: "bg-status-completed/15" },
+  ] as const;
+  return tones.map((tone, i) => ({
+    ...tone,
+    pill: t.mockup.claimSteps[i].pill,
+    pillSub: t.mockup.claimSteps[i].pillSub,
+  }));
+}
 
 function HeroCard() {
   const t = useT();
+  const STEPS = useClaimSteps();
   const [stepIndex, setStepIndex] = useState(0);
 
   useEffect(() => {
@@ -121,7 +79,7 @@ function HeroCard() {
       setStepIndex((i) => (i + 1) % STEPS.length);
     }, 2400);
     return () => clearInterval(id);
-  }, []);
+  }, [STEPS.length]);
 
   const step = STEPS[stepIndex];
 
@@ -149,15 +107,12 @@ function HeroCard() {
             the grid's items-end. */}
         <div className="flex flex-col gap-5 pb-12 sm:pb-16 md:pb-20">
           <h3 className="max-w-md font-medium text-3xl leading-[1.12] tracking-tight sm:text-[40px]">
-            See every claim
+            {t.features.hero.titleL1}
             <br />
-            before you say yes.
+            {t.features.hero.titleL2}
           </h3>
           <p className="max-w-md text-[15px] leading-relaxed text-white/70">
-            Drivers declare from the app; you see the full dossier the moment
-            it lands — photos, damage type, vehicle. Accept in one tap, and
-            every status update you post flows back to the driver
-            automatically.
+            {t.features.hero.body}
           </p>
         </div>
 
@@ -207,6 +162,7 @@ const STACK_SHRINK = 0.04; // scale decrement per depth
 const PRE_ARRIVAL_Y = -44; // px above the front slot — new pill drops in from here
 
 function NotificationStack({ stepIndex }: { stepIndex: number }) {
+  const STEPS = useClaimSteps();
   return (
     <div className="pointer-events-none w-full">
       {/* Container with extra top padding so the stacked pills (which
@@ -361,8 +317,6 @@ function LivePill({ step }: { step: Step }) {
  *  the same `stepIndex` loop driving the left-column copy — the badge,
  *  timeline and label colors all advance together. */
 
-const TIMELINE_LABELS = ["Submitted", "Matched", "Accepted", "In repair", "Ready"];
-
 function ShopClaimDetailMockup({
   step,
   stepIndex,
@@ -370,6 +324,9 @@ function ShopClaimDetailMockup({
   step: Step;
   stepIndex: number;
 }) {
+  const t = useT();
+  const TIMELINE_LABELS = t.mockup.timeline;
+  const SHOP_CLAIM = t.mockup.shopClaim;
   return (
     <div className="relative z-0 flex h-full flex-col overflow-hidden bg-white text-ink">
       {/* Hero gradient — blue tint at top fading into white. Covers the
@@ -414,7 +371,7 @@ function ShopClaimDetailMockup({
               step.tintText
             )}
           >
-            {step.label}
+            {t.mockup.timeline[stepIndex]}
           </span>
         </div>
 
@@ -429,19 +386,19 @@ function ShopClaimDetailMockup({
         {/* Damage line */}
         <div className="flex items-center gap-1 text-[10px] text-ink-secondary leading-none">
           <CarMiniIcon />
-          Collision
+          {SHOP_CLAIM.collision}
         </div>
 
         {/* Refuse + Accept Case — yellow button pulses while Submitted */}
         <div className="flex w-full items-center gap-1.5 pt-1.5">
           <button className="h-7 flex-1 rounded-full bg-[#e9ecef] text-[10px] font-medium text-ink">
-            Refuse
+            {SHOP_CLAIM.refuse}
           </button>
           <button className="relative h-7 flex-1 overflow-visible rounded-full bg-brand-yellow text-[10px] font-medium text-black">
             {stepIndex === 0 && (
               <span className="pointer-events-none absolute inset-0 animate-[phone-ring_1600ms_ease-out_infinite] rounded-full ring-2 ring-brand-yellow" />
             )}
-            <span className="relative">Accept Case</span>
+            <span className="relative">{SHOP_CLAIM.acceptCase}</span>
           </button>
         </div>
       </div>
@@ -451,7 +408,7 @@ function ShopClaimDetailMockup({
         {/* TRACKING */}
         <div className="flex flex-col gap-1.5">
           <p className="text-[8px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
-            Tracking
+            {SHOP_CLAIM.tracking}
           </p>
           <div className="flex items-center">
             {TIMELINE_LABELS.map((_, i) => {
@@ -514,11 +471,10 @@ function ShopClaimDetailMockup({
         {/* DESCRIPTION */}
         <div className="flex flex-col gap-1">
           <p className="text-[8px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
-            Description
+            {SHOP_CLAIM.description}
           </p>
           <p className="text-[9.5px] leading-tight text-ink">
-            Rayure profonde côté passager sur parking souterrain. Drop-off
-            possible dès demain matin.
+            {SHOP_CLAIM.damageText}
           </p>
         </div>
 
@@ -526,16 +482,16 @@ function ShopClaimDetailMockup({
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-1.5">
             <p className="text-[8px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
-              Photos
+              {SHOP_CLAIM.photos}
             </p>
             <div className="h-px flex-1 bg-[#e9ecef]" />
             <p className="text-[8.5px] font-medium text-ink-secondary">3</p>
           </div>
           <div className="flex gap-1.5 overflow-hidden">
             {[
-              { bg: "#402e1f", label: "Aile avant droite" },
-              { bg: "#5c3d24", label: "Détail dommage" },
-              { bg: "#2e2629", label: "Plaque arrachée" },
+              { bg: "#402e1f", label: SHOP_CLAIM.photoLabels[0] },
+              { bg: "#5c3d24", label: SHOP_CLAIM.photoLabels[1] },
+              { bg: "#2e2629", label: SHOP_CLAIM.photoLabels[2] },
             ].map((p) => (
               <div
                 key={p.label}
@@ -553,7 +509,7 @@ function ShopClaimDetailMockup({
         {/* VEHICLE */}
         <div className="flex flex-col gap-1">
           <p className="text-[8px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
-            Vehicle
+            {SHOP_CLAIM.vehicle}
           </p>
           <div className="flex items-center gap-2 rounded-xl bg-[#f1f3f7] p-2">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#e3e6eb]">
@@ -581,7 +537,7 @@ function ShopClaimDetailMockup({
         {/* LOCATION */}
         <div className="flex flex-col gap-1">
           <p className="text-[8px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
-            Location
+            {SHOP_CLAIM.location}
           </p>
           <div className="flex items-center gap-2 rounded-xl bg-[#f1f3f7] p-2">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-yellow/15">
@@ -642,30 +598,20 @@ function PinMiniIcon() {
  * URL always returns the same photo. Swap for licensed shots once
  * they're available.
  */
-const PHOTO_TILES: ReadonlyArray<{ label: string; src?: string }> = [
-  {
-    label: "Damage · close",
-    src: "https://loremflickr.com/400/400/car,damage,bumper?lock=101",
-  },
-  {
-    label: "Damage · wide",
-    src: "https://loremflickr.com/400/400/car,crash,wreck?lock=102",
-  },
-  {
-    label: "Vehicle · front",
-    src: "https://loremflickr.com/400/400/car,accident,fender?lock=103",
-  },
-  {
-    label: "License plate",
-    src: "https://loremflickr.com/400/400/car,dent,scratch?lock=104",
-  },
-  { label: "Other car" },
-  { label: "Scene" },
-];
+// Image srcs for the auto-filled slots (labels come from i18n).
+const PHOTO_SRCS = [
+  "https://loremflickr.com/400/400/car,damage,bumper?lock=101",
+  "https://loremflickr.com/400/400/car,crash,wreck?lock=102",
+  "https://loremflickr.com/400/400/car,accident,fender?lock=103",
+  "https://loremflickr.com/400/400/car,dent,scratch?lock=104",
+] as const;
 /** Photos that actually auto-fill (the first N of the grid). */
 const FILL_COUNT = 4;
+/** Total slots rendered in the grid (includes empty placeholders). */
+const TILE_COUNT = 6;
 
 function PhotoCard() {
+  const t = useT();
   const [filled, setFilled] = useState(0);
   const [loopTick, setLoopTick] = useState(0);
 
@@ -713,15 +659,13 @@ function PhotoCard() {
       <div className="relative flex h-full flex-col gap-6 p-6 sm:gap-8 sm:p-8">
         <div>
           <h3 className="text-xl font-medium">
-            Photos before the estimate.{" "}
+            {t.features.photo.titleLead}{" "}
             <span className="text-white/60">
-              Quote from real evidence, not a phone description.
+              {t.features.photo.titleAside}
             </span>
           </h3>
           <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/55">
-            Four guided photos at the scene come attached to every claim. You
-            quote faster, argue less, and the insurer gets the same pack the
-            driver sent you — no re-sending, no missing angles.
+            {t.features.photo.body}
           </p>
         </div>
 
@@ -729,7 +673,7 @@ function PhotoCard() {
         <div className="relative mt-auto overflow-hidden rounded-2xl bg-black/30 p-4 ring-1 ring-white/10 backdrop-blur-sm">
           <div className="mb-3 flex items-center justify-between">
             <p className="text-[13px] font-medium">
-              Step 2 of 4 · Photos of the damage
+              {t.mockup.photoPanel.stepCaption}
             </p>
             <span
               className={cn(
@@ -761,7 +705,7 @@ function PhotoCard() {
             />
           </div>
           <div className="grid grid-cols-3 gap-2">
-            {PHOTO_TILES.map((tile, i) => {
+            {Array.from({ length: TILE_COUNT }).map((_, i) => {
               // Slots past FILL_COUNT stay empty forever. Inside the fill
               // range, slot `filled` is the one currently uploading.
               const state: "empty" | "uploading" | "filled" =
@@ -775,8 +719,8 @@ function PhotoCard() {
               return (
                 <PhotoCell
                   key={i}
-                  label={tile.label}
-                  src={tile.src}
+                  label={t.mockup.photoPanel.tileLabels[i] ?? ""}
+                  src={i < FILL_COUNT ? PHOTO_SRCS[i] : undefined}
                   state={state}
                   tone={i % 3}
                 />
@@ -785,8 +729,11 @@ function PhotoCard() {
           </div>
           <p className="mt-3 text-[10.5px] text-white/40">
             {filled < FILL_COUNT
-              ? `Uploading ${PHOTO_TILES[filled]?.label ?? ""}…`
-              : "All photos attached — ready to submit."}
+              ? t.mockup.photoPanel.uploadingTpl.replace(
+                  "{label}",
+                  t.mockup.photoPanel.tileLabels[filled] ?? "",
+                )
+              : t.mockup.photoPanel.attached}
           </p>
         </div>
       </div>
@@ -854,6 +801,7 @@ function PhotoCell({
 /* ============================================================ */
 
 function ShopCard() {
+  const t = useT();
   return (
     <article
       className="group relative overflow-hidden rounded-3xl text-white ring-1 ring-white/10 transition-shadow duration-300 hover:ring-brand-yellow/30"
@@ -879,15 +827,13 @@ function ShopCard() {
       <div className="relative flex h-full flex-col gap-10 p-8 sm:p-10">
         <div>
           <h3 className="text-xl font-medium">
-            Drivers book your open slots.{" "}
+            {t.features.shop.titleLead}{" "}
             <span className="text-white/65">
-              No phone tag. No negotiation. No double-booking.
+              {t.features.shop.titleAside}
             </span>
           </h3>
           <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/65">
-            Open your drop-off calendar, and drivers claim the slot that works
-            for both of you. Your planning stays on one screen — no SMS, no
-            sticky notes, no callbacks to confirm.
+            {t.features.shop.body}
           </p>
         </div>
 
@@ -954,6 +900,7 @@ const PLAN_BOOKINGS: { index: number; slot: PlanSlot }[] = [
 ];
 
 function ShopPlanningMockup() {
+  const t = useT();
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -977,10 +924,10 @@ function ShopPlanningMockup() {
       <div className="flex items-center justify-between border-b border-white/8 px-4 py-3">
         <div>
           <p className="text-[10px] font-medium uppercase tracking-wider text-white/60">
-            Today · Thursday, Apr 24
+            {t.mockup.shopPlanning.today}
           </p>
           <p className="mt-0.5 text-[13px] font-medium text-white">
-            Planning
+            {t.mockup.shopPlanning.planning}
           </p>
         </div>
         <div className="flex items-center gap-1.5">
@@ -992,7 +939,10 @@ function ShopPlanningMockup() {
             key={`c-${bookedCount}`}
             className="text-[11px] font-medium text-white animate-[pill-in_320ms_ease-out_both]"
           >
-            {bookedCount} / 4 booked
+            {t.mockup.shopPlanning.bookedTpl.replace(
+              "{n}",
+              String(bookedCount),
+            )}
           </span>
         </div>
       </div>
@@ -1008,6 +958,7 @@ function ShopPlanningMockup() {
 }
 
 function PlanRow({ slot }: { slot: PlanSlot }) {
+  const t = useT();
   const isOpen = slot.state === "open";
   const isPickup = slot.state === "booked-pickup";
   return (
@@ -1033,7 +984,11 @@ function PlanRow({ slot }: { slot: PlanSlot }) {
                 : "text-status-submitted"
           )}
         >
-          {isOpen ? "Open" : isPickup ? "Pickup" : "Drop-off"}
+          {isOpen
+            ? t.mockup.shopPlanning.open
+            : isPickup
+              ? t.mockup.shopPlanning.pickup
+              : t.mockup.shopPlanning.dropoff}
         </span>
       </div>
       <div
@@ -1048,7 +1003,7 @@ function PlanRow({ slot }: { slot: PlanSlot }) {
       />
       {isOpen ? (
         <div className="flex-1 text-[10.5px] font-medium text-white/35">
-          Available — drivers can book
+          {t.mockup.shopPlanning.availableHint}
         </div>
       ) : (
         <div
