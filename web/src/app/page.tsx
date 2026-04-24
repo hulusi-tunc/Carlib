@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   Kicker,
@@ -10,6 +12,7 @@ import { HowItWorks } from "@/components/HowItWorks";
 import { GarageSignupForm } from "@/components/GarageSignupForm";
 import { SiteHeader } from "@/components/SiteHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { useT } from "@/lib/i18n";
 import Image from "next/image";
 import type { ReactNode } from "react";
 
@@ -19,6 +22,7 @@ import type { ReactNode } from "react";
 // two-sided, but the primary conversion goal of this page is shop
 // recruitment (cf. US-10 acceptance criteria).
 export default function Home() {
+  const t = useT();
   return (
     <main className="flex-1">
       <SiteHeader />
@@ -27,23 +31,23 @@ export default function Home() {
       <FeatureBento />
       <HowItWorks />
       <BenefitSection
-        kicker="For body shops"
-        title="A cleaner way to fill the bay."
+        kicker={t.shopBenefits.kicker}
+        title={t.shopBenefits.heading}
         items={[
           {
             icon: IconInbox,
-            title: "Inbound claims",
-            body: "Qualified requests with photos and vehicle info land directly on your dashboard.",
+            title: t.shopBenefits.item1.title,
+            body: t.shopBenefits.item1.body,
           },
           {
             icon: IconCalendar,
-            title: "Schedule your week",
-            body: "Open drop-off slots — drivers book themselves. No phone tag, no back-and-forth.",
+            title: t.shopBenefits.item2.title,
+            body: t.shopBenefits.item2.body,
           },
           {
             icon: IconCheck,
-            title: "Status in one tap",
-            body: "Diagnostic, parts, repair, QC, ready — update the job and the driver sees it instantly.",
+            title: t.shopBenefits.item3.title,
+            body: t.shopBenefits.item3.body,
           },
         ]}
       />
@@ -60,24 +64,22 @@ export default function Home() {
 // style of Ramp's feature grid: a centered pill or shield motif sitting in
 // a soft yellow sunburst.
 function ProblemSection() {
+  const t = useT();
   const items = [
     {
       illustration: <PaperFormsIllustration />,
-      title: "Claims stall the driver.",
-      caption:
-        "Paper forms, insurer back-and-forth, endless phone calls. Time slips — and so does the driver's patience.",
+      title: t.problem.card1.title,
+      caption: t.problem.card1.caption,
     },
     {
       illustration: <ForcedChoiceIllustration />,
-      title: "No real choice.",
-      caption:
-        "The insurer picks the shop. No central place to compare certified body shops nearby — availability, specialty, location.",
+      title: t.problem.card2.title,
+      caption: t.problem.card2.caption,
     },
     {
       illustration: <ClockIllustration />,
-      title: "Shops run admin all day.",
-      caption:
-        "Scattered inbound, unqualified calls, paper schedules. Body shops spend the day sorting messages instead of fixing cars.",
+      title: t.problem.card3.title,
+      caption: t.problem.card3.caption,
     },
   ];
 
@@ -85,9 +87,9 @@ function ProblemSection() {
     <section id="problem" className="bg-[#06060a] text-white">
       <div className="mx-auto max-w-6xl px-6 py-20 sm:py-28">
         <div className="flex flex-col gap-3">
-          <Kicker tone="yellow">The problem</Kicker>
+          <Kicker tone="yellow">{t.problem.kicker}</Kicker>
           <h2 className="max-w-2xl font-medium text-3xl leading-[1.15] tracking-tight text-white sm:text-4xl md:text-5xl">
-            The claim journey is broken. For everyone.
+            {t.problem.heading}
           </h2>
         </div>
         <div className="mt-14 grid gap-4 md:grid-cols-3">
@@ -223,6 +225,7 @@ function BenefitSection({
 }
 
 function Footer() {
+  const t = useT();
   // Pure-black footer sits under the near-black signup section. The 1px
   // contrast + a top border keeps them readable as two distinct bands
   // instead of one long dark column.
@@ -242,34 +245,33 @@ function Footer() {
               </span>
             </a>
             <p className="max-w-xs text-[15px] leading-relaxed text-white/55">
-              A cleaner path from accident to pickup. Built for French body
-              shops and the drivers they serve.
+              {t.footer.tagline}
             </p>
           </div>
 
           {/* Link columns */}
           <FooterColumn
-            title="Product"
+            title={t.footer.product}
             links={[
-              { label: "The problem", href: "#problem" },
-              { label: "How it works", href: "#how-it-works" },
-              { label: "For body shops", href: "#shops" },
-              { label: "Join Carlib", href: "#get-started" },
+              { label: t.footer.links.problem, href: "#problem" },
+              { label: t.footer.links.howItWorks, href: "#how-it-works" },
+              { label: t.footer.links.shops, href: "#shops" },
+              { label: t.footer.links.join, href: "#get-started" },
             ]}
           />
           <FooterColumn
-            title="Company"
+            title={t.footer.company}
             links={[
-              { label: "Terms", href: "#" },
-              { label: "Privacy", href: "#" },
-              { label: "Contact", href: "mailto:hello@carlib.fr" },
+              { label: t.footer.links.terms, href: "#" },
+              { label: t.footer.links.privacy, href: "#" },
+              { label: t.footer.links.contact, href: "mailto:hello@carlib.fr" },
             ]}
           />
         </div>
 
         <div className="mt-14 flex flex-col gap-6 border-t border-white/10 pt-8 text-[13px] sm:flex-row sm:items-center sm:justify-between">
           <p className="text-white/45">
-            © {new Date().getFullYear()} Carlib. All rights reserved.
+            © {new Date().getFullYear()} Carlib. {t.footer.rights}
           </p>
           <LanguageSelector />
         </div>

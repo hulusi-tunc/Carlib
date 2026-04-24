@@ -72,7 +72,7 @@ export const translations = {
       photo: {
         titleLead: "Photos before the estimate.",
         titleAside: "Quote from real evidence, not a phone description.",
-        body: "Six guided photos at the scene come attached to every claim. You quote faster, argue less, and the insurer gets the same pack the driver sent you — no re-sending, no missing angles.",
+        body: "Four guided photos at the scene come attached to every claim. You quote faster, argue less, and the insurer gets the same pack the driver sent you — no re-sending, no missing angles.",
       },
       shop: {
         titleLead: "Drivers book your open slots.",
@@ -221,7 +221,7 @@ export const translations = {
         titleLead: "Les photos avant le devis.",
         titleAside:
           "Chiffrez sur des preuves réelles, pas une description au téléphone.",
-        body: "Six photos guidées prises sur place sont attachées à chaque dossier. Vous chiffrez plus vite, discutez moins, et l'assureur reçoit le même dossier — pas de renvoi, pas d'angle manquant.",
+        body: "Quatre photos guidées prises sur place sont attachées à chaque dossier. Vous chiffrez plus vite, discutez moins, et l'assureur reçoit le même dossier — pas de renvoi, pas d'angle manquant.",
       },
       shop: {
         titleLead: "Les conducteurs réservent vos créneaux.",

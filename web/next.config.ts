@@ -18,6 +18,14 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      {
+        // loremflickr serves keyword-searched Flickr photos — used by the
+        // PhotoCard demo to stand in for real car-accident evidence until
+        // licensed shots are available.
+        protocol: "https",
+        hostname: "loremflickr.com",
+        pathname: "/**",
+      },
     ],
   },
 };

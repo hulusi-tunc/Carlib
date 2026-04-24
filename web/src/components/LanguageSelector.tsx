@@ -1,18 +1,16 @@
 "use client";
 
 import { cn } from "@/lib/cn";
-import { useState } from "react";
-
-type Locale = "en" | "fr";
+import { useLocale } from "@/lib/i18n";
 
 /**
- * Segmented EN / FR toggle. Today this is local state only — visual
- * switch, no routing. When i18n lands (next-intl or the App Router's
- * [locale] segment), swap the `setLocale` call for a router push and
- * read the initial value from the URL / cookie.
+ * Segmented EN / FR toggle wired to the app-wide I18nProvider. Click
+ * either pill to flip the entire landing's copy; the choice is
+ * persisted to localStorage and the <html lang> attribute is kept in
+ * sync for assistive tech.
  */
 export function LanguageSelector() {
-  const [locale, setLocale] = useState<Locale>("en");
+  const { locale, setLocale } = useLocale();
 
   return (
     <div

@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n";
 import Image from "next/image";
 import { Fragment, useEffect, useState, type ReactNode } from "react";
 
@@ -12,17 +13,16 @@ import { Fragment, useEffect, useState, type ReactNode } from "react";
  *   3) Shop card: GarageDetail card with hover interactions + pulse.
  */
 export function FeatureBento() {
+  const t = useT();
   return (
     <section id="features" className="bg-[#06060a] text-white">
       <div className="mx-auto max-w-6xl px-6 py-20 sm:py-28">
         <div className="max-w-3xl">
           <h2 className="font-medium text-4xl leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">
-            The cleanest pipeline you&rsquo;ll ever fill.
+            {t.features.heading}
           </h2>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/65">
-            Carlib hands you claims that are already qualified — with photos,
-            vehicle info, and a booked drop-off slot. No phone tag, no cold
-            quotes, no rework on files someone lost.
+            {t.features.intro}
           </p>
         </div>
 
@@ -113,6 +113,7 @@ const STEPS: Step[] = [
 ];
 
 function HeroCard() {
+  const t = useT();
   const [stepIndex, setStepIndex] = useState(0);
 
   useEffect(() => {
@@ -125,15 +126,28 @@ function HeroCard() {
   const step = STEPS[stepIndex];
 
   return (
-    <article className="relative overflow-hidden rounded-3xl bg-[#0f0f17] text-white ring-1 ring-white/10">
-      {/* Soft yellow glow behind the phone */}
+    <article className="relative overflow-hidden rounded-3xl bg-[#0a0a0a] text-white ring-1 ring-white/10">
+      {/* Grainy amber gradient asset (Gradient V59) — replaces the prior
+          CSS yellow-blur. Covers the whole card. A dark scrim on top keeps
+          the heading legible where the gradient peaks in the bottom-right. */}
+      <Image
+        src="/grain-gradient-hero.png"
+        alt=""
+        width={2400}
+        height={1800}
+        aria-hidden
+        unoptimized
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+      />
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-40 top-1/2 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-brand-yellow/20 blur-3xl"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,10,0.55)_0%,rgba(10,10,10,0.15)_45%,rgba(10,10,10,0)_75%)]"
       />
 
-      <div className="relative grid gap-10 px-8 py-12 sm:px-12 sm:py-16 md:grid-cols-[1fr_minmax(300px,460px)] md:gap-6 md:py-20">
-        <div className="flex flex-col justify-between gap-10">
+      <div className="relative grid items-end gap-10 px-8 pt-10 sm:px-12 sm:pt-14 md:grid-cols-[1fr_minmax(320px,520px)] md:gap-6 md:pt-16">
+        {/* LEFT — text block anchored to the bottom-left of the card via
+            the grid's items-end. */}
+        <div className="flex flex-col gap-5 pb-12 sm:pb-16 md:pb-20">
           <h3 className="max-w-md font-medium text-3xl leading-[1.12] tracking-tight sm:text-[40px]">
             See every claim
             <br />
@@ -147,15 +161,150 @@ function HeroCard() {
           </p>
         </div>
 
-        {/* Phone mockup + live pill */}
-        <div className="relative mx-auto w-full max-w-[360px]">
-          <LivePill step={step} />
-          <PhoneFrame>
-            <ShopClaimDetailMockup step={step} stepIndex={stepIndex} />
-          </PhoneFrame>
+        {/* RIGHT — phone mockup with an iOS-style notification stack
+            anchored to its top-right. The stack rotates as the claim
+            advances: a new pill drops in at the front, the previous
+            one slides back (smaller + faded), older ones compress
+            behind until they fall off the stack. */}
+        <div className="relative mx-auto block w-full max-w-[420px] translate-x-[6%] self-end sm:translate-x-[8%]">
+          <Image
+            src="/mockup-shop-claim.png"
+            alt="Carlib shop-owner claim detail screen shown on an iPhone held in a hand"
+            width={548}
+            height={996}
+            priority
+            unoptimized
+            className="relative z-10 block h-auto w-full object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,0.45)]"
+          />
         </div>
       </div>
+
+      {/* Notification stack — pinned to the card's top-left corner.
+          Absolute relative to the article itself so it's anchored to
+          the card boundary, not to the phone column. */}
+      <div className="pointer-events-none absolute left-6 top-6 z-20 w-[320px] max-w-[78%] sm:left-10 sm:top-10">
+        <NotificationStack stepIndex={stepIndex} />
+      </div>
     </article>
+  );
+}
+
+/** iOS-style notification stack anchored to the phone's top-right.
+ *  Renders every STEP so mounted nodes persist across ticks — each one
+ *  simply transitions to a new depth (0 = front, 1 = one behind, 2 =
+ *  two behind) via translate + scale + opacity. A deeper depth tucks
+ *  the pill further behind the one in front, matching iPhone's
+ *  lock-screen notification pile: newest lands in front, previous
+ *  ones slide back + shrink, oldest fade out.
+ *
+ *  Because node identity stays stable across stepIndex, CSS transitions
+ *  smooth the depth change. The "new" pill coming in was previously
+ *  hidden at `depth = MAX` (opacity 0) so its entry reads as a fresh
+ *  arrival, not a jump. */
+const STACK_SIZE = 3;
+const STACK_OFFSET = 10; // px between depth levels
+const STACK_SHRINK = 0.04; // scale decrement per depth
+const PRE_ARRIVAL_Y = -44; // px above the front slot — new pill drops in from here
+
+function NotificationStack({ stepIndex }: { stepIndex: number }) {
+  return (
+    <div className="pointer-events-none w-full">
+      {/* Container with extra top padding so the stacked pills (which
+          sit behind the front one and peek UP) have room to render
+          above the front slot without clipping. */}
+      <div className="relative pt-6">
+        {STEPS.map((step, absIdx) => {
+          // How many ticks ago this step was the current one. 0 = now.
+          const rawDepth =
+            (stepIndex - absIdx + STEPS.length) % STEPS.length;
+          const isVisible = rawDepth < STACK_SIZE;
+          // Specifically the step *one tick from becoming front*. Sits
+          // above the stack with opacity 0 so that its transition into
+          // front slot reads as a drop-down-from-above arrival.
+          const isPreArrival = rawDepth === STEPS.length - 1;
+
+          let translateY: number;
+          let scale: number;
+          let opacity: number;
+          if (isVisible) {
+            // Bottom-anchored pile: newest sits at bottom, older pills
+            // translate UPWARD so their top edges peek out behind the
+            // front pill. Combined with bottom transform-origin they
+            // compress toward the bottom, reinforcing the "shuffled to
+            // the back" feel.
+            translateY = -rawDepth * STACK_OFFSET;
+            scale = 1 - rawDepth * STACK_SHRINK;
+            opacity = 1 - rawDepth * 0.3;
+          } else if (isPreArrival) {
+            // High above the stack — will drop down into the front slot.
+            translateY = PRE_ARRIVAL_Y;
+            scale = 1 - STACK_SHRINK;
+            opacity = 0;
+          } else {
+            // Fallen off — stays at the deepest visible depth's position
+            // but fades to 0. Looks like it sinks back INTO the pile
+            // instead of flying away, which matches what the user asked
+            // for ("shuffling to back").
+            translateY = -(STACK_SIZE - 1) * STACK_OFFSET;
+            scale = 1 - (STACK_SIZE - 1) * STACK_SHRINK;
+            opacity = 0;
+          }
+
+          const isFront = rawDepth === 0;
+          // Status-matched glow stroke on the front pill. Falls back to
+          // a thin white outline + soft drop shadow for the stacked
+          // cards so the depth cues stay clean.
+          const colorVar = `var(--color-status-${step.key})`;
+          const boxShadow = isFront
+            ? `0 0 0 1px color-mix(in srgb, ${colorVar} 55%, transparent), 0 0 24px -6px color-mix(in srgb, ${colorVar} 40%, transparent), 0 12px 28px -12px rgba(0,0,0,0.55)`
+            : `0 0 0 1px rgba(255,255,255,0.08), 0 10px 22px -12px rgba(0,0,0,0.45)`;
+
+          return (
+            <div
+              key={step.key}
+              className="absolute inset-x-0 bottom-0 rounded-2xl bg-[#0a0a0a] px-5 py-3.5 transition-all duration-[620ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+              style={{
+                zIndex: isVisible
+                  ? STACK_SIZE - rawDepth
+                  : 0,
+                transform: `translateY(${translateY}px) scale(${scale})`,
+                opacity,
+                transformOrigin: "bottom center",
+                boxShadow,
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <span
+                  aria-hidden
+                  className={cn(
+                    "h-2 w-2 rounded-full transition-colors duration-500",
+                    step.tint
+                  )}
+                />
+                <span
+                  className={cn(
+                    "text-[14px] font-medium transition-colors duration-500",
+                    step.tintText
+                  )}
+                >
+                  {step.pill}
+                </span>
+              </div>
+              <p className="mt-1 text-[12.5px] leading-snug text-white/85">
+                {step.pillSub}
+              </p>
+            </div>
+          );
+        })}
+        {/* Spacer — gives the relative container natural height so the
+            absolute bottom-anchored pills have a bottom edge to pin to.
+            Matches the front pill's padding + text metrics. */}
+        <div className="invisible rounded-2xl px-5 py-3.5">
+          <p className="text-[14px] font-medium">&nbsp;</p>
+          <p className="mt-1 text-[12.5px] leading-snug">&nbsp;</p>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -484,48 +633,67 @@ function PinMiniIcon() {
 /**
  * Tiles for the "Photos of the damage" upload demo.
  *
- * `src` URLs are seeded `picsum.photos` photos today — they render as real
- * photography so the demo reads as "uploaded claim evidence" rather than a
- * gradient mock. Swap each `src` out for actual licensed accident photos
- * (e.g. an `images.unsplash.com/photo-…` URL, or a local `/accident/*.jpg`
- * in `public/`) once they're available. Remote hosts are already allow-listed
- * in `next.config.ts`, and `next/image` falls through to the gradient
- * underneath if the URL 404s.
+ * The grid has 6 slots. Only the first `FILL_COUNT` (4) auto-fill with
+ * photos; the last two are left as empty placeholders to read as
+ * "optional extra shots" — that was the PRD's original intent.
+ *
+ * `src` URLs hit loremflickr with car-crash / damage tags so the demo
+ * renders actual accident imagery. `?lock=N` pins the result so the same
+ * URL always returns the same photo. Swap for licensed shots once
+ * they're available.
  */
-const PHOTO_TILES: ReadonlyArray<{ label: string; src: string }> = [
-  { label: "Damage · close", src: "https://picsum.photos/seed/carlib-claim-close/400/400" },
-  { label: "Damage · wide", src: "https://picsum.photos/seed/carlib-claim-wide/400/400" },
-  { label: "Vehicle · front", src: "https://picsum.photos/seed/carlib-claim-front/400/400" },
-  { label: "Other car", src: "https://picsum.photos/seed/carlib-claim-other/400/400" },
-  { label: "License plate", src: "https://picsum.photos/seed/carlib-claim-plate/400/400" },
-  { label: "Scene", src: "https://picsum.photos/seed/carlib-claim-scene/400/400" },
+const PHOTO_TILES: ReadonlyArray<{ label: string; src?: string }> = [
+  {
+    label: "Damage · close",
+    src: "https://loremflickr.com/400/400/car,damage,bumper?lock=101",
+  },
+  {
+    label: "Damage · wide",
+    src: "https://loremflickr.com/400/400/car,crash,wreck?lock=102",
+  },
+  {
+    label: "Vehicle · front",
+    src: "https://loremflickr.com/400/400/car,accident,fender?lock=103",
+  },
+  {
+    label: "License plate",
+    src: "https://loremflickr.com/400/400/car,dent,scratch?lock=104",
+  },
+  { label: "Other car" },
+  { label: "Scene" },
 ];
+/** Photos that actually auto-fill (the first N of the grid). */
+const FILL_COUNT = 4;
 
 function PhotoCard() {
   const [filled, setFilled] = useState(0);
   const [loopTick, setLoopTick] = useState(0);
 
+  // Sequential-fill animation on the first 4 slots. Tiles light up one
+  // at a time, hold at full so the "all photos attached" state is
+  // readable, then the whole thing resets and plays again.
   useEffect(() => {
     setFilled(0);
     let count = 0;
     const fillInt = setInterval(() => {
       count += 1;
       setFilled(count);
-      if (count >= 6) {
+      if (count >= FILL_COUNT) {
         clearInterval(fillInt);
-        // Hold at full, then restart the loop.
-        const restart = setTimeout(() => setLoopTick((t) => t + 1), 2200);
-        return () => clearTimeout(restart);
       }
-    }, 520);
-    return () => clearInterval(fillInt);
+    }, 700);
+    const restart = setTimeout(
+      () => setLoopTick((t) => t + 1),
+      700 * FILL_COUNT + 3000,
+    );
+    return () => {
+      clearInterval(fillInt);
+      clearTimeout(restart);
+    };
   }, [loopTick]);
 
   return (
-    <article
-      className="group relative cursor-pointer select-none overflow-hidden rounded-3xl bg-[#0b0f1c] text-white ring-1 ring-white/5 transition-shadow duration-300 hover:ring-brand-yellow/30"
-      onClick={() => setLoopTick((t) => t + 1)}
-    >
+    <article className="relative overflow-hidden rounded-3xl bg-[#0b0f1c] text-white ring-1 ring-white/5">
       {/* Subtle starfield */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(255,255,255,0.18)_0,transparent_60%)]" />
@@ -542,7 +710,7 @@ function PhotoCard() {
         />
       </div>
 
-      <div className="relative flex h-full flex-col gap-10 p-8 sm:p-10">
+      <div className="relative flex h-full flex-col gap-6 p-6 sm:gap-8 sm:p-8">
         <div>
           <h3 className="text-xl font-medium">
             Photos before the estimate.{" "}
@@ -551,7 +719,7 @@ function PhotoCard() {
             </span>
           </h3>
           <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/55">
-            Six guided photos at the scene come attached to every claim. You
+            Four guided photos at the scene come attached to every claim. You
             quote faster, argue less, and the insurer gets the same pack the
             driver sent you — no re-sending, no missing angles.
           </p>
@@ -566,12 +734,12 @@ function PhotoCard() {
             <span
               className={cn(
                 "flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors duration-300",
-                filled >= 6
+                filled >= FILL_COUNT
                   ? "bg-status-completed text-white"
                   : "bg-brand-yellow text-black"
               )}
             >
-              {filled >= 6 && (
+              {filled >= FILL_COUNT && (
                 <svg viewBox="0 0 24 24" className="h-3 w-3">
                   <path
                     d="M5 12l5 5L20 7"
@@ -579,7 +747,7 @@ function PhotoCard() {
                   />
                 </svg>
               )}
-              {filled} / 6
+              {filled} / {FILL_COUNT}
             </span>
           </div>
           {/* Progress bar */}
@@ -587,26 +755,36 @@ function PhotoCard() {
             <div
               className={cn(
                 "h-full rounded-full transition-all duration-500",
-                filled >= 6 ? "bg-status-completed" : "bg-brand-yellow"
+                filled >= FILL_COUNT ? "bg-status-completed" : "bg-brand-yellow"
               )}
-              style={{ width: `${(filled / 6) * 100}%` }}
+              style={{ width: `${(filled / FILL_COUNT) * 100}%` }}
             />
           </div>
           <div className="grid grid-cols-3 gap-2">
-            {PHOTO_TILES.map((tile, i) => (
-              <PhotoCell
-                key={i}
-                label={tile.label}
-                src={tile.src}
-                state={
-                  i < filled ? "filled" : i === filled ? "uploading" : "empty"
-                }
-                tone={i % 3}
-              />
-            ))}
+            {PHOTO_TILES.map((tile, i) => {
+              // Slots past FILL_COUNT stay empty forever. Inside the fill
+              // range, slot `filled` is the one currently uploading.
+              const state: "empty" | "uploading" | "filled" =
+                i >= FILL_COUNT
+                  ? "empty"
+                  : i < filled
+                    ? "filled"
+                    : i === filled
+                      ? "uploading"
+                      : "empty";
+              return (
+                <PhotoCell
+                  key={i}
+                  label={tile.label}
+                  src={tile.src}
+                  state={state}
+                  tone={i % 3}
+                />
+              );
+            })}
           </div>
           <p className="mt-3 text-[10.5px] text-white/40">
-            {filled < 6
+            {filled < FILL_COUNT
               ? `Uploading ${PHOTO_TILES[filled]?.label ?? ""}…`
               : "All photos attached — ready to submit."}
           </p>
@@ -623,7 +801,7 @@ function PhotoCell({
   tone,
 }: {
   label: string;
-  src: string;
+  src?: string;
   state: "empty" | "uploading" | "filled";
   tone: number;
 }) {
@@ -633,7 +811,7 @@ function PhotoCell({
       : tone === 1
         ? "bg-[linear-gradient(135deg,#5a4a3a,#2a1e12)]"
         : "bg-[linear-gradient(135deg,#3a4a5a,#1e252e)]";
-  if (state === "filled") {
+  if (state === "filled" && src) {
     return (
       <div className="relative aspect-square overflow-hidden rounded-lg animate-[photo-pop_380ms_ease-out_both]">
         {/* Gradient base — stays visible if the photo fails to load so the
@@ -680,16 +858,22 @@ function ShopCard() {
     <article
       className="group relative overflow-hidden rounded-3xl text-white ring-1 ring-white/10 transition-shadow duration-300 hover:ring-brand-yellow/30"
     >
-      {/* Warm brand gradient — deep charcoal at the top so the heading
-          and body stay legible, warming through amber into a rich
-          Carlib-yellow at the bottom where the planning card lives. */}
-      <div
+      {/* Raw gradient asset — covers the card. `unoptimized` bypasses
+          Next/Image's per-hash cache so the file is always served fresh
+          after a swap. A 10% black layer on top tones the whole thing
+          down a notch. */}
+      <Image
+        src="/grain-gradient-yellow.png"
+        alt=""
+        width={678}
+        height={1200}
         aria-hidden
-        className="absolute inset-0 bg-[linear-gradient(180deg,#131012_0%,#241a0e_28%,#4a3212_55%,#a06d1a_82%,#e5a51f_100%)]"
+        unoptimized
+        className="absolute inset-0 h-full w-full object-cover"
       />
       <div
         aria-hidden
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.35)_100%)]"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0.1)_50%,rgba(0,0,0,0.1)_100%)]"
       />
 
       <div className="relative flex h-full flex-col gap-10 p-8 sm:p-10">

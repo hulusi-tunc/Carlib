@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/cn";
 import { Kicker, PillButton } from "@/components/primitives";
+import { useLocale, useT } from "@/lib/i18n";
 import Image from "next/image";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
@@ -128,6 +129,19 @@ const statusStyles: Record<
  * of notification cards fades/slides in around the phone.
  */
 export function PerspectiveHero() {
+  const t = useT();
+  const { locale } = useLocale();
+  // Per-locale mockup assets. The phone screens shown in the hero are
+  // real UI captures, so they have to swap along with the rest of the
+  // copy when the visitor flips FR / EN.
+  //
+  // `?v=N` is a cache-bust knob. Bump the version whenever you replace
+  // the underlying PNG so the browser + Next.js image optimizer don't
+  // keep serving the previous file (both cache aggressively by URL).
+  const driverMockup =
+    locale === "fr" ? "/mockup-driver-fr.png?v=3" : "/mockup-driver.png";
+  const shopMockup =
+    locale === "fr" ? "/mockup-shop-fr.png?v=3" : "/mockup-shop.png";
   const [view, setView] = useState<Perspective>("driver");
   // Hero-scroll progress (0 when top in view, 1 after a short scroll). Used
   // to trigger the perimeter-cards reveal as soon as the user starts moving.
@@ -193,30 +207,30 @@ export function PerspectiveHero() {
   const copy =
     view === "driver"
       ? {
-          kicker: "For drivers",
+          kicker: t.hero.driver.kicker,
           headline: (
             <>
-              From the accident
+              {t.hero.driver.headlineL1}
               <br />
-              to keys in your hand.
+              {t.hero.driver.headlineL2}
             </>
           ),
-          body: "Carlib turns a body-shop claim into a five-step flow you can follow from your phone. Declare, match, accept, repair, pick up.",
-          primaryCta: { label: "Get started", href: "#get-started" },
-          secondaryCta: { label: "See how it works", href: "#features" },
+          body: t.hero.driver.body,
+          primaryCta: { label: t.hero.driver.primaryCta, href: "#get-started" },
+          secondaryCta: { label: t.hero.driver.secondaryCta, href: "#features" },
         }
       : {
-          kicker: "For body shops",
+          kicker: t.hero.shop.kicker,
           headline: (
             <>
-              Fill the bay.
+              {t.hero.shop.headlineL1}
               <br />
-              Skip the phone tag.
+              {t.hero.shop.headlineL2}
             </>
           ),
-          body: "Qualified claims with photos and vehicle info land on your dashboard. Drivers book their own drop-off slots. Status updates in one tap.",
-          primaryCta: { label: "Join as a body shop", href: "#get-started" },
-          secondaryCta: { label: "See how it works", href: "#features" },
+          body: t.hero.shop.body,
+          primaryCta: { label: t.hero.shop.primaryCta, href: "#get-started" },
+          secondaryCta: { label: t.hero.shop.secondaryCta, href: "#features" },
         };
 
   const cards = view === "driver" ? driverCards : shopCards;
@@ -235,12 +249,14 @@ export function PerspectiveHero() {
         isShop ? "bg-[#06060a] text-white" : "bg-screen text-ink"
       )}
     >
-      {/* Text block — normal flow, scrolls away as user reads. */}
-      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 pt-8 text-center sm:pt-12">
-        <Kicker className="mb-6">{copy.kicker}</Kicker>
+      {/* Text block — normal flow, scrolls away as user reads.
+          Mobile tuning: shorter top padding, smaller headline/body so the
+          copy fits a phone screen without breaking the layout. */}
+      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-5 pt-6 text-center sm:px-6 sm:pt-10 md:pt-12">
+        <Kicker className="mb-4 sm:mb-6">{copy.kicker}</Kicker>
         <h1
           className={cn(
-            "font-medium text-5xl leading-[1.02] tracking-tight sm:text-6xl md:text-7xl lg:text-[88px] transition-colors duration-100 delay-[450ms]",
+            "font-medium text-[34px] leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-[88px] xl:leading-[1.02] transition-colors duration-100 delay-[450ms]",
             isShop ? "text-white" : "text-ink"
           )}
         >
@@ -248,18 +264,18 @@ export function PerspectiveHero() {
         </h1>
         <p
           className={cn(
-            "mt-7 max-w-2xl text-lg leading-relaxed sm:text-xl transition-colors duration-100 delay-[450ms]",
+            "mt-5 max-w-2xl text-[15px] leading-relaxed sm:mt-7 sm:text-lg md:text-xl transition-colors duration-100 delay-[450ms]",
             isShop ? "text-white/70" : "text-ink-secondary"
           )}
         >
           {copy.body}
         </p>
-        <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row">
+        <div className="mt-7 flex w-full flex-col items-stretch gap-3 sm:mt-9 sm:w-auto sm:flex-row sm:items-center">
           <PillButton
             href={copy.primaryCta.href}
             variant="primary"
             className={cn(
-              "transition-colors duration-100 delay-[450ms]",
+              "w-full sm:w-auto transition-colors duration-100 delay-[450ms]",
               isShop && "bg-white text-ink hover:bg-white/90"
             )}
           >
@@ -269,7 +285,7 @@ export function PerspectiveHero() {
             href={copy.secondaryCta.href}
             variant="secondary"
             className={cn(
-              "transition-colors duration-100 delay-[450ms]",
+              "w-full sm:w-auto transition-colors duration-100 delay-[450ms]",
               isShop && "bg-white/10 text-white hover:bg-white/15"
             )}
           >
@@ -279,8 +295,11 @@ export function PerspectiveHero() {
       </div>
 
       {/* Pinned phone + perimeter cards + toggle — all in one sticky wrapper
-          so they pin and release as a single stage. */}
-      <div className="sticky top-0 z-10 -mt-[40vh] flex h-screen items-end justify-center pb-0">
+          so they pin and release as a single stage. The sticky wrapper is
+          pulled up above the text block; the pull is larger on mobile
+          because the text block is shorter there, so without the extra
+          lift the phone sits way below the CTAs and leaves dead space. */}
+      <div className="sticky top-0 z-10 -mt-[68vh] flex h-screen items-end justify-center pb-0 sm:-mt-[52vh] md:-mt-[40vh]">
         <div className="relative flex h-full w-full items-end justify-center">
           {/* Shop dark wash — solid sheet that rises from below on
               trigger. Asymmetric timing: forward (rise into shop) is a
@@ -339,10 +358,13 @@ export function PerspectiveHero() {
               mockup is a real screen capture from the Carlib iOS app shown
               in a hand, so the toggle feels like the user is handing the
               phone to a different persona rather than hue-rotating one
-              image. */}
-          <div className="relative z-10 h-auto max-h-[92vh] w-full max-w-[78rem] translate-x-[20px] translate-y-[4%] drop-shadow-[0_40px_80px_rgba(10,10,10,0.18)]">
+              image. Responsive: on mobile the phone is centered and smaller
+              so the text above still has room; desktop keeps the larger
+              off-center placement. */}
+          <div className="relative z-10 h-auto max-h-[62vh] w-full max-w-[34rem] translate-y-[8%] px-4 drop-shadow-[0_40px_80px_rgba(10,10,10,0.18)] sm:max-h-[76vh] sm:max-w-[46rem] sm:translate-y-[6%] sm:px-0 md:max-h-[84vh] md:max-w-[60rem] lg:max-h-[92vh] lg:max-w-[78rem] lg:translate-x-[20px] lg:translate-y-[4%]">
             <Image
-              src="/mockup-driver.png"
+              key={driverMockup}
+              src={driverMockup}
               alt="A hand holding a phone showing the Carlib driver home screen"
               width={1500}
               height={1125}
@@ -354,7 +376,8 @@ export function PerspectiveHero() {
               )}
             />
             <Image
-              src="/mockup-shop.png"
+              key={shopMockup}
+              src={shopMockup}
               alt="A hand holding a phone showing the Carlib body-shop dashboard"
               width={1500}
               height={1125}
@@ -373,7 +396,7 @@ export function PerspectiveHero() {
               Manual clicks smoothly scroll the page to the matching half
               of the hero so the dark-wash parallax plays in sync with the
               state change. */}
-          <div className="pointer-events-none absolute left-1/2 bottom-10 z-20 -translate-x-1/2 px-4 sm:bottom-14">
+          <div className="pointer-events-none absolute left-1/2 bottom-6 z-20 -translate-x-1/2 px-4 sm:bottom-10 md:bottom-14">
             <PerspectiveToggle
               view={view}
               onChange={(next) => {
@@ -1100,6 +1123,7 @@ function PerspectiveToggle({
   view: Perspective;
   onChange: (v: Perspective) => void;
 }) {
+  const t = useT();
   return (
     <div
       role="radiogroup"
@@ -1117,7 +1141,7 @@ function PerspectiveToggle({
         )}
       />
       <ToggleButton
-        label="Driver view"
+        label={t.hero.toggle.driver}
         selected={view === "driver"}
         onClick={() => onChange("driver")}
         icon={
@@ -1130,7 +1154,7 @@ function PerspectiveToggle({
         }
       />
       <ToggleButton
-        label="Shop owner"
+        label={t.hero.toggle.shop}
         selected={view === "shop"}
         onClick={() => onChange("shop")}
         icon={
@@ -1166,7 +1190,9 @@ function ToggleButton({
       className={cn(
         // Transparent button — the yellow pill lives on the parent and
         // slides behind the selected option. Only text color changes here.
-        "relative z-10 inline-flex h-10 items-center justify-center gap-2 rounded-full px-4 text-sm font-medium transition-colors duration-300 ease-out",
+        // Mobile-first: compact h-9 / px-3 so two pills fit in portrait; grows
+        // on sm+ back to the roomier desktop spec.
+        "relative z-10 inline-flex h-9 items-center justify-center gap-1.5 rounded-full px-3 text-[13px] font-medium transition-colors duration-300 ease-out sm:h-10 sm:gap-2 sm:px-4 sm:text-sm",
         selected ? "text-black" : "text-ink-secondary hover:text-ink"
       )}
     >

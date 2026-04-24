@@ -158,7 +158,7 @@ export function HowItWorks() {
               its `top` is relative to the list's own coordinate system. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 hidden w-[3px] -translate-x-1/2 rounded-full bg-brand-yellow-dark transition-[top,height] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:block"
+            className="pointer-events-none absolute left-1/2 hidden w-[3px] -translate-x-1/2 rounded-full bg-brand-yellow shadow-[0_0_14px_rgba(245,183,0,0.5)] transition-[top,height] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:block"
             style={{
               top: `${indicator.top}px`,
               height: `${indicator.height}px`,

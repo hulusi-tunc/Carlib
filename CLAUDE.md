@@ -140,6 +140,16 @@ The product design lives in a Figma file that the Claude Figma MCP server edits.
 - **Other libraries subscribed:** Apple's `iOS and iPadOS 26` UI kit — prefer real Apple components (Status bar - iPhone, Toolbar - Top - Sheet, Toggle - Switch, Tab Bar - iPhone) for iOS chrome instead of drawing primitives.
 - **Frame naming convention:** `NN — Role · Screen` (e.g., `24 — Declaration · Confirmation`, `33 — Garage · Dashboard`). Keep the numbering stable so the Driver flow reads top-to-bottom in Section 1.
 
+## Marketing website (`web/`)
+
+Separate Next.js 16 marketing site for Carlib. Its own toolchain, lives under `web/` and has a nested `CLAUDE.md` → `AGENTS.md` warning that **Next.js 16 has breaking changes**; read `node_modules/next/dist/docs/` before guessing APIs.
+
+- **Stack:** Next.js 16.2 (Turbopack), React 19.2, Tailwind v4 (`@tailwindcss/postcss`), TypeScript 5
+- **Scripts (run from `web/`):** `npm run dev` (port 3000 by default — note a long-running dev server is often already up; check `lsof -i :3000` before starting a second one), `npm run build`, `npm run start`, `npm run lint`
+- **Structure:** `src/app/` (App Router: `page.tsx` is the marketing home, `layout.tsx` wires fonts), `src/components/` (`PerspectiveHero.tsx` is the hero with Driver/Shop toggle + scroll-linked iOS notification cards; `FeatureBento.tsx`, `primitives.tsx` for shared `Card`/`Kicker`/`PillButton`/`SectionHeader`), `src/lib/`
+- **Design parity:** The web components must imitate the real iOS app (tile rows, typography scale, brand yellow accents). Reference `Carlib/Views/Driver/DriverProfileView.swift` and `Carlib/DesignSystem/` when styling — tile rows are `rounded-[14px]` with ~44pt icon discs in `brand-yellow-soft`, 15pt medium title, 13pt secondary subtitle.
+- **Client components:** Anything using `useEffect`/`useState`/scroll needs `"use client"` at top of the file. `PerspectiveHero` is a client component; the page shell is server.
+
 ## Docs
 
 - `docs/PRD_Carlib_v0.1_4.pdf` — Original Digital Unicorn PRD (March 2026)
