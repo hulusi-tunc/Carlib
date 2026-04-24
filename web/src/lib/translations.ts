@@ -276,8 +276,8 @@ export const translations = {
     hero: {
       driver: {
         kicker: "Pour les conducteurs",
-        headlineL1: "De l'accrochage",
-        headlineL2: "aux clés en main.",
+        headlineL1: "Avec Carlib, votre réparation",
+        headlineL2: "est entre de bonnes mains.",
         body: "Carlib guide votre sinistre en cinq étapes depuis votre téléphone : déclaration, mise en relation, prise en charge, réparation, récupération. Zéro ressaisie, zéro appel à rallonge.",
         primaryCta: "Commencer",
         secondaryCta: "Voir comment ça marche",

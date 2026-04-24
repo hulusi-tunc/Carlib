@@ -15,16 +15,17 @@ const aeonik = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Carlib — Five steps from the accident to the keys back in your hand",
+  title:
+    "Carlib — De l'accrochage aux clés en main, en cinq étapes",
   description:
-    "Carlib turns a body-shop claim into a five-step flow you can follow from your phone. Declare, match, accept, repair, pick up.",
+    "Carlib transforme la prise en charge d'un sinistre en un parcours en cinq étapes depuis votre téléphone : déclaration, mise en relation, acceptation, réparation, récupération.",
   metadataBase: new URL("https://carlib.fr"),
   openGraph: {
     title: "Carlib",
     description:
-      "Carlib turns a body-shop claim into a five-step flow you can follow from your phone.",
+      "Carlib transforme la prise en charge d'un sinistre en un parcours en cinq étapes depuis votre téléphone.",
     type: "website",
-    locale: "en_US",
+    locale: "fr_FR",
   },
 };
 
@@ -32,7 +33,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${aeonik.variable} h-full antialiased`}>
+    <html lang="fr" className={`${aeonik.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-screen text-ink">
         <I18nProvider>{children}</I18nProvider>
       </body>

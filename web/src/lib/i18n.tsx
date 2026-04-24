@@ -26,11 +26,14 @@ const STORAGE_KEY = "carlib-locale";
  * <html lang> attribute so assistive tech reads the right language.
  */
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("en");
+  // French is the default — Carlib targets the French body-shop market
+  // and the PRD (§5.1) mandates a fully French experience. English is
+  // a secondary locale for internal review + non-FR visitors.
+  const [locale, setLocaleState] = useState<Locale>("fr");
 
-  // Read persisted choice on mount. We start with "en" on the server so
-  // SSR output is deterministic; once on the client we sync to whatever
-  // the visitor last picked.
+  // Read persisted choice on mount. We start with the default on the
+  // server so SSR output is deterministic; once on the client we sync
+  // to whatever the visitor last picked.
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem(STORAGE_KEY);

@@ -53,34 +53,48 @@ export function SiteHeader() {
       <div
         className={cn(
           "relative mx-auto flex items-center justify-between",
-          "will-change-[max-width,height,padding,border-radius,background-color,box-shadow,backdrop-filter,margin-top,transform]",
-          "motion-safe:transition-[max-width,height,padding,border-radius,background-color,box-shadow,backdrop-filter,margin-top,transform]",
+          // Margin-top is intentionally NOT in this transition list. The
+          // resting state has no top margin (header flush to page top);
+          // floating has `sm:mt-20`. If margin animated over 520ms the pill
+          // would slide UPWARD into the viewport edge mid-morph — which is
+          // exactly the "touches the top" bug we kept chasing. Keeping the
+          // margin change instant lets the pill snap to its float offset
+          // the moment the threshold trips, while the shape/color/etc.
+          // still ease into the pill form smoothly.
+          "will-change-[max-width,height,padding,border-radius,background-color,box-shadow,backdrop-filter,transform]",
+          "motion-safe:transition-[max-width,height,padding,border-radius,background-color,box-shadow,backdrop-filter,transform]",
           "motion-safe:duration-[520ms]",
           "motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
+          // Arbitrary-value margins (`mt-[Npx]`) always land in the
+          // generated CSS — no chance of a Tailwind JIT miss stranding
+          // the pill at the top. Bumped the desktop gap to 120px so it
+          // reads as unmistakably floating even on wide / tall displays.
           floating
-            ? "mt-6 sm:mt-20 h-11 sm:h-12 max-w-[min(880px,calc(100%-1.5rem))] sm:max-w-[min(880px,calc(100%-2rem))] rounded-full pl-3.5 pr-1.5 sm:pl-4 bg-white/85 backdrop-blur-md shadow-[0_18px_40px_-20px_rgba(15,15,15,0.35)] ring-1 ring-border/70 scale-100"
+            ? "mt-[40px] sm:mt-[150px] h-11 sm:h-12 max-w-[min(880px,calc(100%-1.5rem))] sm:max-w-[min(880px,calc(100%-2rem))] rounded-full pl-3.5 pr-1.5 sm:pl-4 bg-white/85 backdrop-blur-md shadow-[0_18px_40px_-20px_rgba(15,15,15,0.35)] ring-1 ring-border/70 scale-100"
             : "mt-3 sm:mt-0 h-16 sm:h-20 max-w-6xl rounded-none px-5 sm:px-6 bg-transparent backdrop-blur-0 shadow-none ring-0 ring-transparent scale-[1.005]"
         )}
       >
         <Logo floating={floating} />
-        {/* Desktop-only absolute-centered nav. Hidden <sm — the hamburger
-            below plus the expand-down panel covers the mobile case. */}
+        {/* Desktop-only absolute-centered nav. Hidden <sm — on mobile
+            the hamburger + expand-down panel take its place. */}
         <Nav floating={floating} className="absolute left-1/2 -translate-x-1/2" />
-        {/* Desktop CTA. Hidden on mobile to keep the pill uncluttered; the
-            CTA reappears as the prominent button inside the drop-down. */}
-        <MorphingCta
-          floating={floating}
-          full={t.nav.ctaFull}
-          compact={t.nav.ctaCompact}
-          className="hidden sm:inline-flex"
-        />
-        {/* Mobile hamburger — toggles the expand-down panel. The icon
-            morphs to an X when the menu is open. */}
-        <HamburgerButton
-          floating={floating}
-          open={menuOpen}
-          onClick={() => setMenuOpen((v) => !v)}
-        />
+        {/* Right-side group. Wrapping CTA + hamburger in one flex child
+            means the pill's `justify-between` only has TWO flex children
+            (Logo + group) and places them at the left/right edges — the
+            CTA no longer gets pushed to the middle on mobile, where it
+            used to be the only non-Logo flex sibling before the group. */}
+        <div className="flex items-center gap-2">
+          <MorphingCta
+            floating={floating}
+            full={t.nav.ctaFull}
+            compact={t.nav.ctaCompact}
+          />
+          <HamburgerButton
+            floating={floating}
+            open={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+          />
+        </div>
       </div>
 
       {/* Expand-down panel — appears directly below the pill and matches
@@ -188,7 +202,11 @@ function MorphingCta({
         className
       )}
     >
-      {floating ? compact : full}
+      {/* Mobile always shows the compact label so the button fits next
+          to the hamburger inside the pill. Desktop keeps the morphing
+          behaviour — full label at rest, compact when floating. */}
+      <span className="sm:hidden">{compact}</span>
+      <span className="hidden sm:inline">{floating ? compact : full}</span>
     </Link>
   );
 }
