@@ -252,7 +252,7 @@ export function PerspectiveHero() {
       {/* Text block — normal flow, scrolls away as user reads.
           Mobile tuning: shorter top padding, smaller headline/body so the
           copy fits a phone screen without breaking the layout. */}
-      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-5 pt-6 text-center sm:px-6 sm:pt-10 md:pt-12">
+      <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-5 pt-6 text-center sm:px-6 sm:pt-10 md:pt-12">
         <Kicker className="mb-4 sm:mb-6">{copy.kicker}</Kicker>
         <h1
           className={cn(
