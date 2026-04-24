@@ -2,56 +2,19 @@
 
 import { cn } from "@/lib/cn";
 import { Kicker } from "@/components/primitives";
+import { useT } from "@/lib/i18n";
 import { useEffect, useRef, useState } from "react";
 
-type Step = {
-  n: string;
-  title: string;
-  body: string;
-  badge: string;
-};
-
-// Five-step driver flow from the PRD + the iOS app's ClaimStatus pipeline
-// (submitted → matched → accepted → repairing → completed). Badge tones
-// reuse the status colors defined in Carlib/DesignSystem so the web-to-app
-// visual language stays consistent.
-const steps: Step[] = [
-  {
-    n: "01",
-    title: "Declare the accident.",
-    body:
-      "A guided four-step flow captures accident type, vehicle info, and damage photos. A couple of minutes from the side of the road — one tap to submit.",
-    badge: "bg-status-submitted/15 text-status-submitted",
-  },
-  {
-    n: "02",
-    title: "Match with a shop.",
-    body:
-      "Browse vetted carrossiers on the map. Filter by specialty and slot, then tap to send them your file — photos and vehicle info already attached.",
-    badge: "bg-status-matched/15 text-status-matched",
-  },
-  {
-    n: "03",
-    title: "Book a drop-off.",
-    body:
-      "Pick a slot that works on the shop's calendar. Instant confirmation, a reminder the day before, and directions to the carrosserie.",
-    badge: "bg-status-accepted/15 text-status-accepted",
-  },
-  {
-    n: "04",
-    title: "Track the repair.",
-    body:
-      "Diagnostic, parts, repair, quality check — every update the shop makes lands as a push notification, with the photos they added along the way.",
-    badge: "bg-status-repairing/15 text-status-repairing",
-  },
-  {
-    n: "05",
-    title: "Pick up the keys.",
-    body:
-      "Ready-for-pickup push lands the moment QC signs off. Swing by the shop, sign the handover, drive home.",
-    badge: "bg-status-completed/15 text-status-completed",
-  },
-];
+// Badge tones reuse the status colors defined in Carlib/DesignSystem so
+// the web-to-app visual language stays consistent. Titles + bodies come
+// from the i18n dictionary so the whole timeline flips FR ↔ EN.
+const BADGES = [
+  "bg-status-submitted/15 text-status-submitted",
+  "bg-status-matched/15 text-status-matched",
+  "bg-status-accepted/15 text-status-accepted",
+  "bg-status-repairing/15 text-status-repairing",
+  "bg-status-completed/15 text-status-completed",
+] as const;
 
 /**
  * Scroll-linked "How it works" timeline. Steps alternate left/right around a
@@ -61,6 +24,14 @@ const steps: Step[] = [
  * client sent, tuned to Carlib's type + status palette.
  */
 export function HowItWorks() {
+  const t = useT();
+  const steps = [
+    { n: "01", ...t.howItWorks.step1, badge: BADGES[0] },
+    { n: "02", ...t.howItWorks.step2, badge: BADGES[1] },
+    { n: "03", ...t.howItWorks.step3, badge: BADGES[2] },
+    { n: "04", ...t.howItWorks.step4, badge: BADGES[3] },
+    { n: "05", ...t.howItWorks.step5, badge: BADGES[4] },
+  ];
   const listRef = useRef<HTMLOListElement>(null);
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
   const [active, setActive] = useState(0);
@@ -128,15 +99,14 @@ export function HowItWorks() {
     >
       {/* Intro */}
       <div className="mx-auto max-w-3xl px-6 text-center">
-        <Kicker className="mb-5 justify-center">How it works</Kicker>
+        <Kicker className="mb-5 justify-center">{t.howItWorks.kicker}</Kicker>
         <h2 className="font-medium text-4xl leading-[1.08] tracking-tight text-ink sm:text-5xl md:text-[56px]">
-          Five steps from the bump
+          {t.howItWorks.headingL1}
           <br />
-          to the keys back in your hand.
+          {t.howItWorks.headingL2}
         </h2>
         <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ink-secondary">
-          Every stage of a carrosserie claim, guided from your phone — no
-          forms, no phone tag, no chasing an update.
+          {t.howItWorks.intro}
         </p>
       </div>
 
@@ -191,7 +161,7 @@ export function HowItWorks() {
                       step.badge
                     )}
                   >
-                    Step {step.n}
+                    {t.howItWorks.stepPrefix} {step.n}
                   </span>
                   <h3 className="mt-5 font-medium text-3xl leading-[1.12] tracking-tight text-ink sm:text-4xl md:text-[40px]">
                     {step.title}

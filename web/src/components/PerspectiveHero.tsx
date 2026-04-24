@@ -233,7 +233,7 @@ export function PerspectiveHero() {
           secondaryCta: { label: t.hero.shop.secondaryCta, href: "#features" },
         };
 
-  const cards = view === "driver" ? driverCards : shopCards;
+  const cards = view === "driver" ? buildDriverCards(t) : buildShopCards(t);
 
   const isShop = view === "shop";
 
@@ -298,8 +298,21 @@ export function PerspectiveHero() {
           so they pin and release as a single stage. The sticky wrapper is
           pulled up above the text block; the pull is larger on mobile
           because the text block is shorter there, so without the extra
-          lift the phone sits way below the CTAs and leaves dead space. */}
-      <div className="sticky top-0 z-10 -mt-[68vh] flex h-screen items-end justify-center pb-0 sm:-mt-[52vh] md:-mt-[40vh]">
+          lift the phone sits way below the CTAs and leaves dead space.
+          Mobile tuning note: the phone image is `scale-[1.45]` with
+          `origin-bottom` so its *visible* top sits well above its box; a
+          -68vh pull therefore yanked the crown of the phone into the
+          secondary CTA. -54vh keeps the phone high enough to fill the
+          viewport on scroll while leaving breathing room above it.
+          Desktop invariant: at page-top we want the phone to *peek* from
+          below, not invade the headline. Because the sticky wrapper is
+          `h-screen` and the phone is bottom-aligned inside it, the rule
+          of thumb is `pull + phone_max_h ≤ 100vh`. We hold pull at a flat
+          -8vh on ≥md so the phone can grow as wide/tall as each breakpoint
+          allows — `2xl:max-h-[92vh]` still pairs to 100vh exactly. This
+          trades a hair of vertical breathing room for a phone that
+          actually dominates the hero on 15"+ displays. */}
+      <div className="sticky top-0 z-10 -mt-[54vh] flex h-screen items-end justify-center pb-0 sm:-mt-[52vh] md:-mt-[8vh] lg:-mt-[8vh] xl:-mt-[8vh] 2xl:-mt-[8vh]">
         <div className="relative flex h-full w-full items-end justify-center">
           {/* Shop dark wash — solid sheet that rises from below on
               trigger. Asymmetric timing: forward (rise into shop) is a
@@ -361,7 +374,15 @@ export function PerspectiveHero() {
               image. Responsive: on mobile the phone is centered and smaller
               so the text above still has room; desktop keeps the larger
               off-center placement. */}
-          <div className="relative z-10 h-auto max-h-[62vh] w-full max-w-[34rem] translate-y-[8%] px-4 drop-shadow-[0_40px_80px_rgba(10,10,10,0.18)] sm:max-h-[76vh] sm:max-w-[46rem] sm:translate-y-[6%] sm:px-0 md:max-h-[84vh] md:max-w-[60rem] lg:max-h-[92vh] lg:max-w-[78rem] lg:translate-x-[20px] lg:translate-y-[4%]">
+          {/* Responsive sizing note: paired with the pulls above so that
+              `pull + max-h` stays under 100vh at every breakpoint. Below
+              that threshold the bottom-aligned phone leaves a clear gap
+              above itself when the hero is at page-top, so the headline
+              and CTAs never get invaded by the mockup. Widths ramp up more
+              slowly now too — a 1581px viewport with `max-w-[78rem]` made
+              the phone cover ~79% of the column, which is the main reason
+              short-viewport desktops looked broken. */}
+          <div className="relative z-10 h-auto max-h-[80vh] w-full max-w-[52rem] origin-bottom scale-[1.45] drop-shadow-[0_40px_80px_rgba(10,10,10,0.18)] sm:max-h-[80vh] sm:max-w-[52rem] sm:translate-y-[6%] sm:scale-100 md:max-h-[82vh] md:max-w-[52rem] lg:max-h-[86vh] lg:max-w-[64rem] lg:translate-x-[20px] lg:translate-y-[4%] xl:max-h-[88vh] xl:max-w-[76rem] 2xl:max-h-[92vh] 2xl:max-w-[96rem]">
             <Image
               key={driverMockup}
               src={driverMockup}
@@ -396,7 +417,7 @@ export function PerspectiveHero() {
               Manual clicks smoothly scroll the page to the matching half
               of the hero so the dark-wash parallax plays in sync with the
               state change. */}
-          <div className="pointer-events-none absolute left-1/2 bottom-6 z-20 -translate-x-1/2 px-4 sm:bottom-10 md:bottom-14">
+          <div className="pointer-events-none absolute left-0 right-0 bottom-6 z-20 flex justify-center px-5 sm:bottom-10 md:bottom-14">
             <PerspectiveToggle
               view={view}
               onChange={(next) => {
@@ -445,10 +466,15 @@ function NotifStack({
   revealed: boolean;
   perspective: Perspective;
 }) {
+  // Stack positions — tuned close enough to the phone that they read
+  // as its satellites rather than edge decorations. Percentages are
+  // measured from the viewport edge to the stack's outer edge; a tiny
+  // outward nudge on 2xl compensates for the much wider 96rem mockup
+  // so the hands don't fully swallow them.
   const positionClass =
     side === "left"
-      ? "left-[24%] xl:left-[27%]"
-      : "right-[24%] xl:right-[27%]";
+      ? "left-[22%] xl:left-[20%] 2xl:left-[18%]"
+      : "right-[22%] xl:right-[20%] 2xl:right-[18%]";
   // Per-index jitter — pseudo-random x-offsets for a hand-arranged look.
   // Y jitter kept very small so adjacent cards don't crunch into each
   // other; real breathing space comes from the stack `gap`.
@@ -873,142 +899,150 @@ function WidgetSlotPicker(card: Extract<HeroWidget, { kind: "slotPicker" }>) {
 // gallery. Driver side leans on claim/booking primitives; shop side
 // swaps in the dashboard/request/schedule/payment primitives.
 
-const driverCards: { left: HeroWidget[]; right: HeroWidget[] } = {
-  left: [
-    {
-      kind: "claimBig",
-      status: "repairing",
-      statusLabel: "In repair",
-      brand: "Peugeot",
-      model: "308",
-      damage: "Parking damage",
-      photos: 8,
-      timestamp: "2m",
-    },
-    {
-      kind: "statusTimeline",
-      steps: ["Declare", "Match", "Accept", "Repair", "Ready"],
-      currentIndex: 3,
-    },
-    {
-      kind: "notif",
-      status: "matched",
-      icon: <IconSearch />,
-      title: "3 shops interested",
-      subtitle: "Tap to compare slots",
-      timestamp: "8m",
-    },
-    {
-      kind: "slotPicker",
-      day: "Thu 10 Apr",
-      slots: [
-        { time: "09:00" },
-        { time: "10:00", selected: true },
-        { time: "11:30" },
-      ],
-    },
-  ],
-  right: [
-    {
-      kind: "garageCard",
-      name: "Dupont Auto Body",
-      address: "12 Rue du Faubourg",
-      distance: "2.4 km",
-      phone: "+33 1 23 45 67 89",
-    },
-    {
-      kind: "kpiBlock",
-      value: "2d",
-      label: "ETA · in repair",
-      accent: "progress",
-      icon: <IconWrench />,
-    },
-    {
-      kind: "claimBig",
-      status: "completed",
-      statusLabel: "Completed",
-      brand: "Renault",
-      model: "Clio V",
-      damage: "Bumper replacement",
-      photos: 12,
-      timestamp: "2d",
-    },
-    {
-      kind: "notif",
-      status: "completed",
-      icon: <IconCheck />,
-      title: "Ready for pickup",
-      subtitle: "Today after 4:00pm",
-      timestamp: "now",
-    },
-  ],
-};
+type Dictionary = import("@/lib/translations").Dictionary;
 
-const shopCards: { left: HeroWidget[]; right: HeroWidget[] } = {
-  left: [
-    {
-      kind: "requestCard",
-      brand: "Peugeot",
-      model: "308",
-      damage: "Parking damage",
-      distance: "2.3 km",
-      photos: 8,
-    },
-    {
-      kind: "statusTimeline",
-      steps: ["Accepted", "Drop-off", "Diagnose", "Repair", "Ready"],
-      currentIndex: 2,
-    },
-    {
-      kind: "scheduleRow",
-      time: "09:00",
-      mode: "dropoff",
-      customer: "Sophie Durand",
-      vehicle: "Peugeot 308",
-    },
-    {
-      kind: "notif",
-      status: "progress",
-      icon: <IconCheck />,
-      title: "Keys received",
-      subtitle: "Driver marked drop-off",
-      timestamp: "2h",
-    },
-  ],
-  right: [
-    {
-      kind: "kpiBlock",
-      value: "4",
-      label: "New · this week",
-      accent: "matched",
-      icon: <IconInbox />,
-    },
-    {
-      kind: "scheduleRow",
-      time: "14:00",
-      mode: "pickup",
-      customer: "Jean Leclerc",
-      vehicle: "Renault Clio V",
-    },
-    {
-      kind: "claimBig",
-      status: "repairing",
-      statusLabel: "In repair",
-      brand: "Citroën",
-      model: "C3",
-      damage: "Hood + front light",
-      photos: 6,
-      timestamp: "1d",
-    },
-    {
-      kind: "kpiBlock",
-      value: "€1.2k",
-      label: "Settled this week",
-      accent: "completed",
-      icon: <IconEuro />,
-    },
-  ],
-};
+function buildDriverCards(t: Dictionary): { left: HeroWidget[]; right: HeroWidget[] } {
+  const m = t.mockup.notif;
+  return {
+    left: [
+      {
+        kind: "claimBig",
+        status: "repairing",
+        statusLabel: m.inRepair,
+        brand: "Peugeot",
+        model: "308",
+        damage: m.driver.parkingDamage,
+        photos: 8,
+        timestamp: "2m",
+      },
+      {
+        kind: "statusTimeline",
+        steps: [...m.driver.timelineSteps],
+        currentIndex: 3,
+      },
+      {
+        kind: "notif",
+        status: "matched",
+        icon: <IconSearch />,
+        title: m.driver.shopsInterested,
+        subtitle: m.driver.tapToCompare,
+        timestamp: "8m",
+      },
+      {
+        kind: "slotPicker",
+        day: m.driver.slotDay,
+        slots: [
+          { time: "09:00" },
+          { time: "10:00", selected: true },
+          { time: "11:30" },
+        ],
+      },
+    ],
+    right: [
+      {
+        kind: "garageCard",
+        name: "Dupont Auto Body",
+        address: "12 Rue du Faubourg",
+        distance: "2.4 km",
+        phone: "+33 1 23 45 67 89",
+      },
+      {
+        kind: "kpiBlock",
+        value: "2d",
+        label: m.driver.etaInRepair,
+        accent: "progress",
+        icon: <IconWrench />,
+      },
+      {
+        kind: "claimBig",
+        status: "completed",
+        statusLabel: m.completed,
+        brand: "Renault",
+        model: "Clio V",
+        damage: m.driver.bumperReplacement,
+        photos: 12,
+        timestamp: "2d",
+      },
+      {
+        kind: "notif",
+        status: "completed",
+        icon: <IconCheck />,
+        title: m.driver.readyForPickup,
+        subtitle: m.driver.todayAfter4pm,
+        timestamp: m.now,
+      },
+    ],
+  };
+}
+
+function buildShopCards(t: Dictionary): { left: HeroWidget[]; right: HeroWidget[] } {
+  const m = t.mockup.notif;
+  return {
+    left: [
+      {
+        kind: "requestCard",
+        brand: "Peugeot",
+        model: "308",
+        damage: m.shop.parkingDamage,
+        distance: "2.3 km",
+        photos: 8,
+      },
+      {
+        kind: "statusTimeline",
+        steps: [...m.shop.timelineSteps],
+        currentIndex: 2,
+      },
+      {
+        kind: "scheduleRow",
+        time: "09:00",
+        mode: "dropoff",
+        customer: "Sophie Durand",
+        vehicle: "Peugeot 308",
+      },
+      {
+        kind: "notif",
+        status: "progress",
+        icon: <IconCheck />,
+        title: m.shop.keysReceived,
+        subtitle: m.shop.driverMarkedDropoff,
+        timestamp: "2h",
+      },
+    ],
+    right: [
+      {
+        kind: "kpiBlock",
+        value: "4",
+        label: m.shop.newThisWeek,
+        accent: "matched",
+        icon: <IconInbox />,
+      },
+      {
+        kind: "scheduleRow",
+        time: "14:00",
+        mode: "pickup",
+        customer: "Jean Leclerc",
+        vehicle: "Renault Clio V",
+      },
+      {
+        kind: "claimBig",
+        status: "repairing",
+        statusLabel: m.inRepair,
+        brand: "Citroën",
+        model: "C3",
+        damage: m.shop.hoodFrontLight,
+        photos: 6,
+        timestamp: "1d",
+      },
+      {
+        kind: "kpiBlock",
+        value: "€1.2k",
+        label: m.shop.settledThisWeek,
+        accent: "completed",
+        icon: <IconEuro />,
+      },
+    ],
+  };
+}
 
 // Inline SVG icons — stroke-only line style, matches Remixicon.
 const svgProps = {
@@ -1145,7 +1179,7 @@ function PerspectiveToggle({
         selected={view === "driver"}
         onClick={() => onChange("driver")}
         icon={
-          <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+          <svg viewBox="0 0 24 24" className="h-[18px] w-[18px] sm:h-4 sm:w-4" aria-hidden>
             <path
               d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0"
               className="stroke-current fill-none stroke-[1.75] [stroke-linecap:round] [stroke-linejoin:round]"
@@ -1158,7 +1192,7 @@ function PerspectiveToggle({
         selected={view === "shop"}
         onClick={() => onChange("shop")}
         icon={
-          <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+          <svg viewBox="0 0 24 24" className="h-[18px] w-[18px] sm:h-4 sm:w-4" aria-hidden>
             <path
               d="M3 9l1.5-4h15L21 9M3 9v11h18V9M3 9h18M8 13h8"
               className="stroke-current fill-none stroke-[1.75] [stroke-linecap:round] [stroke-linejoin:round]"
@@ -1190,9 +1224,10 @@ function ToggleButton({
       className={cn(
         // Transparent button — the yellow pill lives on the parent and
         // slides behind the selected option. Only text color changes here.
-        // Mobile-first: compact h-9 / px-3 so two pills fit in portrait; grows
-        // on sm+ back to the roomier desktop spec.
-        "relative z-10 inline-flex h-9 items-center justify-center gap-1.5 rounded-full px-3 text-[13px] font-medium transition-colors duration-300 ease-out sm:h-10 sm:gap-2 sm:px-4 sm:text-sm",
+        // Mobile: h-11 (44pt Apple HIG touch target) + px-5 / text-sm so
+        // the toggle is a thumb-sized tap target; grows on sm+ back to the
+        // roomier desktop spec.
+        "relative z-10 inline-flex h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium transition-colors duration-300 ease-out sm:h-10 sm:gap-2 sm:px-4 sm:text-sm",
         selected ? "text-black" : "text-ink-secondary hover:text-ink"
       )}
     >

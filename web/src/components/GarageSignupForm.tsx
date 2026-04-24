@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { Kicker } from "@/components/primitives";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/i18n";
 
 // PRD requirement (US-10, §5, §8.2): the landing has to collect the first
 // garage partners via a visible form above the fold, with a confirmation
@@ -27,6 +28,7 @@ const empty: Fields = {
 };
 
 export function GarageSignupForm() {
+  const t = useT();
   const [values, setValues] = useState<Fields>(empty);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,11 +46,11 @@ export function GarageSignupForm() {
     ).filter((k) => values[k].trim().length === 0);
 
     if (missing.length) {
-      setError("All fields are required.");
+      setError(t.signup.errors.missing);
       return;
     }
     if (!values.email.includes("@")) {
-      setError("Please enter a valid email.");
+      setError(t.signup.errors.invalidEmail);
       return;
     }
 
@@ -69,28 +71,23 @@ export function GarageSignupForm() {
         {/* Pitch side */}
         <div className="flex flex-col justify-center gap-6">
           <Kicker tone="yellow" className="text-brand-yellow">
-            Join Carlib
+            {t.signup.kicker}
           </Kicker>
           <h2
             id="garage-signup-heading"
             className="max-w-md font-medium text-4xl leading-[1.08] tracking-tight sm:text-5xl"
           >
-            I'm a body shop.
+            {t.signup.heading}
           </h2>
           <p className="max-w-md text-[15px] leading-relaxed text-white/70">
-            Drop us your details and we'll get back within 48 hours to walk
-            you through the platform and activate your shop profile.
+            {t.signup.pitch}
           </p>
           <ul className="mt-2 space-y-2 text-[15px] text-white/75">
-            <li className="flex items-start gap-2">
-              <Dot /> Qualified claims with photos and vehicle info
-            </li>
-            <li className="flex items-start gap-2">
-              <Dot /> Built-in scheduling, no inbound calls to triage
-            </li>
-            <li className="flex items-start gap-2">
-              <Dot /> No exclusivity, no commitment
-            </li>
+            {t.signup.bullets.map((bullet) => (
+              <li key={bullet} className="flex items-start gap-2">
+                <Dot /> {bullet}
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -105,8 +102,8 @@ export function GarageSignupForm() {
             <form className="flex flex-col gap-5" onSubmit={onSubmit} noValidate>
               <FieldRow
                 id="shopName"
-                label="Shop name"
-                placeholder="North Auto Body"
+                label={t.signup.fields.shopName}
+                placeholder={t.signup.fields.shopNamePlaceholder}
                 value={values.shopName}
                 onChange={update("shopName")}
                 autoComplete="organization"
@@ -114,16 +111,16 @@ export function GarageSignupForm() {
               <div className="grid gap-5 sm:grid-cols-2">
                 <FieldRow
                   id="contactName"
-                  label="Your name"
-                  placeholder="Sophie Martin"
+                  label={t.signup.fields.contactName}
+                  placeholder={t.signup.fields.contactNamePlaceholder}
                   value={values.contactName}
                   onChange={update("contactName")}
                   autoComplete="name"
                 />
                 <FieldRow
                   id="city"
-                  label="City"
-                  placeholder="Paris"
+                  label={t.signup.fields.city}
+                  placeholder={t.signup.fields.cityPlaceholder}
                   value={values.city}
                   onChange={update("city")}
                   autoComplete="address-level2"
@@ -132,8 +129,8 @@ export function GarageSignupForm() {
               <div className="grid gap-5 sm:grid-cols-2">
                 <FieldRow
                   id="email"
-                  label="Email"
-                  placeholder="you@shop.com"
+                  label={t.signup.fields.email}
+                  placeholder={t.signup.fields.emailPlaceholder}
                   value={values.email}
                   onChange={update("email")}
                   type="email"
@@ -141,8 +138,8 @@ export function GarageSignupForm() {
                 />
                 <FieldRow
                   id="phone"
-                  label="Phone"
-                  placeholder="06 12 34 56 78"
+                  label={t.signup.fields.phone}
+                  placeholder={t.signup.fields.phonePlaceholder}
                   value={values.phone}
                   onChange={update("phone")}
                   type="tel"
@@ -166,11 +163,11 @@ export function GarageSignupForm() {
                   "active:scale-[0.98]"
                 )}
               >
-                Join Carlib
+                {t.signup.submit}
               </button>
 
               <p className="text-center text-[13px] text-white/50">
-                Free, no commitment. We&apos;ll reach out within 48 hours.
+                {t.signup.disclaimer}
               </p>
             </form>
           )}
@@ -223,6 +220,7 @@ function FieldRow({
 }
 
 function SuccessState() {
+  const t = useT();
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 py-10 text-center">
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-yellow/15 text-brand-yellow">
@@ -230,10 +228,9 @@ function SuccessState() {
           <path d="M5 12.5l4 4 10-10" />
         </svg>
       </div>
-      <h3 className="text-xl font-medium text-white">Got it — thanks.</h3>
+      <h3 className="text-xl font-medium text-white">{t.signup.success.heading}</h3>
       <p className="max-w-sm text-sm leading-relaxed text-white/65">
-        We'll be in touch within 48 hours with a quick demo and the next
-        steps to activate your shop profile.
+        {t.signup.success.body}
       </p>
     </div>
   );

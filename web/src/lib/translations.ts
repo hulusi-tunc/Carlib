@@ -82,18 +82,30 @@ export const translations = {
     },
     howItWorks: {
       kicker: "How it works",
-      heading: "Three steps. No friction. Zero re-entry.",
+      headingL1: "Five steps from the bump",
+      headingL2: "to the keys back in your hand.",
+      intro:
+        "Every stage of a body-shop claim, guided from your phone — no forms, no phone tag, no chasing an update.",
+      stepPrefix: "Step",
       step1: {
-        title: "You get a qualified claim",
-        body: "The driver files the claim from the app. You see the full dossier — photos, damage type, vehicle — right on your dashboard.",
+        title: "Declare the accident.",
+        body: "A guided four-step flow captures accident type, vehicle info, and damage photos. A couple of minutes from the side of the road — one tap to submit.",
       },
       step2: {
-        title: "You accept in one tap",
-        body: "The claim is assigned to you; the driver is notified automatically and books a drop-off slot in your open calendar.",
+        title: "Match with a shop.",
+        body: "Browse vetted body shops on the map. Filter by specialty and slot, then tap to send them your file — photos and vehicle info already attached.",
       },
       step3: {
-        title: "You run the repair",
-        body: "Diagnostic, parts, repair, quality check, ready — every status change is shared with the driver without a single phone call.",
+        title: "Book a drop-off.",
+        body: "Pick a slot that works on the shop's calendar. Instant confirmation, a reminder the day before, and directions to the shop.",
+      },
+      step4: {
+        title: "Track the repair.",
+        body: "Diagnostic, parts, repair, quality check — every update the shop makes lands as a push notification, with the photos they added along the way.",
+      },
+      step5: {
+        title: "Pick up the keys.",
+        body: "Ready-for-pickup push lands the moment QC signs off. Swing by the shop, sign the handover, drive home.",
       },
     },
     shopBenefits: {
@@ -161,115 +173,218 @@ export const translations = {
       },
       rights: "All rights reserved.",
     },
+    mockup: {
+      // Live claim timeline shown in the FeatureBento hero-card phone.
+      claimSteps: [
+        {
+          pill: "Claim submitted",
+          pillSub: "Looking for shops in Paris Est.",
+        },
+        {
+          pill: "3 shops interested",
+          pillSub: "Tap to compare ratings and slots.",
+        },
+        {
+          pill: "Drop-off confirmed",
+          pillSub: "Thursday 10:00 at North Auto Body.",
+        },
+        {
+          pill: "Repair in progress",
+          pillSub: "Bumper + paint match · 1 day ETA.",
+        },
+        {
+          pill: "Ready for pickup",
+          pillSub: "Your Peugeot is waiting at North Auto Body.",
+        },
+      ],
+      timeline: ["Submitted", "Matched", "Accepted", "In repair", "Ready"],
+      // Shop-side claim detail surfaced in the phone inside HeroCard.
+      shopClaim: {
+        tracking: "Tracking",
+        description: "Description",
+        photos: "Photos",
+        vehicle: "Vehicle",
+        location: "Location",
+        collision: "Collision",
+        refuse: "Refuse",
+        acceptCase: "Accept Case",
+        damageText:
+          "Deep scratch on the passenger side, picked up in an underground car park. Drop-off possible tomorrow morning.",
+        photoLabels: ["Front right wing", "Damage close-up", "Torn plate"],
+      },
+      // PhotoCard live-upload panel.
+      photoPanel: {
+        stepCaption: "Step 2 of 4 · Photos of the damage",
+        uploadingTpl: "Uploading {label}…",
+        attached: "All photos attached — ready to submit.",
+        tileLabels: [
+          "Damage · close",
+          "Damage · wide",
+          "Vehicle · front",
+          "License plate",
+          "Other car",
+          "Scene",
+        ],
+      },
+      // ShopCard planning mockup.
+      shopPlanning: {
+        today: "Today · Thursday, Apr 24",
+        planning: "Planning",
+        bookedTpl: "{n} / 4 booked",
+        open: "Open",
+        pickup: "Pickup",
+        dropoff: "Drop-off",
+        availableHint: "Available — drivers can book",
+      },
+      // PerspectiveHero perimeter cards (driver + shop sides).
+      notif: {
+        inRepair: "In repair",
+        completed: "Completed",
+        ready: "Ready",
+        now: "now",
+        driver: {
+          parkingDamage: "Parking damage",
+          bumperReplacement: "Bumper replacement",
+          shopsInterested: "3 shops interested",
+          tapToCompare: "Tap to compare slots",
+          readyForPickup: "Ready for pickup",
+          todayAfter4pm: "Today after 4:00pm",
+          etaInRepair: "ETA · in repair",
+          slotDay: "Thu 10 Apr",
+          timelineSteps: ["Declare", "Match", "Accept", "Repair", "Ready"],
+        },
+        shop: {
+          parkingDamage: "Parking damage",
+          hoodFrontLight: "Hood + front light",
+          timelineSteps: ["Accepted", "Drop-off", "Diagnose", "Repair", "Ready"],
+          keysReceived: "Keys received",
+          driverMarkedDropoff: "Driver marked drop-off",
+          newThisWeek: "New · this week",
+          settledThisWeek: "Settled this week",
+        },
+      },
+    },
   },
   fr: {
     nav: {
       problem: "Le problème",
       howItWorks: "Comment ça marche",
-      shops: "Pour les garages",
-      ctaFull: "Je suis un garage intéressé",
+      shops: "Pour les carrossiers",
+      ctaFull: "Je suis un carrossier intéressé",
       ctaCompact: "Je suis intéressé",
     },
     hero: {
       driver: {
         kicker: "Pour les conducteurs",
-        headlineL1: "De l'accident",
+        headlineL1: "De l'accrochage",
         headlineL2: "aux clés en main.",
-        body: "Carlib transforme la prise en charge d'un sinistre en un parcours en cinq étapes que vous pouvez suivre depuis votre téléphone. Déclarer, associer, accepter, réparer, récupérer.",
+        body: "Carlib guide votre sinistre en cinq étapes depuis votre téléphone : déclaration, mise en relation, prise en charge, réparation, récupération. Zéro ressaisie, zéro appel à rallonge.",
         primaryCta: "Commencer",
         secondaryCta: "Voir comment ça marche",
       },
       shop: {
-        kicker: "Pour les garages",
+        kicker: "Pour les carrossiers",
         headlineL1: "Remplissez l'atelier.",
         headlineL2: "Finis les appels à rallonge.",
-        body: "Des dossiers qualifiés avec photos et infos véhicule arrivent sur votre tableau de bord. Les conducteurs réservent eux-mêmes leur créneau. Mise à jour du statut en un clic.",
-        primaryCta: "Rejoindre en tant que garage",
+        body: "Des dossiers qualifiés — photos, infos véhicule, créneau déjà réservé — arrivent sur votre tableau de bord. Le conducteur est tenu au courant à chaque mise à jour.",
+        primaryCta: "Je rejoins Carlib",
         secondaryCta: "Voir comment ça marche",
       },
-      toggle: { driver: "Conducteur", shop: "Garage" },
+      toggle: { driver: "Conducteur", shop: "Carrossier" },
     },
     problem: {
       kicker: "Le problème",
       heading: "Le parcours sinistre est cassé. Pour tout le monde.",
       card1: {
-        title: "Le sinistre paralyse le conducteur.",
+        title: "Déclarer un sinistre, c'est un calvaire.",
         caption:
-          "Formulaires papier, allers-retours avec l'assureur, appels à rallonge. Le temps passe — et la patience du conducteur aussi.",
+          "Formulaires papier, allers-retours avec l'assureur, appels qui s'enchaînent. Le temps passe — et le sang-froid du conducteur aussi.",
       },
       card2: {
         title: "Pas de vrai choix.",
         caption:
-          "L'assureur impose le garage. Aucune vue centralisée des carrossiers agréés disponibles à proximité — disponibilité, spécialité, localisation.",
+          "L'assureur impose le garage. Aucune vue centralisée des carrossiers agréés à proximité — disponibilités, spécialités, distance.",
       },
       card3: {
-        title: "Les garages font de l'admin toute la journée.",
+        title: "Les carrossiers croulent sous l'admin.",
         caption:
-          "Réception éparpillée, appels à qualifier, plannings papier. Les carrossiers passent la journée à trier des messages au lieu de réparer.",
+          "Réception éparpillée, appels à qualifier, plannings papier. Ils passent la journée à trier des messages au lieu de réparer.",
       },
     },
     features: {
-      heading: "Le pipeline le plus propre que vous aurez jamais à remplir.",
+      heading: "Un canal d'entrée enfin propre.",
       intro:
-        "Carlib vous livre des dossiers déjà qualifiés — avec photos, infos véhicule et créneau de dépôt réservé. Pas d'appels à rallonge, pas de devis à l'aveugle, pas de ressaisie sur un dossier perdu.",
+        "Chaque dossier vous arrive déjà qualifié — photos, infos véhicule, créneau de dépôt réservé. Plus d'appels à rallonge, plus de devis à l'aveugle, plus de ressaisie.",
       hero: {
         titleL1: "Voyez chaque dossier",
         titleL2: "avant d'accepter.",
-        body: "Le conducteur déclare depuis l'app ; vous voyez le dossier complet dès qu'il arrive — photos, type de dommage, véhicule. Acceptez en un clic, et chaque changement de statut remonte automatiquement au conducteur.",
+        body: "Le conducteur déclare depuis l'application ; vous voyez le dossier complet dès qu'il arrive — photos, type de dommage, véhicule. Vous acceptez en un clic, et chaque changement de statut que vous publiez remonte automatiquement au conducteur.",
       },
       photo: {
         titleLead: "Les photos avant le devis.",
         titleAside:
-          "Chiffrez sur des preuves réelles, pas une description au téléphone.",
-        body: "Quatre photos guidées prises sur place sont attachées à chaque dossier. Vous chiffrez plus vite, discutez moins, et l'assureur reçoit le même dossier — pas de renvoi, pas d'angle manquant.",
+          "Chiffrez sur des preuves, pas sur une description au téléphone.",
+        body: "Quatre photos guidées, prises sur place, sont attachées à chaque dossier. Vous chiffrez plus vite, vous discutez moins, et l'assureur reçoit le même dossier — pas de renvoi, pas d'angle manquant.",
       },
       shop: {
-        titleLead: "Les conducteurs réservent vos créneaux.",
+        titleLead: "Vos créneaux, remplis par les conducteurs.",
         titleAside:
-          "Pas d'allers-retours. Pas de négociation. Pas de double-réservation.",
-        body: "Ouvrez vos créneaux de dépôt, et les conducteurs prennent celui qui leur convient. Votre planning tient sur un seul écran — pas de SMS, pas de post-it, pas de rappel pour confirmer.",
+          "Plus d'allers-retours. Plus de négociation. Plus de double-réservation.",
+        body: "Ouvrez vos créneaux de dépôt ; le conducteur prend celui qui lui convient. Votre planning reste sur un seul écran — pas de SMS, pas de post-it, pas de rappel pour confirmer.",
       },
     },
     howItWorks: {
       kicker: "Comment ça marche",
-      heading: "Trois étapes. Aucune friction. Zéro ressaisie.",
+      headingL1: "Cinq étapes, de l'accrochage",
+      headingL2: "aux clés en main.",
+      intro:
+        "Chaque étape du parcours sinistre, guidée depuis votre téléphone — pas de formulaires papier, pas d'appels à rallonge, pas de relances pour connaître le statut.",
+      stepPrefix: "Étape",
       step1: {
-        title: "Vous recevez un dossier qualifié",
-        body: "Le conducteur déclare son sinistre depuis l'app. Vous voyez le dossier complet — photos, type de dommage, véhicule — directement sur votre tableau de bord.",
+        title: "Déclarez le sinistre.",
+        body: "Un parcours guidé en quatre étapes capture le type d'accident, les infos véhicule et les photos du dommage. Quelques minutes au bord de la route, un clic pour envoyer.",
       },
       step2: {
-        title: "Vous acceptez en un clic",
-        body: "Le dossier vous est attribué ; le conducteur est notifié automatiquement et réserve un créneau de dépôt dans votre planning.",
+        title: "Choisissez un carrossier.",
+        body: "Comparez les carrossiers agréés sur la carte. Filtrez par spécialité, distance et disponibilité, puis envoyez-leur votre dossier en un clic — photos et infos véhicule déjà attachées.",
       },
       step3: {
-        title: "Vous gérez la réparation",
-        body: "Diagnostic, pièces, réparation, contrôle qualité, prêt — chaque changement de statut est partagé au conducteur sans un seul appel.",
+        title: "Réservez le dépôt.",
+        body: "Choisissez un créneau directement dans le planning du garage. Confirmation immédiate, rappel la veille, itinéraire inclus.",
+      },
+      step4: {
+        title: "Suivez la réparation.",
+        body: "Diagnostic, pièces, réparation, contrôle qualité — chaque mise à jour du garage arrive en notification, avec les photos ajoutées au passage. Plus besoin de rappeler pour demander où en est la voiture.",
+      },
+      step5: {
+        title: "Récupérez les clés.",
+        body: "Vous recevez la notification « prêt à récupérer » dès la validation du contrôle qualité. Vous passez signer la remise, et vous repartez au volant.",
       },
     },
     shopBenefits: {
-      kicker: "Pour les garages",
+      kicker: "Pour les carrossiers",
       heading: "Une façon plus propre de remplir l'atelier.",
       item1: {
-        title: "Dossiers entrants",
-        body: "Des demandes qualifiées avec photos et infos véhicule arrivent directement sur votre tableau de bord.",
+        title: "Dossiers entrants qualifiés",
+        body: "Des demandes complètes, avec photos et infos véhicule, atterrissent directement sur votre tableau de bord.",
       },
       item2: {
-        title: "Gérez votre semaine",
-        body: "Créneaux de dépôt ouverts — les conducteurs réservent seuls. Pas d'appels à rallonge, pas d'allers-retours.",
+        title: "Un planning qui se remplit seul",
+        body: "Ouvrez vos créneaux de dépôt ; les conducteurs réservent eux-mêmes. Plus d'appels à qualifier, plus d'allers-retours.",
       },
       item3: {
         title: "Statut en un clic",
-        body: "Diagnostic, pièces, réparation, contrôle qualité, prêt — mettez à jour et le conducteur le voit instantanément.",
+        body: "Diagnostic, pièces, réparation, contrôle qualité, prêt — une mise à jour, et le conducteur la voit instantanément.",
       },
     },
     signup: {
       kicker: "Rejoindre Carlib",
-      heading: "Je suis un garage intéressé.",
+      heading: "Je suis un carrossier intéressé.",
       pitch:
-        "Laissez-nous vos coordonnées et nous revenons vers vous sous 48 h pour vous présenter la plateforme et activer votre profil carrossier.",
+        "Laissez-nous vos coordonnées. On vous recontacte sous 48 h pour vous présenter la plateforme et activer votre profil.",
       bullets: [
-        "Dossiers qualifiés avec photos et infos véhicule",
-        "Planning intégré, sans appels entrants à qualifier",
+        "Dossiers qualifiés, photos et infos véhicule incluses",
+        "Planning intégré, sans appels entrants à filtrer",
         "Sans exclusivité, sans engagement",
       ],
       fields: {
@@ -280,37 +395,134 @@ export const translations = {
         city: "Ville",
         cityPlaceholder: "Paris",
         email: "E-mail",
-        emailPlaceholder: "vous@garage.fr",
+        emailPlaceholder: "vous@carrosserie.fr",
         phone: "Téléphone",
         phonePlaceholder: "06 12 34 56 78",
       },
-      submit: "Rejoindre Carlib",
-      disclaimer:
-        "Gratuit, sans engagement. Nous vous contactons sous 48 h.",
+      submit: "Je rejoins Carlib",
+      disclaimer: "Gratuit, sans engagement. Réponse sous 48 h.",
       errors: {
         missing: "Tous les champs sont requis.",
-        invalidEmail: "Merci de saisir un e-mail valide.",
+        invalidEmail: "Merci de saisir une adresse e-mail valide.",
       },
       success: {
-        heading: "Merci, c'est noté.",
-        body: "Nous revenons vers vous sous 48 h avec une démo rapide et les prochaines étapes pour activer votre profil carrossier.",
+        heading: "Bien reçu, merci.",
+        body: "On revient vers vous sous 48 h avec une démo rapide et les prochaines étapes pour activer votre profil carrossier.",
       },
     },
     footer: {
       tagline:
-        "Un parcours plus propre de l'accident à la récupération. Conçu pour les carrossiers français et les conducteurs qu'ils servent.",
+        "Un parcours plus propre, de l'accrochage à la récupération. Pensé pour les carrossiers français et les conducteurs qu'ils réparent.",
       product: "Produit",
-      company: "Société",
+      company: "Entreprise",
       links: {
         problem: "Le problème",
         howItWorks: "Comment ça marche",
-        shops: "Pour les garages",
+        shops: "Pour les carrossiers",
         join: "Rejoindre Carlib",
-        terms: "Conditions",
+        terms: "Mentions légales",
         privacy: "Confidentialité",
         contact: "Contact",
       },
       rights: "Tous droits réservés.",
+    },
+    mockup: {
+      claimSteps: [
+        {
+          pill: "Dossier envoyé",
+          pillSub: "Recherche de carrossiers à Paris Est.",
+        },
+        {
+          pill: "3 carrossiers intéressés",
+          pillSub: "Comparez notes et créneaux.",
+        },
+        {
+          pill: "Dépôt confirmé",
+          pillSub: "Jeudi 10 h 00 chez Carrosserie Martin.",
+        },
+        {
+          pill: "Réparation en cours",
+          pillSub: "Pare-chocs + raccord peinture · 1 jour estimé.",
+        },
+        {
+          pill: "Prête à récupérer",
+          pillSub: "Votre Peugeot vous attend chez Carrosserie Martin.",
+        },
+      ],
+      timeline: ["Envoyé", "Associé", "Accepté", "En réparation", "Prêt"],
+      shopClaim: {
+        tracking: "Suivi",
+        description: "Description",
+        photos: "Photos",
+        vehicle: "Véhicule",
+        location: "Localisation",
+        collision: "Collision",
+        refuse: "Refuser",
+        acceptCase: "Prendre en charge",
+        damageText:
+          "Rayure profonde côté passager, constatée sur parking souterrain. Dépôt possible dès demain matin.",
+        photoLabels: ["Aile avant droite", "Détail dommage", "Plaque arrachée"],
+      },
+      photoPanel: {
+        stepCaption: "Étape 2 sur 4 · Photos du dommage",
+        uploadingTpl: "Envoi de « {label} »…",
+        attached: "Photos attachées — prêt à envoyer.",
+        tileLabels: [
+          "Dommage · proche",
+          "Dommage · large",
+          "Véhicule · avant",
+          "Plaque",
+          "Autre véhicule",
+          "Scène",
+        ],
+      },
+      shopPlanning: {
+        today: "Aujourd'hui · jeudi 24 avr.",
+        planning: "Planning",
+        bookedTpl: "{n} / 4 réservés",
+        open: "Libre",
+        pickup: "Récupération",
+        dropoff: "Dépôt",
+        availableHint: "Créneau libre — réservable par un conducteur",
+      },
+      notif: {
+        inRepair: "En réparation",
+        completed: "Terminé",
+        ready: "Prêt",
+        now: "à l'instant",
+        driver: {
+          parkingDamage: "Accrochage parking",
+          bumperReplacement: "Remplacement pare-chocs",
+          shopsInterested: "3 carrossiers intéressés",
+          tapToCompare: "Appuyez pour comparer",
+          readyForPickup: "Prête à récupérer",
+          todayAfter4pm: "Aujourd'hui après 16 h",
+          etaInRepair: "Rendu · en réparation",
+          slotDay: "Jeu. 10 avr.",
+          timelineSteps: [
+            "Déclarer",
+            "Associer",
+            "Accepter",
+            "Réparer",
+            "Prêt",
+          ],
+        },
+        shop: {
+          parkingDamage: "Accrochage parking",
+          hoodFrontLight: "Capot + feu avant",
+          timelineSteps: [
+            "Accepté",
+            "Dépôt",
+            "Diagnostic",
+            "Réparation",
+            "Prêt",
+          ],
+          keysReceived: "Clés récupérées",
+          driverMarkedDropoff: "Le conducteur a confirmé le dépôt.",
+          newThisWeek: "Nouveaux · cette semaine",
+          settledThisWeek: "Réglés cette semaine",
+        },
+      },
     },
   },
 } as const;

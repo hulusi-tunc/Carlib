@@ -31,7 +31,10 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full" data-floating={floating}>
+    <header
+      className="sticky top-0 z-50 w-full pt-[env(safe-area-inset-top)]"
+      data-floating={floating}
+    >
       {/* Morphing container. mx-auto centers it when it shrinks below the
           page max-width; the transition list covers every property that
           changes between the two states so nothing animates in isolation. */}
@@ -44,10 +47,14 @@ export function SiteHeader() {
           // Apple-ish ease-out-expo — settles without overshoot.
           "motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
           floating
-            ? "mt-8 h-12 max-w-[min(880px,calc(100%-2rem))] rounded-full pl-4 pr-1.5 bg-white/85 backdrop-blur-md shadow-[0_18px_40px_-20px_rgba(15,15,15,0.35)] ring-1 ring-border/70 scale-100"
+            // 24px mobile / 80px desktop — generous gap so the pill clearly
+            // reads as "floating above" rather than "clipped to" the top.
+            ? "mt-6 sm:mt-20 h-11 sm:h-12 max-w-[min(880px,calc(100%-1.5rem))] sm:max-w-[min(880px,calc(100%-2rem))] rounded-full pl-3.5 pr-1.5 sm:pl-4 bg-white/85 backdrop-blur-md shadow-[0_18px_40px_-20px_rgba(15,15,15,0.35)] ring-1 ring-border/70 scale-100"
             // A whisper of scale while resting — so when the pill arrives
-            // it reads as a gentle settle-down rather than a zoom.
-            : "mt-0 h-20 max-w-6xl rounded-none px-6 bg-transparent backdrop-blur-0 shadow-none ring-0 ring-transparent scale-[1.005]"
+            // it reads as a gentle settle-down rather than a zoom. On mobile
+            // we keep a bit of top breathing so the logo never butts up
+            // against the status-bar / viewport edge.
+            : "mt-3 sm:mt-0 h-16 sm:h-20 max-w-6xl rounded-none px-5 sm:px-6 bg-transparent backdrop-blur-0 shadow-none ring-0 ring-transparent scale-[1.005]"
         )}
       >
         <Logo floating={floating} />
@@ -90,19 +97,23 @@ function Nav({
   return (
     <nav
       className={cn(
-        "hidden items-center text-ink-secondary sm:flex",
+        // Match the CTA's text treatment: `font-medium` + dark ink, same
+        // 13/14px scale. Previously the links inherited a lighter, regular
+        // weight (ink-secondary, 400) which read as washed-out next to the
+        // solid-black button.
+        "hidden items-center font-medium text-ink sm:flex",
         "motion-safe:transition-[gap,font-size] motion-safe:duration-[520ms] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
         floating ? "gap-5 text-[13px]" : "gap-8 text-sm",
         className
       )}
     >
-      <a href="#problem" className="transition-colors hover:text-ink">
+      <a href="#problem" className="transition-colors hover:text-ink/60">
         {t.nav.problem}
       </a>
-      <a href="#how-it-works" className="transition-colors hover:text-ink">
+      <a href="#how-it-works" className="transition-colors hover:text-ink/60">
         {t.nav.howItWorks}
       </a>
-      <a href="#shops" className="transition-colors hover:text-ink">
+      <a href="#shops" className="transition-colors hover:text-ink/60">
         {t.nav.shops}
       </a>
     </nav>
