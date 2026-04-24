@@ -102,7 +102,13 @@ function HeroCard() {
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,10,0.55)_0%,rgba(10,10,10,0.15)_45%,rgba(10,10,10,0)_75%)]"
       />
 
-      <div className="relative grid items-end gap-10 px-8 pt-10 sm:px-12 sm:pt-14 md:grid-cols-[1fr_minmax(320px,520px)] md:gap-6 md:pt-16">
+      {/* Mobile: the notification stack is absolutely pinned to the top-left
+          of the card (see below — `top-6` + its own `pt-6`, ~100px visible
+          tall). We reserve that space with `pt-36` so the heading never
+          lands under it. On md+ the card becomes two columns and the text
+          bottom-aligns in its cell, so the stack no longer collides with
+          the heading — we drop back to the tighter `pt-16`. */}
+      <div className="relative grid items-end gap-10 px-8 pt-36 sm:px-12 sm:pt-40 md:grid-cols-[1fr_minmax(320px,520px)] md:gap-6 md:pt-16">
         {/* LEFT — text block anchored to the bottom-left of the card via
             the grid's items-end. */}
         <div className="flex flex-col gap-5 pb-12 sm:pb-16 md:pb-20">
@@ -671,13 +677,13 @@ function PhotoCard() {
 
         {/* Live upload panel */}
         <div className="relative mt-auto overflow-hidden rounded-2xl bg-black/30 p-4 ring-1 ring-white/10 backdrop-blur-sm">
-          <div className="mb-3 flex items-center justify-between">
-            <p className="text-[13px] font-medium">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p className="min-w-0 text-[13px] font-medium">
               {t.mockup.photoPanel.stepCaption}
             </p>
             <span
               className={cn(
-                "flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors duration-300",
+                "inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors duration-300",
                 filled >= FILL_COUNT
                   ? "bg-status-completed text-white"
                   : "bg-brand-yellow text-black"
