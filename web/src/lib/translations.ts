@@ -294,11 +294,11 @@ export const translations = {
     },
     problem: {
       kicker: "Le problème",
-      heading: "Le parcours sinistre est cassé. Pour tout le monde.",
+      heading: "Déclarer un sinistre ne devrait pas être un second accident.",
       card1: {
         title: "Déclarer un sinistre, c'est un calvaire.",
         caption:
-          "Formulaires papier, allers-retours avec l'assureur, appels qui s'enchaînent. Le temps passe — et le sang-froid du conducteur aussi.",
+          "Formulaires papier, allers-retours avec l'assureur, appels qui s'enchaînent. Le temps passe — et la patience du conducteur aussi.",
       },
       card2: {
         title: "Pas de vrai choix.",
@@ -316,15 +316,15 @@ export const translations = {
       intro:
         "Chaque dossier vous arrive déjà qualifié — photos, infos véhicule, créneau de dépôt réservé. Plus d'appels à rallonge, plus de devis à l'aveugle, plus de ressaisie.",
       hero: {
-        titleL1: "Voyez chaque dossier",
-        titleL2: "avant d'accepter.",
-        body: "Le conducteur déclare depuis l'application ; vous voyez le dossier complet dès qu'il arrive — photos, type de dommage, véhicule. Vous acceptez en un clic, et chaque changement de statut que vous publiez remonte automatiquement au conducteur.",
+        titleL1: "Chaque dossier arrive complet,",
+        titleL2: "avant votre réponse.",
+        body: "Photos, type de dommage, véhicule : tout est là dès la déclaration du conducteur. Vous acceptez en un clic. Vos mises à jour de statut remontent instantanément — sans que le conducteur ait besoin de rappeler.",
       },
       photo: {
         titleLead: "Les photos avant le devis.",
         titleAside:
           "Chiffrez sur des preuves, pas sur une description au téléphone.",
-        body: "Quatre photos guidées, prises sur place, sont attachées à chaque dossier. Vous chiffrez plus vite, vous discutez moins, et l'assureur reçoit le même dossier — pas de renvoi, pas d'angle manquant.",
+        body: "Chaque dossier arrive avec quatre photos guidées prises sur place. Vous chiffrez sur des images réelles, pas sur une description au téléphone. Le dossier part à l'assureur tel quel — complet, sans renvoi.",
       },
       shop: {
         titleLead: "Vos créneaux, remplis par les conducteurs.",
@@ -358,12 +358,12 @@ export const translations = {
       },
       step5: {
         title: "Récupérez les clés.",
-        body: "Vous recevez la notification « prêt à récupérer » dès la validation du contrôle qualité. Vous passez signer la remise, et vous repartez au volant.",
+        body: "Une notification, un passage au garage, et vous repartez au volant. Dès que le contrôle qualité est validé, Carlib vous prévient — plus besoin d'appeler pour savoir si la voiture est prête.",
       },
     },
     shopBenefits: {
       kicker: "Pour les carrossiers",
-      heading: "Une façon plus propre de remplir l'atelier.",
+      heading: "L'atelier tourne. Sans la paperasse.",
       item1: {
         title: "Dossiers entrants qualifiés",
         body: "Des demandes complètes, avec photos et infos véhicule, atterrissent directement sur votre tableau de bord.",
@@ -412,7 +412,7 @@ export const translations = {
     },
     footer: {
       tagline:
-        "Un parcours plus propre, de l'accrochage à la récupération. Pensé pour les carrossiers français et les conducteurs qu'ils réparent.",
+        "De l'accrochage aux clés en main — sans les frictions. Conçu pour les carrossiers français et les conducteurs qu'ils remettent sur la route.",
       product: "Produit",
       company: "Entreprise",
       links: {
