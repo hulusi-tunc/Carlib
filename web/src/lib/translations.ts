@@ -321,9 +321,8 @@ export const translations = {
         body: "Photos, type de dommage, véhicule : tout est là dès la déclaration du conducteur. Vous acceptez en un clic. Vos mises à jour de statut remontent instantanément — sans que le conducteur ait besoin de rappeler.",
       },
       photo: {
-        titleLead: "Les photos avant le devis.",
-        titleAside:
-          "Chiffrez sur des preuves, pas sur une description au téléphone.",
+        titleLead: "Fini les devis à l'aveugle.",
+        titleAside: "",
         body: "Chaque dossier arrive avec quatre photos guidées prises sur place. Vous chiffrez sur des images réelles, pas sur une description au téléphone. Le dossier part à l'assureur tel quel — complet, sans renvoi.",
       },
       shop: {
