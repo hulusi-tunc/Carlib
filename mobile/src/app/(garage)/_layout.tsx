@@ -9,6 +9,7 @@ import { CarlibIcon } from '@/components/icons';
 import { RemixIcon } from '@/components/RemixIcon';
 import { tabBarStyleProps } from '@/components/tabBarStyle';
 import { useAppStore } from '@/stores/appStore';
+import { useUiStore } from '@/stores/uiStore';
 import { useTheme } from '@/theme';
 
 const { Trigger } = NativeTabs;
@@ -19,6 +20,7 @@ export default function GarageTabsLayout() {
   const router = useRouter();
   const pendingGarageTab = useAppStore((s) => s.pendingGarageTab);
   const setPendingGarageTab = useAppStore((s) => s.setPendingGarageTab);
+  const tabBarHidden = useUiStore((s) => s.tabBarHidden);
 
   // Cross-flow tab intents (AppState.pendingGarageTab): navigate, then clear.
   useEffect(() => {
@@ -28,7 +30,7 @@ export default function GarageTabsLayout() {
   }, [pendingGarageTab, router, setPendingGarageTab]);
 
   return (
-    <NativeTabs {...tabBarStyleProps(colors)}>
+    <NativeTabs hidden={tabBarHidden} {...tabBarStyleProps(colors)}>
       <Trigger name="dashboard">
         <Trigger.Icon src={<Trigger.VectorIcon family={RemixIcon} name={CarlibIcon.dashboard} />} />
         <Trigger.Label>{t('garageTab.dashboard')}</Trigger.Label>

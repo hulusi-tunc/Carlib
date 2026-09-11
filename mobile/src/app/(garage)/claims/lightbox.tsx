@@ -16,6 +16,7 @@ import { Glass } from '@/components/Glass';
 import { PressableScale } from '@/components/PressableScale';
 import { RemixIcon } from '@/components/RemixIcon';
 import { useClaimStore } from '@/stores/claimStore';
+import { useHidesTabBar } from '@/stores/uiStore';
 import { carlibFont, radius, spacing, ThemeScope } from '@/theme';
 
 function Lightbox() {
@@ -33,6 +34,8 @@ function Lightbox() {
   useEffect(() => {
     if (count === 0 && router.canGoBack()) router.back();
   }, [count, router]);
+  // Swift .fullScreenCover: nothing of the tab shell shows behind the photo.
+  useHidesTabBar();
   if (photos == null || count === 0) return <View style={styles.screen} />;
 
   const caption = photos[current]?.caption ?? '';

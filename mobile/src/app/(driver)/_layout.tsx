@@ -11,6 +11,7 @@ import { RemixIcon } from '@/components/RemixIcon';
 import { tabBarStyleProps } from '@/components/tabBarStyle';
 import { useAppStore } from '@/stores/appStore';
 import { useShopsUiStore } from '@/stores/shopsUiStore';
+import { useUiStore } from '@/stores/uiStore';
 import { useTheme } from '@/theme';
 
 const { Trigger } = NativeTabs;
@@ -23,6 +24,7 @@ export default function DriverTabsLayout() {
   const setPendingDriverTab = useAppStore((s) => s.setPendingDriverTab);
   // Shops drawer expanded → hide the bar (SwiftUI .toolbar(.hidden, for: .tabBar)).
   const shopsPanelExpanded = useShopsUiStore((s) => s.panelExpanded);
+  const tabBarHidden = useUiStore((s) => s.tabBarHidden);
 
   // Cross-flow tab intents (AppState.pendingDriverTab): navigate, then clear.
   useEffect(() => {
@@ -32,7 +34,7 @@ export default function DriverTabsLayout() {
   }, [pendingDriverTab, router, setPendingDriverTab]);
 
   return (
-    <NativeTabs hidden={shopsPanelExpanded} {...tabBarStyleProps(colors)}>
+    <NativeTabs hidden={shopsPanelExpanded || tabBarHidden} {...tabBarStyleProps(colors)}>
       <Trigger name="home">
         <Trigger.Icon src={<Trigger.VectorIcon family={RemixIcon} name={CarlibIcon.home} />} />
         <Trigger.Label>{t('driverTab.home')}</Trigger.Label>
