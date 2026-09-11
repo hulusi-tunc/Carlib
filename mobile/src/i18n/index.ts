@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import i18n from 'i18next';
+import i18n, { changeLanguage } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import en from './en.json';
@@ -28,6 +28,9 @@ export const resources = {
 //   t('driverHome.distanceAway', { km: km.toFixed(1) })
 // Plural keys (pass count): driverHome.repairBody, driverHome.shortcutMyGarageCars,
 // garagePlanning.bayBooked (label only — render the number separately).
+// i18next's named `use` export collides with React 19's `use` hook under
+// rules-of-hooks, so the method form stays.
+// eslint-disable-next-line import/no-named-as-default-member
 void i18n.use(initReactI18next).init({
   resources,
   lng: 'en', // iOS app defaults to English regardless of device locale
@@ -39,14 +42,14 @@ void i18n.use(initReactI18next).init({
 void AsyncStorage.getItem(STORAGE_KEY)
   .then((stored) => {
     if ((stored === 'en' || stored === 'fr') && stored !== i18n.language) {
-      return i18n.changeLanguage(stored).then(() => undefined);
+      return changeLanguage(stored).then(() => undefined);
     }
     return undefined;
   })
   .catch(() => undefined);
 
 export async function setAppLanguage(lang: AppLanguage): Promise<void> {
-  await i18n.changeLanguage(lang);
+  await changeLanguage(lang);
   await AsyncStorage.setItem(STORAGE_KEY, lang);
 }
 

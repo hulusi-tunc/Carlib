@@ -313,14 +313,16 @@ export default function GarageDashboardScreen() {
   const todayAppointmentsCount = bookedTodaySlots.length;
   const completedThisMonthCount = pastClaims.filter((claim) => claim.status === 'termine').length;
 
-  // Keep the selected page valid if a card is declined/accepted.
+  // Keep the selected page valid if a card is declined/accepted: clamp for
+  // render, move the pager as a side effect — its onPageSelected then
+  // re-syncs requestIndex.
+  const safeRequestIndex =
+    newRequestsCount > 0 ? Math.min(requestIndex, newRequestsCount - 1) : 0;
   useEffect(() => {
-    if (requestIndex >= newRequestsCount && newRequestsCount > 0) {
-      const next = newRequestsCount - 1;
-      setRequestIndex(next);
-      pagerRef.current?.setPageWithoutAnimation(next);
+    if (newRequestsCount > 0 && safeRequestIndex !== requestIndex) {
+      pagerRef.current?.setPageWithoutAnimation(safeRequestIndex);
     }
-  }, [newRequestsCount, requestIndex]);
+  }, [newRequestsCount, requestIndex, safeRequestIndex]);
 
   const bannerKicker = [
     `${newRequestsCount} new`,
@@ -452,7 +454,7 @@ export default function GarageDashboardScreen() {
             {availableClaims.length > 1 && (
               <View style={styles.dots}>
                 {availableClaims.map((claim, index) => (
-                  <PageDot key={claim.id} active={index === requestIndex} />
+                  <PageDot key={claim.id} active={index === safeRequestIndex} />
                 ))}
               </View>
             )}

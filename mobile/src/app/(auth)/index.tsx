@@ -57,15 +57,17 @@ export default function Splash() {
 
   useEffect(() => {
     // Stage 1 — glow rises + fades in.
-    glowOpacity.value = withTiming(1, { duration: 900, easing: easeOut });
-    glowProgress.value = withTiming(1, { duration: 900, easing: easeOut });
+    glowOpacity.set(withTiming(1, { duration: 900, easing: easeOut }));
+    glowProgress.set(withTiming(1, { duration: 900, easing: easeOut }));
     // Stage 2 — wordmark settles in ~250ms after the glow starts.
-    wordmarkOpacity.value = withDelay(250, withTiming(1, { duration: 600, easing: easeOut }));
-    wordmarkScale.value = withDelay(250, withTiming(1, { duration: 600, easing: easeOut }));
+    wordmarkOpacity.set(withDelay(250, withTiming(1, { duration: 600, easing: easeOut })));
+    wordmarkScale.set(withDelay(250, withTiming(1, { duration: 600, easing: easeOut })));
     // Stage 3 — ongoing breathe while we wait on the auth check.
-    breathe.value = withDelay(
+    breathe.set(
+      withDelay(
       900,
       withRepeat(withTiming(1.03, { duration: 1400, easing: easeInOut }), -1, true),
+      ),
     );
   }, [glowOpacity, glowProgress, wordmarkOpacity, wordmarkScale, breathe]);
 

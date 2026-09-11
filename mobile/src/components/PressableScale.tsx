@@ -53,7 +53,7 @@ export function PressableScale({
 
   const handlePressIn = useCallback<NonNullable<PressableProps['onPressIn']>>(
     (e) => {
-      pressed.value = withSpring(scale, SPRING);
+      pressed.set(withSpring(scale, SPRING));
       fireHaptic(haptic);
       onPressIn?.(e);
     },
@@ -62,7 +62,7 @@ export function PressableScale({
 
   const handlePressOut = useCallback<NonNullable<PressableProps['onPressOut']>>(
     (e) => {
-      pressed.value = withSpring(1, SPRING);
+      pressed.set(withSpring(1, SPRING));
       onPressOut?.(e);
     },
     [onPressOut, pressed],

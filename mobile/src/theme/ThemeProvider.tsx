@@ -26,17 +26,18 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+// Screenshot harness: EXPO_PUBLIC_CARLIB_THEME forces a mode at build time.
+const FORCED_MODE: ThemeMode | null = (() => {
+  const forced = process.env.EXPO_PUBLIC_CARLIB_THEME;
+  return forced === 'dark' || forced === 'light' || forced === 'system' ? forced : null;
+})();
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useColorScheme();
-  const [mode, setModeState] = useState<ThemeMode>(DEFAULT_MODE);
+  const [mode, setModeState] = useState<ThemeMode>(() => FORCED_MODE ?? DEFAULT_MODE);
 
   useEffect(() => {
-    // Screenshot harness: EXPO_PUBLIC_CARLIB_THEME forces a mode at build time.
-    const forced = process.env.EXPO_PUBLIC_CARLIB_THEME;
-    if (forced === 'dark' || forced === 'light' || forced === 'system') {
-      setModeState(forced);
-      return;
-    }
+    if (FORCED_MODE != null) return;
     AsyncStorage.getItem(STORAGE_KEY).then((stored) => {
       if (stored === 'system' || stored === 'light' || stored === 'dark') {
         setModeState(stored);
