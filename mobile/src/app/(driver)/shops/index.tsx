@@ -36,6 +36,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Glass } from '@/components/Glass';
+import { PageDot } from '@/components/PageDot';
 import { PressableScale } from '@/components/PressableScale';
 import { RemixIcon } from '@/components/RemixIcon';
 import {
@@ -321,23 +322,16 @@ export default function GarageSearchScreen() {
   const pageDots =
     shopsCount > 1 ? (
       <View style={styles.dotsRow}>
-        {filteredGarages.map((garage) => {
-          const active = garage.id === selectedId;
-          return (
-            <View
-              key={garage.id}
-              style={[
-                styles.dot,
-                {
-                  width: active ? 16 : 6,
-                  backgroundColor: active
-                    ? colors.carlibDark
-                    : withAlpha(colors.carlibLabel, 0.3),
-                },
-              ]}
-            />
-          );
-        })}
+        {filteredGarages.map((garage) => (
+          <PageDot
+            key={garage.id}
+            active={garage.id === selectedId}
+            activeWidth={16}
+            curve="ease"
+            activeColor={colors.carlibDark}
+            inactiveColor={withAlpha(colors.carlibLabel, 0.3)}
+          />
+        ))}
       </View>
     ) : null;
 
@@ -577,10 +571,6 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingTop: 6,
     paddingBottom: 14,
-  },
-  dot: {
-    height: 6,
-    borderRadius: 3,
   },
   foundLabel: {
     paddingHorizontal: 20,

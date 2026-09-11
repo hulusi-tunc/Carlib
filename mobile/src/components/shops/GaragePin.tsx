@@ -4,12 +4,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Marker } from 'react-native-maps';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 import { RemixIcon } from '@/components/RemixIcon';
 import type { Garage } from '@/models/types';
 import { useTheme } from '@/theme';
 
 const PIN_CONTAINER = 44;
+const PIN_RESTING = 34;
+const PIN_SELECTED = 44;
+const ICON_RESTING = 14;
+const ICON_SELECTED = 18;
+// Swift .spring(response: 0.3, dampingFraction: 0.7) on isSelected.
+const PIN_SPRING = { mass: 1, stiffness: 439, damping: 29 } as const;
 
 export interface GarageMarkerProps {
   garage: Garage;
@@ -29,11 +36,22 @@ export function GarageMarker({ garage, selected, onPress }: GarageMarkerProps) {
     if (prevSelected.current === selected) return undefined;
     prevSelected.current = selected;
     setTracks(true);
-    const timer = setTimeout(() => setTracks(false), 350);
+    const timer = setTimeout(() => setTracks(false), 500); // spring tail
     return () => clearTimeout(timer);
   }, [selected]);
 
-  const size = selected ? 44 : 34;
+  // 0 = resting, 1 = selected; the circle and the glyph scale together.
+  const selection = useSharedValue(selected ? 1 : 0);
+  useEffect(() => {
+    selection.set(withSpring(selected ? 1 : 0, PIN_SPRING));
+  }, [selected, selection]);
+  const circleStyle = useAnimatedStyle(() => {
+    const size = PIN_RESTING + (PIN_SELECTED - PIN_RESTING) * selection.value;
+    return { width: size, height: size };
+  });
+  const iconStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: 1 + (ICON_SELECTED / ICON_RESTING - 1) * selection.value }],
+  }));
 
   return (
     <Marker
@@ -44,25 +62,26 @@ export function GarageMarker({ garage, selected, onPress }: GarageMarkerProps) {
       onPress={() => onPress(garage.id)}
     >
       <View style={styles.container}>
-        <View
+        <Animated.View
           style={[
             styles.circle,
+            circleStyle,
             {
-              width: size,
-              height: size,
               backgroundColor: selected ? colors.brandYellow : colors.carlibScreenBg,
               borderWidth: selected ? 0 : 2,
               borderColor: colors.brandYellow,
             },
           ]}
         >
-          <RemixIcon
-            name="toolsFill"
-            size={selected ? 18 : 14}
-            // Explicit black on the yellow fill — brand surfaces don't adapt.
-            color={selected ? '#000000' : colors.brandYellow}
-          />
-        </View>
+          <Animated.View style={iconStyle}>
+            <RemixIcon
+              name="toolsFill"
+              size={ICON_RESTING}
+              // Explicit black on the yellow fill — brand surfaces don't adapt.
+              color={selected ? '#000000' : colors.brandYellow}
+            />
+          </Animated.View>
+        </Animated.View>
       </View>
     </Marker>
   );
