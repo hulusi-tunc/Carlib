@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CarlibButton } from '@/components/CarlibButton';
 import { CarlibCard } from '@/components/CarlibCard';
 import { CarlibTextField } from '@/components/CarlibTextField';
+import { Glass } from '@/components/Glass';
 import { useHeaderHeight } from '@/lib/header';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
 import { ACCIDENT_KEY, ACCIDENT_TYPES, type AccidentType } from '@/models/enums';
@@ -21,6 +22,8 @@ import { useClaimStore } from '@/stores/claimStore';
 import { carlibFont, radius, spacing, text, useTheme } from '@/theme';
 
 const TOTAL_STEPS = 4;
+// Footer = one 52pt button row plus its padding; the scroll content clears it.
+const FOOTER_HEIGHT = 52 + spacing.screenHorizontal * 2;
 // Swift .animation(.easeInOut(0.25), value: currentStep): steps cross-fade.
 const STEP_FADE_IN = FadeIn.duration(250);
 const STEP_FADE_OUT = FadeOut.duration(250);
@@ -134,7 +137,9 @@ export default function DeclareScreen() {
         {t('declaration.stepProgress', { current: currentStep, total: TOTAL_STEPS })}
       </Text>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={[styles.content, { paddingBottom: FOOTER_HEIGHT + insets.bottom }]}
+      >
         {currentStep === 1 && (
           <Animated.View style={styles.step} entering={STEP_FADE_IN} exiting={STEP_FADE_OUT}>
             <Text style={[text.title2, { color: colors.carlibDark }]}>
@@ -306,6 +311,13 @@ export default function DeclareScreen() {
         )}
       </ScrollView>
 
+      {/* Pinned action bar over the scrolling step — the same glass inset the
+          repair-status sheet uses. Opaque where glass is unavailable. */}
+      <Glass
+        borderRadius={0}
+        style={styles.footerBar}
+        fallbackStyle={{ borderWidth: 0, backgroundColor: colors.carlibScreenBg }}
+      >
       <View style={[styles.footer, { paddingBottom: spacing.screenHorizontal + insets.bottom }]}>
         {currentStep > 1 && (
           <CarlibButton
@@ -327,6 +339,7 @@ export default function DeclareScreen() {
           style={styles.footerButton}
         />
       </View>
+      </Glass>
     </View>
   );
 }
@@ -415,6 +428,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   disclaimer: { textAlign: 'center' },
+  footerBar: { position: 'absolute', left: 0, right: 0, bottom: 0 },
   footer: {
     flexDirection: 'row',
     gap: spacing.md,

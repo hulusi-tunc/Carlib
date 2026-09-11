@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CarlibButton } from '@/components/CarlibButton';
 import { CarlibCard } from '@/components/CarlibCard';
 import { RemixIcon } from '@/components/RemixIcon';
+import { useHidesTabBar } from '@/stores/uiStore';
 import { carlibFont, spacing, text, useTheme } from '@/theme';
 
 function randomReference(): string {
@@ -20,6 +21,8 @@ function randomReference(): string {
 }
 
 export default function DeclareConfirmScreen() {
+  // Swift .fullScreenCover: the confirmation covers the tab bar too.
+  useHidesTabBar();
   const { t } = useTranslation();
   const { colors } = useTheme();
   const [reference] = useState(randomReference);

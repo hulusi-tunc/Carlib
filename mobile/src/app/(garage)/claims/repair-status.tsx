@@ -8,7 +8,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
+import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CarlibButton } from '@/components/CarlibButton';
@@ -151,7 +151,8 @@ export default function RepairStatusSheetRoute() {
       />
 
       {/* Inline nav bar — Cancel + inline title (Swift toolbar). */}
-      <View style={styles.toolbar}>
+      {/* At the full detent the sheet reaches the status bar; keep the row below it. */}
+      <View style={[styles.toolbar, { marginTop: insets.top }]}>
         <Pressable onPress={() => router.back()} hitSlop={12} style={styles.toolbarSide}>
           <Text style={[carlibFont(17, 'regular'), { color: colors.carlibSecondary }]}>
             {t('common.cancel')}
@@ -231,9 +232,10 @@ export default function RepairStatusSheetRoute() {
 
       {/* Save bar — Swift safeAreaInset over .ultraThinMaterial. */}
       {showSave && (
+        // Translate only: an opacity fade on a glass view's parent kills the effect.
         <Animated.View
-          entering={FadeInDown.springify()}
-          exiting={FadeOutDown}
+          entering={SlideInDown.springify()}
+          exiting={SlideOutDown}
           style={styles.saveBar}
         >
           <Glass
