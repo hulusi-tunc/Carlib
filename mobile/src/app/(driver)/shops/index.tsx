@@ -69,6 +69,15 @@ const FOCUS_DELTA = 0.012;
 const SETTLE_SPRING = { mass: 1, stiffness: 273, damping: 28 } as const;
 const FLING_VELOCITY = 500;
 
+function filterGarages(garages: Garage[], searchText: string): Garage[] {
+  if (!searchText) return garages;
+  const query = searchText.trim().toLowerCase();
+  return garages.filter(
+    (garage) =>
+      garage.name.toLowerCase().includes(query) || garage.address.toLowerCase().includes(query),
+  );
+}
+
 function CarouselSeparator() {
   return <View style={{ width: CAROUSEL_GAP }} />;
 }
@@ -88,7 +97,8 @@ export default function GarageSearchScreen() {
 
   const [expanded, setExpanded] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Swift onAppear: the first shop starts selected.
+  const [selectedId, setSelectedId] = useState<string | null>(() => garages[0]?.id ?? null);
   const [containerSize, setContainerSize] = useState({
     width: window.width,
     height: window.height,
@@ -103,10 +113,16 @@ export default function GarageSearchScreen() {
   const selectionFromCarousel = useRef(false);
   const pendingRebase = useRef<number | null>(null);
 
+  // Latest values for callbacks created once (the gesture, the viewability
+  // pair) — synced after commit rather than written during render.
   const expandedRef = useRef(expanded);
-  expandedRef.current = expanded;
   const selectedIdRef = useRef(selectedId);
-  selectedIdRef.current = selectedId;
+  useLayoutEffect(() => {
+    expandedRef.current = expanded;
+  }, [expanded]);
+  useLayoutEffect(() => {
+    selectedIdRef.current = selectedId;
+  }, [selectedId]);
 
   const ty = useSharedValue(0);
 
@@ -118,29 +134,19 @@ export default function GarageSearchScreen() {
   const cardWidth = containerSize.width - PANEL_MARGIN_H * 2 - CAROUSEL_MARGIN * 2;
   const cardStride = cardWidth + CAROUSEL_GAP;
 
-  const filteredGarages = useMemo(() => {
-    if (!searchText) return garages;
-    const query = searchText.trim().toLowerCase();
-    return garages.filter(
-      (garage) =>
-        garage.name.toLowerCase().includes(query) ||
-        garage.address.toLowerCase().includes(query),
-    );
-  }, [garages, searchText]);
-
-  // Swift onAppear: preselect the first garage.
-  useEffect(() => {
-    if (selectedId == null && garages.length > 0) {
-      setSelectedId(garages[0]?.id ?? null);
-    }
-  }, [garages, selectedId]);
+  const filteredGarages = useMemo(() => filterGarages(garages, searchText), [garages, searchText]);
 
   // Swift onChange(searchText): keep the selection inside the filtered set.
-  useEffect(() => {
-    if (selectedId != null && !filteredGarages.some((garage) => garage.id === selectedId)) {
-      setSelectedId(filteredGarages[0]?.id ?? null);
-    }
-  }, [filteredGarages, selectedId]);
+  const onSearchChange = useCallback(
+    (next: string) => {
+      setSearchText(next);
+      const nextFiltered = filterGarages(garages, next);
+      if (selectedId != null && !nextFiltered.some((garage) => garage.id === selectedId)) {
+        setSelectedId(nextFiltered[0]?.id ?? null);
+      }
+    },
+    [garages, selectedId],
+  );
 
   // Selection → camera + carousel. Camera always follows; the carousel only
   // scrolls when the selection did NOT originate from the carousel itself.
@@ -183,7 +189,7 @@ export default function GarageSearchScreen() {
     [setPanelExpanded],
   );
 
-  const viewabilityConfigCallbackPairs = useRef([
+  const [viewabilityConfigCallbackPairs] = useState(() => [
     {
       viewabilityConfig: { itemVisiblePercentThreshold: 60 },
       onViewableItemsChanged: ({ viewableItems }: { viewableItems: ViewToken<Garage>[] }) => {
@@ -204,10 +210,10 @@ export default function GarageSearchScreen() {
   const settle = useCallback(
     (next: boolean) => {
       if (next === expandedRef.current) {
-        ty.value = withSpring(0, SETTLE_SPRING);
+        ty.set(withSpring(0, SETTLE_SPRING));
         return;
       }
-      pendingRebase.current = next ? travel + ty.value : ty.value - travel;
+      pendingRebase.current = next ? travel + ty.get() : ty.get() - travel;
       setExpanded(next);
       setPanelExpanded(next);
     },
@@ -216,25 +222,31 @@ export default function GarageSearchScreen() {
 
   useLayoutEffect(() => {
     if (pendingRebase.current == null) return;
-    ty.value = pendingRebase.current;
+    ty.set(pendingRebase.current);
     pendingRebase.current = null;
-    ty.value = withSpring(0, SETTLE_SPRING);
+    ty.set(withSpring(0, SETTLE_SPRING));
   }, [expanded, ty]);
 
+  // The worklets hand off to `settle` through runOnJS, i.e. in gesture-event
+  // context. The compiler's refs rule cannot see through runOnJS and reports
+  // `settle` (which reads a ref) as a render-time access, so it is disabled
+  // on the two handlers that reference it.
   const panelGesture = useMemo(() => {
     const pan = Gesture.Pan()
       .onUpdate((event) => {
         'worklet';
-        ty.value = Math.min(0, Math.max(-travel, event.translationY));
+        ty.set(Math.min(0, Math.max(-travel, event.translationY)));
       })
+      // eslint-disable-next-line react-hooks/refs
       .onEnd((event) => {
         'worklet';
         let shouldExpand: boolean;
         if (event.velocityY < -FLING_VELOCITY) shouldExpand = true;
         else if (event.velocityY > FLING_VELOCITY) shouldExpand = false;
-        else shouldExpand = -ty.value > travel / 2;
+        else shouldExpand = -ty.get() > travel / 2;
         runOnJS(settle)(shouldExpand);
       });
+    // eslint-disable-next-line react-hooks/refs
     const tap = Gesture.Tap().onEnd(() => {
       'worklet';
       runOnJS(settle)(true);
@@ -295,7 +307,7 @@ export default function GarageSearchScreen() {
         <TextInput
           style={[styles.searchInput, { color: colors.carlibDark }]}
           value={searchText}
-          onChangeText={setSearchText}
+          onChangeText={onSearchChange}
           placeholder="Search shops"
           placeholderTextColor={colors.carlibLabel}
           autoCapitalize="none"
@@ -371,7 +383,7 @@ export default function GarageSearchScreen() {
               index,
             })}
             initialScrollIndex={selectedIndex > 0 ? selectedIndex : 0}
-            viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
+            viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs}
             onMomentumScrollEnd={() => {
               programmaticScroll.current = false;
             }}
