@@ -4,7 +4,7 @@
 // row is replaced by years active (per migration plan), and the Book button is
 // pinned instead of scrolling with the content.
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,6 +13,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { CarlibButton } from '@/components/CarlibButton';
 import { CarlibCard } from '@/components/CarlibCard';
 import { DummyImage } from '@/components/DummyImage';
+import { EmptyState } from '@/components/EmptyState';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
 import { shortFormatted, timeFormatted } from '@/lib/dates';
 import { openMaps, openTel } from '@/lib/links';
@@ -43,10 +44,15 @@ export default function GarageDetailScreen() {
   // Swift prefix(4) — the horizontal preview shows the first few open slots.
   const slots = useClaimStore(useShallow(availableSlots(id ?? ''))).slice(0, 4);
 
-  useEffect(() => {
-    if (garage == null && router.canGoBack()) router.back();
-  }, [garage, router]);
-  if (garage == null) return null;
+  if (garage == null) {
+    return (
+      <EmptyState
+        icon="storeLine"
+        title={t('garageDetail.notFoundTitle')}
+        description={t('garageDetail.notFoundBody')}
+      />
+    );
+  }
 
   const km = garageDistances[garage.id] ?? 0;
   const years = garageYearsActive[garage.id] ?? 0;

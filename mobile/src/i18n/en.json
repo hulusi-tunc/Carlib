@@ -158,6 +158,8 @@
     "mapPlaceholder": "Map coming soon"
   },
   "garageDetail": {
+    "notFoundTitle": "Shop not found",
+    "notFoundBody": "This body shop is no longer available.",
     "coverage": "{{km}} km radius",
     "sectionSpecialties": "Specialties",
     "sectionSlots": "Available Slots",

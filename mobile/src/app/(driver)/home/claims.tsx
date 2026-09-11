@@ -9,9 +9,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShallow } from 'zustand/react/shallow';
 
 import { ClaimCard } from '@/components/ClaimCard';
+import { EmptyState } from '@/components/EmptyState';
 import { RemixIcon } from '@/components/RemixIcon';
 import { selectPastClaims, useClaimStore } from '@/stores/claimStore';
-import { carlibFont, spacing, text, useTheme } from '@/theme';
+import { carlibFont, spacing, useTheme } from '@/theme';
 
 export default function DriverClaimsListScreen() {
   const { t } = useTranslation();
@@ -35,16 +36,11 @@ export default function DriverClaimsListScreen() {
       </View>
 
       {pastClaims.length === 0 ? (
-        // ContentUnavailableView port: icon + title + description, centered.
-        <View style={styles.empty}>
-          <RemixIcon name="inboxLine" size={48} color={colors.carlibSecondary} />
-          <Text style={[text.title3, styles.centered, { color: colors.carlibDark }]}>
-            {t('driverClaims.emptyTitle')}
-          </Text>
-          <Text style={[text.footnote, styles.centered, { color: colors.carlibSecondary }]}>
-            {t('driverClaims.emptyDescription')}
-          </Text>
-        </View>
+        <EmptyState
+          icon="inboxLine"
+          title={t('driverClaims.emptyTitle')}
+          description={t('driverClaims.emptyDescription')}
+        />
       ) : (
         <ScrollView contentContainerStyle={styles.list}>
           {pastClaims.map((claim) => (
@@ -77,14 +73,6 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
-  empty: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.xxl,
-  },
-  centered: { textAlign: 'center' },
   list: {
     gap: spacing.sm,
     paddingHorizontal: spacing.screenHorizontal,

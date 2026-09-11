@@ -1,16 +1,16 @@
 // Port of Carlib/Views/Driver/DriverClaimDetailView.swift — status-tinted
 // 380pt hero gradient fixed behind the scroll (toolbarBackground(.hidden)
 // look), horizontal stepper, vehicle/photos/garage cards and cancel action.
-// Photo taps are no-ops for now — the fullscreen lightbox is a later phase.
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CarBrandLogo } from '@/components/CarBrandLogo';
+import { EmptyState } from '@/components/EmptyState';
 import { CarlibButton } from '@/components/CarlibButton';
 import { CarlibStatusBadge } from '@/components/CarlibStatusBadge';
 import { claimPhotoURL } from '@/components/DummyImage';
@@ -67,10 +67,16 @@ export default function DriverClaimDetailScreen() {
   const claim = useClaimStore((s) => s.claims.find((c) => c.id === id));
   const cancelClaim = useClaimStore((s) => s.cancelClaim);
 
-  useEffect(() => {
-    if (claim == null && router.canGoBack()) router.back();
-  }, [claim, router]);
-  if (claim == null) return null;
+  if (claim == null) {
+    // Swift missingClaimPlaceholder: a deep link to a claim that left the store.
+    return (
+      <EmptyState
+        icon="inboxLine"
+        title={t('driverClaims.emptyTitle')}
+        description={t('driverClaims.emptyDescription')}
+      />
+    );
+  }
 
   const statusKey = STATUS_KEY[claim.status];
   const statusColor = colors.status[statusKey].fg;

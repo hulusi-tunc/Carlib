@@ -158,6 +158,8 @@
     "mapPlaceholder": "Carte bientôt disponible"
   },
   "garageDetail": {
+    "notFoundTitle": "Carrossier introuvable",
+    "notFoundBody": "Ce carrossier n'est plus disponible.",
     "coverage": "Rayon de {{km}} km",
     "sectionSpecialties": "Spécialités",
     "sectionSlots": "Créneaux disponibles",
