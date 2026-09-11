@@ -56,7 +56,8 @@ function topActiveClaim(claims: Claim[]): Claim | undefined {
   let bestPriority = 0;
   for (const claim of claims) {
     const priority = heroPriority(claim);
-    if (priority > bestPriority) {
+    // Swift: .filter { > 0 }.max(by:) — the LAST claim wins a tie.
+    if (priority > 0 && priority >= bestPriority) {
       best = claim;
       bestPriority = priority;
     }
@@ -183,7 +184,7 @@ function ActiveFileHeader({
 }: ActiveFileHeaderProps) {
   const { colors } = useTheme();
   return (
-    <PressableScale scale={0.99} haptic="none" onPress={onPress} style={styles.hero}>
+    <View style={styles.hero}>
       <View style={styles.heroKickerRow}>
         <KickerChip color={accent} label={kicker} />
         {stage != null && stage > 0 && <StageIndicator current={stage} accent={accent} />}
@@ -196,7 +197,7 @@ function ActiveFileHeader({
       </View>
       {garageCard != null && <GarageInfoCard data={garageCard} />}
       <PillCta label={ctaLabel} onPress={onPress} />
-    </PressableScale>
+    </View>
   );
 }
 
@@ -307,13 +308,11 @@ export default function DriverHomeScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
-  const currentUser = useAppStore((s) => s.currentUser);
   const setPendingDriverTab = useAppStore((s) => s.setPendingDriverTab);
   const heroClaim = useClaimStore((s) => topActiveClaim(s.claims));
   const vehicleCount = useClaimStore((s) => s.vehicles.length);
   const pastClaims = useClaimStore(useShallow(selectPastClaims));
 
-  const firstName = currentUser?.fullName.trim().split(/\s+/)[0] ?? '';
   const recentClaims = pastClaims.slice(0, 3);
   const openClaim = (id: string) => router.push(`/home/claim/${id}`);
 
@@ -345,10 +344,6 @@ export default function DriverHomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <Text style={[text.title2, styles.greeting, { color: colors.carlibDark }]}>
-          {t('driverHome.greeting', { name: firstName })}
-        </Text>
-
         <HeroSection claim={heroClaim} onOpen={openClaim} />
 
         <View style={styles.middleStack}>
@@ -398,6 +393,8 @@ export default function DriverHomeScreen() {
               subtitle={t('driverHome.shortcutMyGarageCars', { count: vehicleCount })}
               icon="carFill"
               iconPosition="bottomTrailing"
+              iconSize={40}
+              iconColor={colors.carlibDark}
               onPress={() => router.push('/home/my-garage')}
               style={styles.shortcutFlex}
             />
@@ -430,8 +427,8 @@ export default function DriverHomeScreen() {
               </View>
               <RemixIcon
                 name="map2Fill"
-                size={34}
-                color={`${colors.carlibLabel}66`}
+                size={40}
+                color={colors.carlibDark}
                 style={styles.shortcutIcon}
               />
             </PressableScale>
@@ -494,7 +491,6 @@ const styles = StyleSheet.create({
     paddingBottom: TAB_BAR_SCROLL_PADDING,
     gap: 24,
   },
-  greeting: { paddingHorizontal: 20 },
 
   // Hero "file" section
   hero: { paddingHorizontal: 20, gap: 12 },

@@ -14,6 +14,9 @@ export interface PolestarTileProps {
   subtitle?: string;
   icon: RemixIconName;
   iconPosition?: PolestarTileIconPosition;
+  /** Defaults to the 34pt / 40%-alpha PolestarTile icon; the home shortcuts use 40pt solid. */
+  iconSize?: number;
+  iconColor?: string;
   variant?: PolestarTileVariant;
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
@@ -24,6 +27,8 @@ export function PolestarTile({
   subtitle,
   icon,
   iconPosition = 'bottomLeading',
+  iconSize = 34,
+  iconColor,
   variant = 'secondary',
   onPress,
   style,
@@ -44,9 +49,9 @@ export function PolestarTile({
     >
       <RemixIcon
         name={icon}
-        size={34}
+        size={iconSize}
         // 0.4 alpha on carlibLabel via #RRGGBBAA suffix (0.4 × 255 = 0x66).
-        color={isPrimary ? 'rgba(0, 0, 0, 0.2)' : `${colors.carlibLabel}66`}
+        color={iconColor ?? (isPrimary ? 'rgba(0, 0, 0, 0.2)' : `${colors.carlibLabel}66`)}
         style={[
           styles.icon,
           iconPosition === 'bottomLeading' ? styles.iconLeading : styles.iconTrailing,
