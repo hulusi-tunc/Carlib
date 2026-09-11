@@ -3,9 +3,11 @@
 // Transparency). Rules enforced here: uniform borderRadius only; never fade a
 // GlassView via opacity (kills the effect) — toggle glassEffectStyle instead.
 import {
+  GlassContainer,
   GlassView,
   isGlassEffectAPIAvailable,
   isLiquidGlassAvailable,
+  type GlassEffectStyleConfig,
   type GlassStyle,
 } from 'expo-glass-effect';
 import React, { useEffect, useState } from 'react';
@@ -40,9 +42,12 @@ export interface GlassProps {
   children?: React.ReactNode;
   /** Uniform radius only — per-corner radii are broken on GlassView. */
   borderRadius?: number;
-  glassEffectStyle?: GlassStyle;
+  /** A string, or `{ style, animate, animationDuration }` to animate between styles. */
+  glassEffectStyle?: GlassStyle | GlassEffectStyleConfig;
   tintColor?: string;
   isInteractive?: boolean;
+  /** Defaults to the app's resolved scheme, so a ThemeScope-forced subtree gets matching glass. */
+  colorScheme?: 'light' | 'dark';
   style?: StyleProp<ViewStyle>;
   /** Extra styling for the non-glass fallback card (overrides the themed default). */
   fallbackStyle?: StyleProp<ViewStyle>;
@@ -54,11 +59,12 @@ export function Glass({
   glassEffectStyle = 'regular',
   tintColor,
   isInteractive,
+  colorScheme,
   style,
   fallbackStyle,
 }: GlassProps) {
   const glass = useGlassAvailable();
-  const { colors } = useTheme();
+  const { colors, scheme } = useTheme();
 
   if (glass) {
     return (
@@ -66,6 +72,7 @@ export function Glass({
         glassEffectStyle={glassEffectStyle}
         tintColor={tintColor}
         isInteractive={isInteractive}
+        colorScheme={colorScheme ?? scheme}
         style={[{ borderRadius, overflow: 'hidden' }, style]}
       >
         {children}
@@ -82,6 +89,8 @@ export function Glass({
           backgroundColor: colors.tileSecondary,
           borderWidth: 1,
           borderColor: colors.carlibCardBorder,
+          // The plan's Android fallback is an elevated opaque card, not blur mimicry.
+          elevation: Platform.OS === 'android' ? 2 : 0,
         },
         style,
         fallbackStyle,
@@ -90,4 +99,24 @@ export function Glass({
       {children}
     </View>
   );
+}
+
+export interface GlassGroupProps {
+  children?: React.ReactNode;
+  /** Distance at which sibling glass views start merging into each other. */
+  spacing?: number;
+  style?: StyleProp<ViewStyle>;
+}
+
+/** GlassContainer on glass-capable devices (lets sibling Glass views morph), a plain View elsewhere. */
+export function GlassGroup({ children, spacing, style }: GlassGroupProps) {
+  const glass = useGlassAvailable();
+  if (glass) {
+    return (
+      <GlassContainer spacing={spacing} style={style}>
+        {children}
+      </GlassContainer>
+    );
+  }
+  return <View style={style}>{children}</View>;
 }
