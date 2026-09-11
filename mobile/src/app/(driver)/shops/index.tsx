@@ -252,9 +252,11 @@ export default function GarageSearchScreen() {
 
   const openDetail = useCallback(
     (garageId: string) => {
+      // Swift openDetail: expand the panel first, so the detail pops back onto the list.
+      settle(true);
       router.push(`/shops/garage/${garageId}`);
     },
-    [router],
+    [router, settle],
   );
 
   const panelAnimatedStyle = useAnimatedStyle(() => ({
