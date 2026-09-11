@@ -29,6 +29,7 @@ import Animated, {
   FadeIn,
   runOnJS,
   useAnimatedStyle,
+  useAnimatedReaction,
   useSharedValue,
   withSpring,
   useReducedMotion,
@@ -68,6 +69,11 @@ const FOCUS_DELTA = 0.012;
 // SwiftUI spring(response: 0.38, dampingFraction: 0.84).
 const SETTLE_SPRING = { mass: 1, stiffness: 273, damping: 28 } as const;
 const FLING_VELOCITY = 500;
+// Swift contentMidpoint: the content flips to the list once the drag passes
+// halfway between the two resting heights. Hysteresis stops it flip-flopping
+// at the seam.
+const MORPH_MIDPOINT = 0.5;
+const MORPH_HYSTERESIS = 0.06;
 
 function filterGarages(garages: Garage[], searchText: string): Garage[] {
   if (!searchText) return garages;
@@ -96,6 +102,10 @@ export default function GarageSearchScreen() {
   const setPanelExpanded = useShopsUiStore((s) => s.setPanelExpanded);
 
   const [expanded, setExpanded] = useState(false);
+  // Live content state during a drag (Swift isContentExpanded). `expanded`
+  // stays the settled truth for the glass surface, frame, insets and tab bar.
+  const [contentExpanded, setContentExpanded] = useState(false);
+  const liveExpanded = useSharedValue(false);
   const [searchText, setSearchText] = useState('');
   // Swift onAppear: the first shop starts selected.
   const [selectedId, setSelectedId] = useState<string | null>(() => garages[0]?.id ?? null);
@@ -209,6 +219,8 @@ export default function GarageSearchScreen() {
   // continuous, then springs home. Same state → just spring back.
   const settle = useCallback(
     (next: boolean) => {
+      liveExpanded.set(next);
+      setContentExpanded(next);
       if (next === expandedRef.current) {
         ty.set(withSpring(0, SETTLE_SPRING));
         return;
@@ -217,7 +229,7 @@ export default function GarageSearchScreen() {
       setExpanded(next);
       setPanelExpanded(next);
     },
-    [setPanelExpanded, travel, ty],
+    [liveExpanded, setPanelExpanded, travel, ty],
   );
 
   useLayoutEffect(() => {
@@ -243,7 +255,7 @@ export default function GarageSearchScreen() {
         let shouldExpand: boolean;
         if (event.velocityY < -FLING_VELOCITY) shouldExpand = true;
         else if (event.velocityY > FLING_VELOCITY) shouldExpand = false;
-        else shouldExpand = -ty.get() > travel / 2;
+        else shouldExpand = -ty.get() > travel * MORPH_MIDPOINT;
         runOnJS(settle)(shouldExpand);
       });
     // eslint-disable-next-line react-hooks/refs
@@ -253,6 +265,23 @@ export default function GarageSearchScreen() {
     });
     return Gesture.Race(pan, tap);
   }, [settle, travel, ty]);
+
+  // Mid-drag morph: flip the content at the midpoint while the finger is
+  // down. Ignored once settled expanded — the translation is re-based then.
+  useAnimatedReaction(
+    () => (travel > 0 ? -ty.get() / travel : 0),
+    (progress) => {
+      if (expanded) return;
+      const next = liveExpanded.get()
+        ? progress > MORPH_MIDPOINT - MORPH_HYSTERESIS
+        : progress > MORPH_MIDPOINT + MORPH_HYSTERESIS;
+      if (next !== liveExpanded.get()) {
+        liveExpanded.set(next);
+        runOnJS(setContentExpanded)(next);
+      }
+    },
+    [expanded, travel],
+  );
 
   const focusGarage = useCallback(
     (garageId: string) => {
@@ -466,16 +495,16 @@ export default function GarageSearchScreen() {
               <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.carlibScreenBg }]} />
             )}
             <View style={[styles.flex, expanded && { paddingTop: insets.top }]}>
-              <Animated.View key={`header-${expanded}`} entering={FadeIn.duration(160)}>
-                {expanded ? navBar : dragHandle}
+              <Animated.View key={`header-${contentExpanded}`} entering={FadeIn.duration(160)}>
+                {contentExpanded ? navBar : dragHandle}
               </Animated.View>
               {searchField}
               <Animated.View
-                key={`body-${expanded}`}
+                key={`body-${contentExpanded}`}
                 entering={FadeIn.duration(160)}
                 style={styles.flex}
               >
-                {expanded ? listBody : carouselBody}
+                {contentExpanded ? listBody : carouselBody}
               </Animated.View>
             </View>
           </Glass>
