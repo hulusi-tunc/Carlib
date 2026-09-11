@@ -1,3 +1,5 @@
+> Historical — written against the SwiftUI app, now archived at `archive/swift/`. The product is `mobile/`.
+
 # Carlib -- UI Design Specification
 
 **Project:** Carlib -- Native SwiftUI App (iOS 26)

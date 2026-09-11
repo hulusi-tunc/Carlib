@@ -1,3 +1,5 @@
+> Historical — written against the SwiftUI app, now archived at `archive/swift/`. The product is `mobile/`.
+
 # Carlib -- UX Strategy for Native SwiftUI Implementation
 
 **Document:** Comprehensive UX Strategy Analysis -- SwiftUI / iOS 26  

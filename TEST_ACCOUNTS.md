@@ -1,6 +1,6 @@
 # Test Accounts
 
-Placeholder credentials for local sign-in. Source of truth: [Carlib/Services/DefaultUsers.swift](Carlib/Services/DefaultUsers.swift).
+Placeholder credentials for local sign-in. Source of truth: [mobile/src/services/defaultUsers.ts](mobile/src/services/defaultUsers.ts) (the archived SwiftUI app keeps its copy in `archive/swift/Carlib/Services/DefaultUsers.swift`).
 
 > These are mock accounts — passwords live in plaintext in the source. Replace with real auth before ship.
 

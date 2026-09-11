@@ -14,59 +14,59 @@ Single source of truth for the screen inventory and user flows. Every Figma fram
 
 | ID | Screen | SwiftUI view | Notes |
 |---|---|---|---|
-| S-01 | Splash | [SplashView.swift](../../Carlib/Views/Onboarding/SplashView.swift) | App launch, logo animation |
-| S-02 | Welcome carousel | [WelcomeCarouselView.swift](../../Carlib/Views/Onboarding/WelcomeCarouselView.swift) | 3–4 value slides |
-| S-03 | Role selection | [RoleSelectionView.swift](../../Carlib/Views/Onboarding/RoleSelectionView.swift) | Driver / Garage split |
-| S-04 | Onboarding wrapper | [OnboardingView.swift](../../Carlib/Views/Onboarding/OnboardingView.swift) | Container |
-| S-05 | Auth gateway | [AuthGatewayView.swift](../../Carlib/Views/Auth/AuthGatewayView.swift) | Sign in / sign up CTA |
-| S-06 | Sign in | [SignInView.swift](../../Carlib/Views/Auth/SignInView.swift) | Email + password |
-| S-07 | Sign up | [SignUpView.swift](../../Carlib/Views/Auth/SignUpView.swift) | Role-specific fields |
-| S-08 | Forgot password | [ForgotPasswordView.swift](../../Carlib/Views/Auth/ForgotPasswordView.swift) | Email reset |
-| S-09 | Notifications settings | [NotificationSettingsView.swift](../../Carlib/Views/Shared/NotificationSettingsView.swift) | Push toggles |
+| S-01 | Splash | [SplashView.swift](../../archive/swift/Carlib/Views/Onboarding/SplashView.swift) | App launch, logo animation |
+| S-02 | Welcome carousel | [WelcomeCarouselView.swift](../../archive/swift/Carlib/Views/Onboarding/WelcomeCarouselView.swift) | 3–4 value slides |
+| S-03 | Role selection | [RoleSelectionView.swift](../../archive/swift/Carlib/Views/Onboarding/RoleSelectionView.swift) | Driver / Garage split |
+| S-04 | Onboarding wrapper | [OnboardingView.swift](../../archive/swift/Carlib/Views/Onboarding/OnboardingView.swift) | Container |
+| S-05 | Auth gateway | [AuthGatewayView.swift](../../archive/swift/Carlib/Views/Auth/AuthGatewayView.swift) | Sign in / sign up CTA |
+| S-06 | Sign in | [SignInView.swift](../../archive/swift/Carlib/Views/Auth/SignInView.swift) | Email + password |
+| S-07 | Sign up | [SignUpView.swift](../../archive/swift/Carlib/Views/Auth/SignUpView.swift) | Role-specific fields |
+| S-08 | Forgot password | [ForgotPasswordView.swift](../../archive/swift/Carlib/Views/Auth/ForgotPasswordView.swift) | Email reset |
+| S-09 | Notifications settings | [NotificationSettingsView.swift](../../archive/swift/Carlib/Views/Shared/NotificationSettingsView.swift) | Push toggles |
 | S-10 | Error / offline | — | Global error & empty states |
 
 ### 1.2 Driver app (D)
 
 | ID | Screen | SwiftUI view | Flow |
 |---|---|---|---|
-| D-01 | Driver tab bar | [DriverTabView.swift](../../Carlib/Views/Driver/DriverTabView.swift) | Shell |
-| D-02 | Home / dashboard | [DriverHomeView.swift](../../Carlib/Views/Driver/DriverHomeView.swift) | Active claim + quick actions |
-| D-03 | Declaration — type | [DeclarationFlowView.swift](../../Carlib/Views/Driver/DeclarationFlowView.swift) | Step 1 of 4 |
+| D-01 | Driver tab bar | [DriverTabView.swift](../../archive/swift/Carlib/Views/Driver/DriverTabView.swift) | Shell |
+| D-02 | Home / dashboard | [DriverHomeView.swift](../../archive/swift/Carlib/Views/Driver/DriverHomeView.swift) | Active claim + quick actions |
+| D-03 | Declaration — type | [DeclarationFlowView.swift](../../archive/swift/Carlib/Views/Driver/DeclarationFlowView.swift) | Step 1 of 4 |
 | D-04 | Declaration — photos | DeclarationFlowView | Step 2 of 4 |
 | D-05 | Declaration — vehicle | DeclarationFlowView | Step 3 of 4 |
 | D-06 | Declaration — location | DeclarationFlowView | Step 4 of 4 |
 | D-07 | Declaration — review | DeclarationFlowView | Summary |
-| D-08 | Declaration confirmation | [DeclarationConfirmationView.swift](../../Carlib/Views/Driver/DeclarationConfirmationView.swift) | Success state |
-| D-09 | Claims list | [DriverClaimsListView.swift](../../Carlib/Views/Driver/DriverClaimsListView.swift) | Active + past |
-| D-10 | Claim detail | [DriverClaimDetailView.swift](../../Carlib/Views/Driver/DriverClaimDetailView.swift) | Status + actions |
-| D-11 | Garage search — list | [GarageSearchView.swift](../../Carlib/Views/Driver/GarageSearchView.swift) | Sortable list |
+| D-08 | Declaration confirmation | [DeclarationConfirmationView.swift](../../archive/swift/Carlib/Views/Driver/DeclarationConfirmationView.swift) | Success state |
+| D-09 | Claims list | [DriverClaimsListView.swift](../../archive/swift/Carlib/Views/Driver/DriverClaimsListView.swift) | Active + past |
+| D-10 | Claim detail | [DriverClaimDetailView.swift](../../archive/swift/Carlib/Views/Driver/DriverClaimDetailView.swift) | Status + actions |
+| D-11 | Garage search — list | [GarageSearchView.swift](../../archive/swift/Carlib/Views/Driver/GarageSearchView.swift) | Sortable list |
 | D-12 | Garage search — map | GarageSearchView | Map view toggle |
 | D-13 | Garage filters | GarageSearchView | Distance, type, specialties |
-| D-14 | Garage detail | [GarageDetailView.swift](../../Carlib/Views/Driver/GarageDetailView.swift) | Profile, photos, slots |
-| D-15 | Booking flow — calendar | [BookingFlowView.swift](../../Carlib/Views/Driver/BookingFlowView.swift) | Pick date |
+| D-14 | Garage detail | [GarageDetailView.swift](../../archive/swift/Carlib/Views/Driver/GarageDetailView.swift) | Profile, photos, slots |
+| D-15 | Booking flow — calendar | [BookingFlowView.swift](../../archive/swift/Carlib/Views/Driver/BookingFlowView.swift) | Pick date |
 | D-16 | Booking flow — slot | BookingFlowView | Pick time |
 | D-17 | Booking confirmation | BookingFlowView | Success + dossier # |
-| D-18 | My garage | [MyGarageView.swift](../../Carlib/Views/Driver/MyGarageView.swift) | Assigned garage info |
-| D-19 | Vehicle detail | [VehicleDetailView.swift](../../Carlib/Views/Driver/VehicleDetailView.swift) | My vehicle |
-| D-20 | Profile | [DriverProfileView.swift](../../Carlib/Views/Driver/DriverProfileView.swift) | Account, settings |
-| D-21 | Status timeline | [StatusTimelineView.swift](../../Carlib/Views/Shared/StatusTimelineView.swift) | Shared with Garage |
+| D-18 | My garage | [MyGarageView.swift](../../archive/swift/Carlib/Views/Driver/MyGarageView.swift) | Assigned garage info |
+| D-19 | Vehicle detail | [VehicleDetailView.swift](../../archive/swift/Carlib/Views/Driver/VehicleDetailView.swift) | My vehicle |
+| D-20 | Profile | [DriverProfileView.swift](../../archive/swift/Carlib/Views/Driver/DriverProfileView.swift) | Account, settings |
+| D-21 | Status timeline | [StatusTimelineView.swift](../../archive/swift/Carlib/Views/Shared/StatusTimelineView.swift) | Shared with Garage |
 | D-22 | Push notification detail | — | Deep link target |
 
 ### 1.3 Garage portal (G)
 
 | ID | Screen | SwiftUI view | Flow |
 |---|---|---|---|
-| G-01 | Garage tab bar | [GarageTabView.swift](../../Carlib/Views/Garage/GarageTabView.swift) | Shell |
-| G-02 | Dashboard | [GarageDashboardView.swift](../../Carlib/Views/Garage/GarageDashboardView.swift) | Pending + today |
-| G-03 | Claims list | [GarageClaimsListView.swift](../../Carlib/Views/Garage/GarageClaimsListView.swift) | Incoming + active |
-| G-04 | Claim detail | [GarageClaimDetailView.swift](../../Carlib/Views/Garage/GarageClaimDetailView.swift) | Accept/refuse + status |
+| G-01 | Garage tab bar | [GarageTabView.swift](../../archive/swift/Carlib/Views/Garage/GarageTabView.swift) | Shell |
+| G-02 | Dashboard | [GarageDashboardView.swift](../../archive/swift/Carlib/Views/Garage/GarageDashboardView.swift) | Pending + today |
+| G-03 | Claims list | [GarageClaimsListView.swift](../../archive/swift/Carlib/Views/Garage/GarageClaimsListView.swift) | Incoming + active |
+| G-04 | Claim detail | [GarageClaimDetailView.swift](../../archive/swift/Carlib/Views/Garage/GarageClaimDetailView.swift) | Accept/refuse + status |
 | G-05 | Accept modal | GarageClaimDetailView | Confirmation |
 | G-06 | Status update sheet | GarageClaimDetailView | Change repair stage |
-| G-07 | Planning — week | [GaragePlanningView.swift](../../Carlib/Views/Garage/GaragePlanningView.swift) | Week calendar |
+| G-07 | Planning — week | [GaragePlanningView.swift](../../archive/swift/Carlib/Views/Garage/GaragePlanningView.swift) | Week calendar |
 | G-08 | Planning — day | GaragePlanningView | Day detail |
 | G-09 | Availability editor | GaragePlanningView | Add/block slots |
-| G-10 | Profile view | [GarageProfileView.swift](../../Carlib/Views/Garage/GarageProfileView.swift) | Public preview |
-| G-11 | Profile edit | [GarageProfileEditView.swift](../../Carlib/Views/Garage/GarageProfileEditView.swift) | Form |
+| G-10 | Profile view | [GarageProfileView.swift](../../archive/swift/Carlib/Views/Garage/GarageProfileView.swift) | Public preview |
+| G-11 | Profile edit | [GarageProfileEditView.swift](../../archive/swift/Carlib/Views/Garage/GarageProfileEditView.swift) | Form |
 | G-12 | Photos management | GarageProfileEditView | Upload grid |
 | G-13 | Zone de couverture | GarageProfileEditView | Map radius |
 | G-14 | Claim history | GarageClaimsListView | Archived |
@@ -84,9 +84,9 @@ Single source of truth for the screen inventory and user flows. Every Figma fram
 
 | ID | Component | File |
 |---|---|---|
-| C-01 | ClaimCardView | [ClaimCardView.swift](../../Carlib/Views/Shared/ClaimCardView.swift) |
-| C-02 | GarageCardView | [GarageCardView.swift](../../Carlib/Views/Shared/GarageCardView.swift) |
-| C-03 | StatusTimelineView | [StatusTimelineView.swift](../../Carlib/Views/Shared/StatusTimelineView.swift) |
+| C-01 | ClaimCardView | [ClaimCardView.swift](../../archive/swift/Carlib/Views/Shared/ClaimCardView.swift) |
+| C-02 | GarageCardView | [GarageCardView.swift](../../archive/swift/Carlib/Views/Shared/GarageCardView.swift) |
+| C-03 | StatusTimelineView | [StatusTimelineView.swift](../../archive/swift/Carlib/Views/Shared/StatusTimelineView.swift) |
 
 ---
 
@@ -206,7 +206,7 @@ Three interconnected status machines power the claim/booking/repair UX. All nine
 | **Booking** | pending → confirmed → arrived → dropped off → (rescheduled / cancelled) | reuses claim colors |
 | **Repair** | diagnostic → waiting parts → repairing → quality check → ready for pickup | reuses claim colors |
 
-See [CarlibStatusBadge.swift](../../Carlib/DesignSystem/Components/CarlibStatusBadge.swift) for the canonical color mapping.
+See [CarlibStatusBadge.swift](../../archive/swift/Carlib/DesignSystem/Components/CarlibStatusBadge.swift) for the canonical color mapping.
 
 ---
 
