@@ -13,10 +13,10 @@ import { useShallow } from 'zustand/react/shallow';
 
 import CarlibLogo from '../../../../assets/images/carlib-logo.svg';
 import HomeTopBgDark from '../../../../assets/images/home-top-bg-dark.svg';
-import { ClaimCard } from '@/components/ClaimCard';
 import { Glass } from '@/components/Glass';
 import { PolestarTile } from '@/components/PolestarTile';
 import { PressableScale } from '@/components/PressableScale';
+import { RecentFileRow } from '@/components/RecentFileRow';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
 import { relativeFormatted, shortFormatted } from '@/lib/dates';
 import { openMaps, openTel } from '@/lib/links';
@@ -453,16 +453,16 @@ export default function DriverHomeScreen() {
                 <RemixIcon name="arrowRightLine" size={16} color={colors.carlibDark} />
               </PressableScale>
             </View>
-            <View style={styles.recentList}>
-              {recentClaims.map((claim) => (
-                <PressableScale
-                  key={claim.id}
-                  scale={0.98}
-                  haptic="light"
-                  onPress={() => openClaim(claim.id)}
-                >
-                  <ClaimCard claim={claim} />
-                </PressableScale>
+            <View>
+              {recentClaims.map((claim, index) => (
+                <React.Fragment key={claim.id}>
+                  {index > 0 && (
+                    <View
+                      style={[styles.recentDivider, { backgroundColor: colors.carlibCardBorder }]}
+                    />
+                  )}
+                  <RecentFileRow claim={claim} onPress={() => openClaim(claim.id)} />
+                </React.Fragment>
               ))}
             </View>
           </View>
@@ -609,5 +609,5 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: radius.full,
   },
-  recentList: { gap: 12 },
+  recentDivider: { height: StyleSheet.hairlineWidth },
 });
