@@ -7,6 +7,7 @@ import { Stack, router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CarlibButton } from '@/components/CarlibButton';
@@ -19,6 +20,9 @@ import { useClaimStore } from '@/stores/claimStore';
 import { carlibFont, fontFamilies, radius, spacing, text, useTheme } from '@/theme';
 
 const TOTAL_STEPS = 4;
+// Swift .animation(.easeInOut(0.25), value: currentStep): steps cross-fade.
+const STEP_FADE_IN = FadeIn.duration(250);
+const STEP_FADE_OUT = FadeOut.duration(250);
 
 // Mirrors the AccidentType icon extension in ClaimCardView.swift.
 const ACCIDENT_ICON: Record<AccidentType, RemixIconName> = {
@@ -141,7 +145,7 @@ export default function DeclareScreen() {
 
       <ScrollView contentContainerStyle={styles.content}>
         {currentStep === 1 && (
-          <View style={styles.step}>
+          <Animated.View style={styles.step} entering={STEP_FADE_IN} exiting={STEP_FADE_OUT}>
             <Text style={[text.title2, { color: colors.carlibDark }]}>
               {t('declaration.step1Title')}
             </Text>
@@ -171,11 +175,11 @@ export default function DeclareScreen() {
                 );
               })}
             </View>
-          </View>
+          </Animated.View>
         )}
 
         {currentStep === 2 && (
-          <View style={styles.step}>
+          <Animated.View style={styles.step} entering={STEP_FADE_IN} exiting={STEP_FADE_OUT}>
             <Text style={[text.title2, { color: colors.carlibDark }]}>
               {t('declaration.step2Title')}
             </Text>
@@ -227,11 +231,11 @@ export default function DeclareScreen() {
             <Text style={[text.caption, { color: colors.carlibSecondary }]}>
               {t('declaration.photosHint')}
             </Text>
-          </View>
+          </Animated.View>
         )}
 
         {currentStep === 3 && (
-          <View style={styles.step}>
+          <Animated.View style={styles.step} entering={STEP_FADE_IN} exiting={STEP_FADE_OUT}>
             <Text style={[text.title2, { color: colors.carlibDark }]}>
               {t('declaration.step3Title')}
             </Text>
@@ -271,11 +275,11 @@ export default function DeclareScreen() {
                 onChangeText={setColor}
               />
             </View>
-          </View>
+          </Animated.View>
         )}
 
         {currentStep === 4 && (
-          <View style={styles.step}>
+          <Animated.View style={styles.step} entering={STEP_FADE_IN} exiting={STEP_FADE_OUT}>
             <Text style={[text.title2, { color: colors.carlibDark }]}>
               {t('declaration.step4Title')}
             </Text>
@@ -307,7 +311,7 @@ export default function DeclareScreen() {
             <Text style={[text.caption, styles.disclaimer, { color: colors.carlibSecondary }]}>
               {t('declaration.summaryDisclaimer')}
             </Text>
-          </View>
+          </Animated.View>
         )}
       </ScrollView>
 
