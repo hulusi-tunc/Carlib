@@ -1,7 +1,8 @@
 // Port of Carlib/Views/Shared/ClaimCardView.swift — premium claim row card
-// with a 4pt status-colored left edge bar. The iOS long-press context-menu
-// photo preview + fullscreen lightbox are replaced by a plain `onPressPhoto`
-// tap callback (the target screen decides what to open).
+// with a 4pt status-colored left edge bar. Photos report taps and long-presses
+// through `onPressPhoto`; the target screen decides what to open. (iOS's
+// .contextMenu preview is the one piece not ported — the lightbox plays that
+// role on both platforms until a native ContextMenu.Preview is verified.)
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
 import React from 'react';
@@ -96,6 +97,12 @@ export function ClaimCard({ claim, showGarage = true, actions, onPressPhoto }: C
         scale={0.94}
         haptic="light"
         onPress={() => onPressPhoto(index)}
+        // Swift: long-press opens the context-menu preview. Same target here.
+        onLongPress={() => {
+          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          onPressPhoto(index);
+        }}
+        delayLongPress={200}
       >
         {thumb}
       </PressableScale>
