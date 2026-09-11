@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShallow } from 'zustand/react/shallow';
 
 import { ClaimCard } from '@/components/ClaimCard';
+import { Glass, GlassGroup } from '@/components/Glass';
 import { PressableScale } from '@/components/PressableScale';
 import { RemixIcon } from '@/components/RemixIcon';
 import { garages } from '@/services/mockData';
@@ -58,21 +59,33 @@ function FilterSwitcher({
   const pillStyle = useAnimatedStyle(() => ({ transform: [{ translateX: offset.value }] }));
 
   return (
-    <View
-      style={[styles.switcher, { backgroundColor: colors.tileSecondary }]}
-      onLayout={(e) => setTrackWidth(e.nativeEvent.layout.width)}
-    >
-      {segmentWidth > 0 && (
-        <Animated.View
-          pointerEvents="none"
-          style={[
-            styles.switcherPill,
-            scheme === 'light' && styles.switcherPillShadow,
-            pillStyle,
-            { width: segmentWidth, backgroundColor: colors.carlibScreenBg },
-          ]}
+    <View style={styles.switcher} onLayout={(e) => setTrackWidth(e.nativeEvent.layout.width)}>
+      {/* iOS 26 segmented control: a glass track and a glass indicator as siblings in
+          one container, so the indicator merges with the track edges as it slides.
+          Elsewhere: the tileSecondary track + screen-bg pill the Swift app draws. */}
+      <GlassGroup spacing={SWITCHER_GAP * 2} style={StyleSheet.absoluteFill}>
+        <Glass
+          borderRadius={radius.full}
+          style={StyleSheet.absoluteFill}
+          fallbackStyle={{ backgroundColor: colors.tileSecondary, borderWidth: 0 }}
         />
-      )}
+        {segmentWidth > 0 && (
+          <Animated.View
+            pointerEvents="none"
+            style={[styles.switcherPill, pillStyle, { width: segmentWidth }]}
+          >
+            <Glass
+              borderRadius={radius.full}
+              isInteractive
+              style={StyleSheet.absoluteFill}
+              fallbackStyle={[
+                { backgroundColor: colors.carlibScreenBg, borderWidth: 0 },
+                scheme === 'light' && styles.switcherPillShadow,
+              ]}
+            />
+          </Animated.View>
+        )}
+      </GlassGroup>
       {FILTERS.map((filter) => (
         <View key={filter} style={styles.switcherSlot}>
           <PressableScale
