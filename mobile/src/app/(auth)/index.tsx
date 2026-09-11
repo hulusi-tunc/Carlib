@@ -91,6 +91,18 @@ export default function Splash() {
                 ? `/${seedTab}`
                 : homeForRole(seed.user.role);
           router.replace(target as never);
+          // Twin of CARLIB_SHEET: EXPO_PUBLIC_CARLIB_ROUTES pushes each route
+          // in turn, EXPO_PUBLIC_CARLIB_ROUTE_DWELL ms apart (default 5000), so
+          // one build can be captured screen by screen.
+          const routeList: string = process.env.EXPO_PUBLIC_CARLIB_ROUTES ?? '';
+          const routes = routeList
+            .split(',')
+            .map((route) => route.trim())
+            .filter(Boolean);
+          const dwell = Number(process.env.EXPO_PUBLIC_CARLIB_ROUTE_DWELL ?? 5000);
+          routes.forEach((route, index) => {
+            setTimeout(() => router.push(route as never), dwell * (index + 1));
+          });
         }
         return;
       }
