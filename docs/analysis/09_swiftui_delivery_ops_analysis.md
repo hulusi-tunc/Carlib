@@ -1,3 +1,5 @@
+> Historical — written against the SwiftUI app, now archived at `archive/swift/`. The product is `mobile/`.
+
 # Carlib -- SwiftUI Native Implementation: Delivery & Operations Analysis
 
 **Document version:** 1.0  

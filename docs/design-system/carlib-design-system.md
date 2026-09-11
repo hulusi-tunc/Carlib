@@ -1,3 +1,5 @@
+> Historical — written against the SwiftUI app, now archived at `archive/swift/`. The product is `mobile/`.
+
 # Carlib Design System Specification
 
 **Status:** Source of truth for the Figma library build.

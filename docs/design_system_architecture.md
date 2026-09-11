@@ -1,3 +1,5 @@
+> Historical — written against the SwiftUI app, now archived at `archive/swift/`. The product is `mobile/`.
+
 # Carlib Design System Architecture
 
 **Platform:** iOS 26 (SwiftUI, iPhone only, Portrait only)

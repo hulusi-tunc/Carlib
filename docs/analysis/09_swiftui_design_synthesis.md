@@ -1,3 +1,5 @@
+> Historical — written against the SwiftUI app, now archived at `archive/swift/`. The product is `mobile/`.
+
 # Carlib -- SwiftUI Strategic Design Synthesis
 ## Native iOS 26 Implementation -- Senior Design Partner Analysis
 
