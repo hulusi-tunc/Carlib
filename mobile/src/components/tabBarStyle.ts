@@ -30,6 +30,8 @@ export function tabBarStyleProps(colors: ColorTokens) {
       },
     },
     disableTransparentOnScrollEdge: true,
+    // iOS 26: the floating bar shrinks to the active tab while scrolling down.
+    minimizeBehavior: 'onScrollDown',
   } as const;
 }
 
