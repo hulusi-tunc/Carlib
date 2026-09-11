@@ -6,7 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const SWIFT_SOURCE = path.join(__dirname, '../../Carlib/DesignSystem/RemixIcon.swift');
+const SWIFT_SOURCE = path.join(__dirname, '../../archive/swift/Carlib/DesignSystem/RemixIcon.swift');
 const OUT = path.join(__dirname, '../assets/icons/remixicon-glyphmap.json');
 
 const swift = fs.readFileSync(SWIFT_SOURCE, 'utf8');
