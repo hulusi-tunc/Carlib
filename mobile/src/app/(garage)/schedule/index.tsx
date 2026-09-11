@@ -9,7 +9,13 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -76,6 +82,12 @@ const WEEKDAY_NAMES = [
 // damping = 2 · fraction · √stiffness.
 const MODE_SPRING = { mass: 1, stiffness: 438, damping: 36 } as const; // 0.3 / 0.85
 const BAR_SPRING = { mass: 1, stiffness: 247, damping: 27 } as const; // 0.4 / 0.85
+// Swift wraps mode and day changes in .spring(0.3, 0.85) and week shifts in
+// .spring(0.35, 0.85); the content under them cross-fades on the same curves.
+const MODE_FADE_IN = FadeIn.springify().stiffness(438).damping(36);
+const MODE_FADE_OUT = FadeOut.springify().stiffness(438).damping(36);
+const WEEK_FADE_IN = FadeIn.springify().stiffness(322).damping(30);
+const WEEK_FADE_OUT = FadeOut.springify().stiffness(322).damping(30);
 
 const SLOT_TIME_WIDTH = 64;
 const WEEK_CELL_HEIGHT = 72;
@@ -432,7 +444,12 @@ export default function GarageScheduleScreen() {
         </View>
 
         {mode === 'calendar' ? (
-          <>
+          <Animated.View
+            key="calendar"
+            style={styles.modeContent}
+            entering={MODE_FADE_IN}
+            exiting={MODE_FADE_OUT}
+          >
             {/* ── Capacity hero ── */}
             <View style={styles.padded}>
               <CarlibCard style={styles.heroCard}>
@@ -534,6 +551,7 @@ export default function GarageScheduleScreen() {
                 </PressableScale>
               </View>
 
+              <Animated.View key={weekStart.getTime()} entering={WEEK_FADE_IN} exiting={WEEK_FADE_OUT}>
               <View style={[styles.padded, styles.weekRow]}>
                 {weekDates.map((date) => (
                   <WeekDayCell
@@ -545,9 +563,11 @@ export default function GarageScheduleScreen() {
                   />
                 ))}
               </View>
+              </Animated.View>
             </View>
 
             {/* ── Slots ── */}
+            <Animated.View key={selectedDate.getTime()} entering={MODE_FADE_IN} exiting={MODE_FADE_OUT}>
             <View style={[styles.padded, styles.slotsSection]}>
               <View style={styles.slotsHeader}>
                 {/* Verbatim in Swift — not an L10n key. */}
@@ -603,10 +623,16 @@ export default function GarageScheduleScreen() {
                 </View>
               )}
             </View>
-          </>
+            </Animated.View>
+          </Animated.View>
         ) : (
           /* ── Weekly hours ── */
-          <View style={styles.hoursSection}>
+          <Animated.View
+            key="hours"
+            style={styles.hoursSection}
+            entering={MODE_FADE_IN}
+            exiting={MODE_FADE_OUT}
+          >
             <View style={[styles.padded, styles.hoursIntro]}>
               <Text style={[text.title2, { color: colors.carlibDark }]}>
                 {t('garagePlanning.hoursTitle')}
@@ -626,7 +652,7 @@ export default function GarageScheduleScreen() {
                 />
               ))}
             </View>
-          </View>
+          </Animated.View>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -636,6 +662,7 @@ export default function GarageScheduleScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   content: { paddingBottom: TAB_BAR_SCROLL_PADDING, gap: spacing.lg },
+  modeContent: { gap: spacing.lg },
   padded: { paddingHorizontal: spacing.screenHorizontal },
   spacer: { flex: 1 },
   centered: { textAlign: 'center' },
