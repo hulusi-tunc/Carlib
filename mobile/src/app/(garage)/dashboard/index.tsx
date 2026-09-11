@@ -8,12 +8,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import PagerView, { type PagerViewOnPageSelectedEvent } from 'react-native-pager-view';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useShallow } from 'zustand/react/shallow';
 
 import CarlibLogo from '../../../../assets/images/carlib-logo.svg';
 import HomeTopBgDark from '../../../../assets/images/home-top-bg-dark.svg';
+import { PageDot } from '@/components/PageDot';
 import { CarBrandLogo } from '@/components/CarBrandLogo';
 import { CarlibStatusBadge } from '@/components/CarlibStatusBadge';
 import { PressableScale } from '@/components/PressableScale';
@@ -69,25 +69,6 @@ function vehicleTitle(claim: Claim): string {
 
 // SwiftUI .spring(response: 0.35): stiffness = (2π/0.35)² ≈ 322,
 // damping = 2·0.825·√322 ≈ 30.
-const DOT_SPRING = { mass: 1, stiffness: 322, damping: 30 } as const;
-
-function PageDot({ active }: { active: boolean }) {
-  const { colors } = useTheme();
-  const width = useSharedValue(active ? 18 : 6);
-  useEffect(() => {
-    width.value = withSpring(active ? 18 : 6, DOT_SPRING);
-  }, [active, width]);
-  const animatedStyle = useAnimatedStyle(() => ({ width: width.value }));
-  return (
-    <Animated.View
-      style={[
-        styles.pageDot,
-        animatedStyle,
-        { backgroundColor: active ? colors.carlibDark : colors.carlibCardBorder },
-      ]}
-    />
-  );
-}
 
 function KpiDivider() {
   const { colors } = useTheme();
@@ -454,7 +435,12 @@ export default function GarageDashboardScreen() {
             {availableClaims.length > 1 && (
               <View style={styles.dots}>
                 {availableClaims.map((claim, index) => (
-                  <PageDot key={claim.id} active={index === safeRequestIndex} />
+                  <PageDot
+                  key={claim.id}
+                  active={index === safeRequestIndex}
+                  activeColor={colors.carlibDark}
+                  inactiveColor={colors.carlibCardBorder}
+                />
                 ))}
               </View>
             )}
@@ -624,7 +610,6 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingTop: 2,
   },
-  pageDot: { height: 6, borderRadius: radius.full },
 
   // Today's schedule
   rowsCard: { borderRadius: 14, overflow: 'hidden' },
