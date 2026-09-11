@@ -1,0 +1,64 @@
+{
+  "expo": {
+    "name": "Carlib",
+    "slug": "carlib",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon-1024.png",
+    "scheme": "carlib",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "com.carlib.fr",
+      "icon": "./assets/images/icon-1024.png",
+      "infoPlist": {
+        "CFBundleDevelopmentRegion": "fr",
+        "NSCameraUsageDescription": "Carlib utilise l'appareil photo pour prendre des photos des d\u00e9g\u00e2ts de votre v\u00e9hicule.",
+        "NSPhotoLibraryUsageDescription": "Carlib acc\u00e8de \u00e0 vos photos pour joindre des images \u00e0 votre d\u00e9claration de sinistre.",
+        "NSLocationWhenInUseUsageDescription": "Carlib utilise votre position pour trouver les garages \u00e0 proximit\u00e9."
+      }
+    },
+    "android": {
+      "package": "com.carlib.fr",
+      "adaptiveIcon": {
+        "backgroundColor": "#000000",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": true
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#1a1a1a",
+          "image": "./assets/images/carlib-splash.png",
+          "imageWidth": 160,
+          "resizeMode": "contain"
+        }
+      ],
+      "expo-secure-store",
+      "expo-localization",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Aeonik-Light.otf",
+            "./assets/fonts/Aeonik-Regular.otf",
+            "./assets/fonts/Aeonik-Medium.otf",
+            "./assets/fonts/Aeonik-Bold.otf",
+            "./assets/fonts/remixicon.ttf"
+          ]
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
