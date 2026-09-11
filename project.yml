@@ -38,7 +38,7 @@ targets:
         CURRENT_PROJECT_VERSION: "1"
         SWIFT_EMIT_LOC_STRINGS: "YES"
         CODE_SIGN_ENTITLEMENTS: Carlib/Resources/Carlib.entitlements
-        DEVELOPMENT_TEAM: P43FA66M49
+        DEVELOPMENT_TEAM: 8B52D39U6Z
         CODE_SIGN_STYLE: Automatic
     info:
       path: Carlib/Resources/Info.plist

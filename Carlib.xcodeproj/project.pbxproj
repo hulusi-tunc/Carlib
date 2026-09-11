@@ -50,17 +50,20 @@
 		871477BA9A7DB9E7786C28C7 /* GaragePlanningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593B5B75C2CAC0C895EE8CC0 /* GaragePlanningView.swift */; };
 		8790CC18EAB66A8EC1AB59AF /* DeclarationFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DE167C52C6191E36618B16 /* DeclarationFlowView.swift */; };
 		87BB912677B436DA81E4EBB2 /* CarlibCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5587A44890856F907030AEF /* CarlibCard.swift */; };
+		8859AB8483191C95201D9FF0 /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57BAF701A40899E77AAD1804 /* ChangePasswordView.swift */; };
 		8A6C182DF168E15FB3ED39F4 /* Aeonik-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = FDE1741023BC5F25BD66FD3D /* Aeonik-Light.otf */; };
 		8E9F67A4B19422ADD502E649 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347C8AD4411F256C24336491 /* SplashView.swift */; };
 		90F15C340617BF06F0019E3E /* Aeonik-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9E1B25CA2789055C92E2D8DD /* Aeonik-Bold.otf */; };
 		950621ED461CFC14ECED52A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04AC0092DAB8EA421BCE7CFB /* Assets.xcassets */; };
 		9545418C45DD7F474127ABFC /* TimeSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04BE545770D1F4B02431860 /* TimeSlot.swift */; };
 		978894CA9FA9B5D13F2BFB2A /* BookingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A3FD5C234C6CA19A797461 /* BookingFlowView.swift */; };
+		9A2D97B6B1214025CE6E1661 /* LanguagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDF89D148B187B9F0B01349 /* LanguagePickerView.swift */; };
 		A3A16BB60EB54F22B665CA55 /* CarlibButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A4DD9FCFA298B86662EE66 /* CarlibButton.swift */; };
 		A582FEB66DCA717CF5A39915 /* DriverHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECD9FDE347D292BD9331D87 /* DriverHomeView.swift */; };
 		A79E8D9EA48F6D8598224857 /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F2F54FDE5B7697A872C608 /* DateFormatting.swift */; };
 		ADE5DBDBF76A5DEC0B8AF7F2 /* LucideIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3220831D4A43F04603D42043 /* LucideIcon.swift */; };
 		AF5358640AB4EEBDC9652FBC /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67E942CFBE45A2D17B65704 /* AuthService.swift */; };
+		B26E6CBD5008049B777F528F /* DefaultUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10FFE38CDA3A057A2E3EC0DF /* DefaultUsers.swift */; };
 		B3DC822A27AA9DF3D5B08405 /* CarlibTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67A3A38888D36EC4C4F5FB5C /* CarlibTypography.swift */; };
 		B5A7A56DD00C38926FB17553 /* DummyImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E8F8C0C81A25C2ACE4143E /* DummyImage.swift */; };
 		BAAEB54A8647595DE3915E5B /* DriverClaimsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9D1E29F6EC119546A1BC2A /* DriverClaimsListView.swift */; };
@@ -68,6 +71,7 @@
 		C01A48462777994E4C99BFB2 /* DriverClaimDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C40C09492855BC92ED1E83 /* DriverClaimDetailView.swift */; };
 		C080BADE511E7734DE2E31DD /* CarlibSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A051B521759D2597DFA5AAC /* CarlibSectionHeader.swift */; };
 		C11657BF927FFAB05C3E3899 /* DriverTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BF0731A33C59BADEFCDC74 /* DriverTabView.swift */; };
+		CABFA23A583C0B57F9455262 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E5CC1AEE96DCCEAEF43663 /* SettingsView.swift */; };
 		CD9DF4F88E3284D3C237553A /* CarlibColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DAD59397DE1AF1A957959C /* CarlibColors.swift */; };
 		D1906A12CDE210E008431469 /* RoleSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32AB6EA3796CF44549CEC67 /* RoleSelectionView.swift */; };
 		D4BAC6807F11C4B83DFF4996 /* Claim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C981B7CB9ABC5E8B102A85 /* Claim.swift */; };
@@ -86,6 +90,7 @@
 		FB8D94EE4F7901640F5BC183 /* VehicleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0EFAF96DA039A0BE34A09B9 /* VehicleDetailView.swift */; };
 		FCAD7F96D4A61B256EF5800F /* WelcomeCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667F241A017DDD8D3B91A053 /* WelcomeCarouselView.swift */; };
 		FE7BB24581909D52FA4543CD /* GarageCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3993E0BB2312582EB3F21DB0 /* GarageCardView.swift */; };
+		FF10916AF9498810C13C1FE0 /* DebugScreenshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3A13E9F6132ADC7AFD4D6B /* DebugScreenshotHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -100,6 +105,7 @@
 		0C01E8B78E6FFB1A0F7575FA /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		0E9D1E29F6EC119546A1BC2A /* DriverClaimsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverClaimsListView.swift; sourceTree = "<group>"; };
 		10EB238C465D71C2885F653C /* GarageClaimsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageClaimsListView.swift; sourceTree = "<group>"; };
+		10FFE38CDA3A057A2E3EC0DF /* DefaultUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultUsers.swift; sourceTree = "<group>"; };
 		148609A1283F43ADB7418572 /* GarageProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageProfileEditView.swift; sourceTree = "<group>"; };
 		17AE9A85DF483DF0FF10E0B3 /* GarageSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageSearchView.swift; sourceTree = "<group>"; };
 		17FAF9CE2E349B05B6275D0A /* Booking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Booking.swift; sourceTree = "<group>"; };
@@ -110,11 +116,13 @@
 		27C40C09492855BC92ED1E83 /* DriverClaimDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverClaimDetailView.swift; sourceTree = "<group>"; };
 		2BA573BCF1B3F9BDD02BB258 /* StatusTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusTimelineView.swift; sourceTree = "<group>"; };
 		2C153EDCCB550641C7966A64 /* Carlib.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Carlib.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F3A13E9F6132ADC7AFD4D6B /* DebugScreenshotHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugScreenshotHelper.swift; sourceTree = "<group>"; };
 		2FEE12E3A5CAFB0FC348CA02 /* CarlibApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibApp.swift; sourceTree = "<group>"; };
 		3220831D4A43F04603D42043 /* LucideIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LucideIcon.swift; sourceTree = "<group>"; };
 		347C8AD4411F256C24336491 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		3993E0BB2312582EB3F21DB0 /* GarageCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageCardView.swift; sourceTree = "<group>"; };
 		3AF4B190F5C5EE98E97E0857 /* GarageProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageProfileView.swift; sourceTree = "<group>"; };
+		41E5CC1AEE96DCCEAEF43663 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		43C7526D4113FF28BCCC45E5 /* CarlibTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibTextField.swift; sourceTree = "<group>"; };
 		45B2B78A5789A951EBDD6349 /* UserRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRole.swift; sourceTree = "<group>"; };
 		463CC4E21B520A04595E7A11 /* Aeonik-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Aeonik-Medium.otf"; sourceTree = "<group>"; };
@@ -123,6 +131,7 @@
 		4CE4D0B2E0A6EF17B2065C22 /* GarageTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageTabView.swift; sourceTree = "<group>"; };
 		51BF0731A33C59BADEFCDC74 /* DriverTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverTabView.swift; sourceTree = "<group>"; };
 		52E83D52CF63849F27DE5A03 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		57BAF701A40899E77AAD1804 /* ChangePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordView.swift; sourceTree = "<group>"; };
 		5896D8564F05F375CF791EB4 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		593B5B75C2CAC0C895EE8CC0 /* GaragePlanningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GaragePlanningView.swift; sourceTree = "<group>"; };
 		65B0DCE7F51CC33A815464CB /* GarageClaimDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageClaimDetailView.swift; sourceTree = "<group>"; };
@@ -147,6 +156,7 @@
 		9A820B0F22C9630976C3FA67 /* DriverProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverProfileView.swift; sourceTree = "<group>"; };
 		9B9D4D3BD2B2E517ED480B41 /* CarlibRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibRadius.swift; sourceTree = "<group>"; };
 		9E1B25CA2789055C92E2D8DD /* Aeonik-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Aeonik-Bold.otf"; sourceTree = "<group>"; };
+		9EDF89D148B187B9F0B01349 /* LanguagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagePickerView.swift; sourceTree = "<group>"; };
 		A07AA422D74CC0EF9031D97F /* CountryDialCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryDialCode.swift; sourceTree = "<group>"; };
 		A0A4DD9FCFA298B86662EE66 /* CarlibButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarlibButton.swift; sourceTree = "<group>"; };
 		A32AB6EA3796CF44549CEC67 /* RoleSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleSelectionView.swift; sourceTree = "<group>"; };
@@ -230,6 +240,7 @@
 			children = (
 				52E83D52CF63849F27DE5A03 /* AppState.swift */,
 				2FEE12E3A5CAFB0FC348CA02 /* CarlibApp.swift */,
+				2F3A13E9F6132ADC7AFD4D6B /* DebugScreenshotHelper.swift */,
 				B19E577496F01195491E878D /* RootView.swift */,
 				0C01E8B78E6FFB1A0F7575FA /* ThemeManager.swift */,
 			);
@@ -266,6 +277,7 @@
 			children = (
 				A67E942CFBE45A2D17B65704 /* AuthService.swift */,
 				0784D7D619C7186A60839DD3 /* ClaimStore.swift */,
+				10FFE38CDA3A057A2E3EC0DF /* DefaultUsers.swift */,
 				066AB08256CFD30F7698FBB3 /* KeychainManager.swift */,
 				5896D8564F05F375CF791EB4 /* MockData.swift */,
 			);
@@ -286,11 +298,14 @@
 		7D4B5710CDF29766E7E97C17 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				57BAF701A40899E77AAD1804 /* ChangePasswordView.swift */,
 				1FE49D83333850BE2A338291 /* ClaimCardView.swift */,
 				3993E0BB2312582EB3F21DB0 /* GarageCardView.swift */,
+				9EDF89D148B187B9F0B01349 /* LanguagePickerView.swift */,
 				E7F163983106891EB13874A1 /* NotificationSettingsView.swift */,
 				69E2E17491476D6F6667592C /* PhotoLightboxView.swift */,
 				00F05D8E06BAEE71D61C2EC9 /* RepairStatusSheet.swift */,
+				41E5CC1AEE96DCCEAEF43663 /* SettingsView.swift */,
 				2BA573BCF1B3F9BDD02BB258 /* StatusTimelineView.swift */,
 			);
 			path = Shared;
@@ -302,7 +317,6 @@
 				936E58C46545390400414D69 /* Auth */,
 				F4B71673D4318861106B2F72 /* Driver */,
 				032C3410AFC2CDF66ACE93A4 /* Garage */,
-				D6CF66988FE541C8AA4D5E75 /* Landing */,
 				70535AA4AE346F696BA1A019 /* Onboarding */,
 				7D4B5710CDF29766E7E97C17 /* Shared */,
 			);
@@ -342,20 +356,6 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
-		D6CF66988FE541C8AA4D5E75 /* Landing */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Landing;
-			sourceTree = "<group>";
-		};
-		E711B095D066BC2FFD46C867 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
 		F4B71673D4318861106B2F72 /* Driver */ = {
 			isa = PBXGroup;
 			children = (
@@ -385,7 +385,6 @@
 				18EF527C31776F07846A4C4B /* Models */,
 				004A0564E1222849047A4E5E /* Resources */,
 				5888242C38F964CC6CE996E3 /* Services */,
-				E711B095D066BC2FFD46C867 /* ViewModels */,
 				917FB24506EABC464A08F274 /* Views */,
 			);
 			path = Carlib;
@@ -434,6 +433,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					50B392FA34B7328E24643DF1 = {
+						DevelopmentTeam = 8B52D39U6Z;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = C93E4ADA68C976B9C982A820 /* Build configuration list for PBXProject "Carlib" */;
@@ -498,14 +501,17 @@
 				2E17BF93BE21D248BFD7E947 /* CarlibStatusBadge.swift in Sources */,
 				40BD16E161FDDF82BFCC4F7D /* CarlibTextField.swift in Sources */,
 				B3DC822A27AA9DF3D5B08405 /* CarlibTypography.swift in Sources */,
+				8859AB8483191C95201D9FF0 /* ChangePasswordView.swift in Sources */,
 				D4BAC6807F11C4B83DFF4996 /* Claim.swift in Sources */,
 				11878E4D2EF7ACB9391E7AC8 /* ClaimCardView.swift in Sources */,
 				08D27503D805473E2B3AC759 /* ClaimStatus.swift in Sources */,
 				362033F4E3151F4D8B929CE0 /* ClaimStore.swift in Sources */,
 				DFD79F7182CA48A714EE5839 /* CountryDialCode.swift in Sources */,
 				A79E8D9EA48F6D8598224857 /* DateFormatting.swift in Sources */,
+				FF10916AF9498810C13C1FE0 /* DebugScreenshotHelper.swift in Sources */,
 				166B3B9E8A20EA5ED43F18DB /* DeclarationConfirmationView.swift in Sources */,
 				8790CC18EAB66A8EC1AB59AF /* DeclarationFlowView.swift in Sources */,
+				B26E6CBD5008049B777F528F /* DefaultUsers.swift in Sources */,
 				C01A48462777994E4C99BFB2 /* DriverClaimDetailView.swift in Sources */,
 				BAAEB54A8647595DE3915E5B /* DriverClaimsListView.swift in Sources */,
 				A582FEB66DCA717CF5A39915 /* DriverHomeView.swift in Sources */,
@@ -526,6 +532,7 @@
 				4045C86B4DEF7AFB3F61CE37 /* GarageSearchView.swift in Sources */,
 				ED060D9F58A66529292E6C75 /* GarageTabView.swift in Sources */,
 				834B4907189CF87FB716B391 /* KeychainManager.swift in Sources */,
+				9A2D97B6B1214025CE6E1661 /* LanguagePickerView.swift in Sources */,
 				ADE5DBDBF76A5DEC0B8AF7F2 /* LucideIcon.swift in Sources */,
 				68C7E2208AD14509D43D08F2 /* MockData.swift in Sources */,
 				7803270F613ACE9BE93C08B4 /* MyGarageView.swift in Sources */,
@@ -538,6 +545,7 @@
 				4D49227DD793614A62330E4A /* RepairStatusSheet.swift in Sources */,
 				D1906A12CDE210E008431469 /* RoleSelectionView.swift in Sources */,
 				F9143814F6380D71C75E1592 /* RootView.swift in Sources */,
+				CABFA23A583C0B57F9455262 /* SettingsView.swift in Sources */,
 				F88EC94F4328D4D2E177FCE6 /* SignInView.swift in Sources */,
 				34AB259B9798B7ECB57BB79D /* SignUpView.swift in Sources */,
 				8E9F67A4B19422ADD502E649 /* SplashView.swift in Sources */,
@@ -562,7 +570,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Carlib/Resources/Carlib.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8B52D39U6Z;
 				INFOPLIST_FILE = Carlib/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -650,7 +660,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Carlib/Resources/Carlib.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8B52D39U6Z;
 				INFOPLIST_FILE = Carlib/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
