@@ -12,6 +12,7 @@ import PagerView, { type PagerViewOnPageSelectedEvent } from 'react-native-pager
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { claimPhotoURL } from '@/components/DummyImage';
+import { Glass } from '@/components/Glass';
 import { PressableScale } from '@/components/PressableScale';
 import { RemixIcon } from '@/components/RemixIcon';
 import { useClaimStore } from '@/stores/claimStore';
@@ -58,11 +59,11 @@ function Lightbox() {
       {/* Counter pill + close (Swift .overlay(alignment: .top)). */}
       <View style={[styles.topBar, { paddingTop: insets.top + spacing.xs }]}>
         {count > 1 ? (
-          <View style={styles.counterPill}>
+          <Glass borderRadius={radius.full} colorScheme="dark" style={styles.counterPill} fallbackStyle={styles.onPhotoChip}>
             <Text style={[carlibFont(13, 'medium'), styles.onPhoto]}>
               {`${current + 1} / ${count}`}
             </Text>
-          </View>
+          </Glass>
         ) : (
           <View />
         )}
@@ -72,6 +73,12 @@ function Lightbox() {
           onPress={() => router.back()}
           style={styles.closeButton}
         >
+          <Glass
+            borderRadius={20}
+            colorScheme="dark"
+            style={StyleSheet.absoluteFill}
+            fallbackStyle={styles.onPhotoChip}
+          />
           <RemixIcon name="closeLine" size={22} color="#FFFFFF" />
         </PressableScale>
       </View>
@@ -82,11 +89,11 @@ function Lightbox() {
         style={[styles.bottomBar, { paddingBottom: insets.bottom + spacing.sm }]}
       >
         {caption !== '' && (
-          <View style={styles.captionPill}>
+          <Glass borderRadius={radius.full} colorScheme="dark" style={styles.captionPill} fallbackStyle={styles.onPhotoCaption}>
             <Text style={[carlibFont(15, 'medium'), styles.onPhoto, styles.captionText]}>
               {caption}
             </Text>
-          </View>
+          </Glass>
         )}
         {count > 1 && (
           <View style={styles.dots}>
@@ -134,11 +141,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: spacing.screenHorizontal,
   },
+  // The chips' pre-glass fills — still the look where glass is unavailable.
+  onPhotoChip: { backgroundColor: '#00000073', borderWidth: 0 },
+  onPhotoCaption: { backgroundColor: '#00000080', borderWidth: 0 },
   counterPill: {
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: radius.full,
-    backgroundColor: '#00000073',
   },
   closeButton: {
     width: 40,
@@ -146,7 +155,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#00000073',
   },
 
   bottomBar: {
@@ -162,7 +170,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderRadius: radius.full,
-    backgroundColor: '#00000080',
   },
   captionText: { textAlign: 'center' },
   dots: {
