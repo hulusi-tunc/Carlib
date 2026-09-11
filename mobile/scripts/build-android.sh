@@ -11,6 +11,7 @@
 #   CARLIB_SEED=<seed email>  auto-signs-in that seed user (screenshot harness)
 #   CARLIB_TAB=shops|profile  lands on that tab
 #   CARLIB_THEME=dark|light   forces the theme mode
+#   CARLIB_ANDROID_DEVICE=emulator-5556  install on that adb serial (see below)
 #   CARLIB_PREBUILD=1         re-run prebuild first — REQUIRED after changing app.json
 #                             icon/splash config, which run:ios/run:android do NOT refresh
 set -euo pipefail
@@ -34,6 +35,9 @@ if ! JAVA_HOME="$(pick_jdk)"; then
   exit 1
 fi
 export JAVA_HOME
+# prebuild regenerates android/ without local.properties, so Gradle needs the
+# SDK from the environment.
+export ANDROID_HOME="${ANDROID_HOME:-$HOME/Library/Android/sdk}"
 echo "JAVA_HOME=$JAVA_HOME ($("$JAVA_HOME/bin/java" -version 2>&1 | head -1))"
 
 if [[ -n "${CARLIB_SEED:-}" ]]; then
@@ -53,4 +57,7 @@ fi
 
 rm -rf "${TMPDIR:-/tmp}/metro-cache"
 
-LANG=en_US.UTF-8 npx expo run:android --variant release --no-bundler
+# CARLIB_ANDROID_DEVICE=<adb serial> targets one emulator when several are up
+# (expo would otherwise prompt, or grab whichever AVD exists).
+LANG=en_US.UTF-8 npx expo run:android --variant release --no-bundler \
+  ${CARLIB_ANDROID_DEVICE:+--device "$CARLIB_ANDROID_DEVICE"}
