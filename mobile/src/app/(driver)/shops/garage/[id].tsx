@@ -70,7 +70,8 @@ export default function GarageDetailScreen() {
     <View style={[styles.screen, { backgroundColor: colors.carlibScreenBg }]}>
       <ScrollView
         style={styles.flex}
-        contentContainerStyle={[styles.content, { paddingTop: insets.top + 44 }]}
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={styles.content}
       >
         {/* ── Header ── */}
         <View style={styles.header}>
@@ -179,14 +180,6 @@ export default function GarageDetailScreen() {
         />
       </View>
 
-      {/* Floating back chevron over the transparent header area. */}
-      <Pressable
-        onPress={() => router.back()}
-        hitSlop={12}
-        style={[styles.backButton, { top: insets.top }]}
-      >
-        <RemixIcon name="arrowLeftSLine" size={26} color={colors.carlibDark} />
-      </Pressable>
     </View>
   );
 }
@@ -194,14 +187,6 @@ export default function GarageDetailScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   flex: { flex: 1 },
-  backButton: {
-    position: 'absolute',
-    left: spacing.xxs,
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   content: {
     gap: spacing.sectionSpacing,
     paddingBottom: spacing.xl,

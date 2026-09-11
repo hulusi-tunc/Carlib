@@ -16,13 +16,13 @@ import Animated, {
   withDelay,
   withSpring,
 } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShallow } from 'zustand/react/shallow';
 
 import { CarBrandLogo } from '@/components/CarBrandLogo';
 import { CarlibButton } from '@/components/CarlibButton';
 import { ClaimCard } from '@/components/ClaimCard';
 import { RemixIcon } from '@/components/RemixIcon';
+import { useHeaderHeight } from '@/lib/header';
 import type { Vehicle } from '@/models/types';
 import { selectActiveClaims, useClaimStore } from '@/stores/claimStore';
 import { carlibFont, radius, sectionHeaderText, spacing, text, useTheme } from '@/theme';
@@ -39,6 +39,8 @@ const CARD_PERSPECTIVE = 700;
 
 export default function MyGarageScreen() {
   const { t } = useTranslation();
+  // The section header is not a ScrollView: pad below the transparent native bar.
+  const headerHeight = useHeaderHeight();
   const { colors } = useTheme();
   const router = useRouter();
   const vehicles = useClaimStore((s) => s.vehicles);
@@ -66,21 +68,12 @@ export default function MyGarageScreen() {
   const addVehicle = () => router.push('/home/add-vehicle');
 
   return (
-    <SafeAreaView style={[styles.screen, { backgroundColor: colors.carlibScreenBg }]} edges={['top']}>
-      {/* Home stack hides native headers — inline nav title drawn here. */}
-      <View style={styles.navHeader}>
-        <Pressable onPress={() => router.back()} hitSlop={12} style={styles.backButton}>
-          <RemixIcon name="arrowLeftSLine" size={26} color={colors.carlibDark} />
-        </Pressable>
-        <Text style={[styles.navTitle, { color: colors.carlibDark }]}>
-          {t('driverHome.shortcutMyGarageTitle')}
-        </Text>
-        <View style={styles.backButton} />
-      </View>
-
+    <View style={[styles.screen, { backgroundColor: colors.carlibScreenBg, paddingTop: headerHeight }]}>
       <View style={styles.header}>
         <View style={styles.headerText}>
-          <Text style={[sectionHeaderText, { color: colors.carlibLabel }]}>My Garage</Text>
+          <Text style={[sectionHeaderText, { color: colors.carlibLabel }]}>
+            {t('driverHome.shortcutMyGarageTitle')}
+          </Text>
           <Text style={[text.caption, { color: colors.carlibSecondary }]}>
             {`${vehicles.length} vehicle${vehicles.length === 1 ? '' : 's'}`}
           </Text>
@@ -147,7 +140,7 @@ export default function MyGarageScreen() {
           )}
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -258,23 +251,6 @@ function PageDot({ active }: { active: boolean }) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 44,
-    paddingHorizontal: spacing.xxs,
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navTitle: {
-    ...carlibFont(17, 'medium'),
-    flex: 1,
-    textAlign: 'center',
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

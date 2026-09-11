@@ -3,7 +3,7 @@
 // Photos hold picker file URIs (migration plan §5), not image data.
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { Stack, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -13,11 +13,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CarlibButton } from '@/components/CarlibButton';
 import { CarlibCard } from '@/components/CarlibCard';
 import { CarlibTextField } from '@/components/CarlibTextField';
+import { useHeaderHeight } from '@/lib/header';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
 import { ACCIDENT_KEY, ACCIDENT_TYPES, type AccidentType } from '@/models/enums';
 import type { Claim, PhotoAttachment, VehicleInfo } from '@/models/types';
 import { useClaimStore } from '@/stores/claimStore';
-import { carlibFont, fontFamilies, radius, spacing, text, useTheme } from '@/theme';
+import { carlibFont, radius, spacing, text, useTheme } from '@/theme';
 
 const TOTAL_STEPS = 4;
 // Swift .animation(.easeInOut(0.25), value: currentStep): steps cross-fade.
@@ -46,6 +47,8 @@ export default function DeclareScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  // Not a ScrollView root: pad below the transparent native bar by hand.
+  const headerHeight = useHeaderHeight();
   const addClaim = useClaimStore((s) => s.addClaim);
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -120,19 +123,7 @@ export default function DeclareScreen() {
   const placeholderCount = Math.max(0, 3 - photos.length);
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.carlibScreenBg }]}>
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          title: t('declaration.title'),
-          headerStyle: { backgroundColor: colors.carlibScreenBg },
-          headerShadowVisible: false,
-          headerTintColor: colors.carlibDark,
-          headerTitleStyle: { fontFamily: fontFamilies.medium, fontSize: 17 },
-          headerBackButtonDisplayMode: 'minimal',
-        }}
-      />
-
+    <View style={[styles.screen, { backgroundColor: colors.carlibScreenBg, paddingTop: headerHeight }]}>
       <View style={styles.progressWrap}>
         <View style={[styles.progressTrack, { backgroundColor: colors.tileSecondary }]}>
           <View style={{ flex: currentStep, backgroundColor: colors.brandYellow }} />

@@ -272,14 +272,6 @@ export default function DriverClaimDetailScreen() {
         </View>
       </ScrollView>
 
-      {/* Floating back chevron over the transparent header area. */}
-      <Pressable
-        onPress={() => router.back()}
-        hitSlop={12}
-        style={[styles.backButton, { top: insets.top }]}
-      >
-        <RemixIcon name="arrowLeftSLine" size={26} color={colors.carlibDark} />
-      </Pressable>
     </View>
   );
 }
@@ -294,14 +286,6 @@ const styles = StyleSheet.create({
     height: 380,
   },
   content: {},
-  backButton: {
-    position: 'absolute',
-    left: spacing.xxs,
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   hero: {
     alignItems: 'center',
     gap: 12,
