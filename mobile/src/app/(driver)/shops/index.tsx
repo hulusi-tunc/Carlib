@@ -31,6 +31,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  useReducedMotion,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -73,6 +74,10 @@ function CarouselSeparator() {
 
 export default function GarageSearchScreen() {
   const { colors } = useTheme();
+  // Reanimated springs/timings already honour the OS Reduce Motion setting
+  // (ReduceMotion.System is the default); the map camera and the programmatic
+  // carousel scroll are the two non-Reanimated moves, so they are gated here.
+  const reduceMotion = useReducedMotion();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const window = useWindowDimensions();
@@ -149,7 +154,7 @@ export default function GarageSearchScreen() {
           latitudeDelta: FOCUS_DELTA,
           longitudeDelta: FOCUS_DELTA,
         },
-        400,
+        reduceMotion ? 0 : 400,
       );
     }
     if (selectionFromCarousel.current) {
@@ -159,7 +164,7 @@ export default function GarageSearchScreen() {
     const index = filteredGarages.findIndex((g) => g.id === selectedId);
     if (index >= 0) {
       programmaticScroll.current = true;
-      carouselRef.current?.scrollToOffset({ offset: index * cardStride, animated: true });
+      carouselRef.current?.scrollToOffset({ offset: index * cardStride, animated: !reduceMotion });
       if (scrollSettleTimer.current) clearTimeout(scrollSettleTimer.current);
       scrollSettleTimer.current = setTimeout(() => {
         programmaticScroll.current = false;
