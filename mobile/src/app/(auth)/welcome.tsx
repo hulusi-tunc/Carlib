@@ -9,7 +9,13 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useSharedValue,
+  type SharedValue,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import CarlibLogo from '../../../assets/images/carlib-logo.svg';
@@ -45,24 +51,30 @@ const SLIDES: Slide[] = [
 
 // Capsule filled by scaleX; RN scales from center, so a translateX recenters
 // the scaled fill onto the left edge.
-function ProgressSegment({ fill }: { fill: number }) {
+// Swift redraws the fill at 33fps via scaleEffect(x:); here the timer writes a
+// shared value and the fill follows it on the UI thread — no React re-render.
+function ProgressSegment({
+  index,
+  currentPage,
+  progress,
+}: {
+  index: number;
+  currentPage: number;
+  progress: SharedValue<number>;
+}) {
   const [trackWidth, setTrackWidth] = useState(0);
+  const fillStyle = useAnimatedStyle(() => {
+    const fill = index < currentPage ? 1 : index === currentPage ? progress.value : 0;
+    return {
+      transform: [{ translateX: (-(1 - fill) * trackWidth) / 2 }, { scaleX: fill }],
+    };
+  });
   return (
     <View
       style={styles.segmentTrack}
       onLayout={(e) => setTrackWidth(e.nativeEvent.layout.width)}
     >
-      <View
-        style={[
-          styles.segmentFill,
-          {
-            transform: [
-              { translateX: (-(1 - fill) * trackWidth) / 2 },
-              { scaleX: fill },
-            ],
-          },
-        ]}
-      />
+      <Animated.View style={[styles.segmentFill, fillStyle]} />
     </View>
   );
 }
@@ -71,8 +83,7 @@ function WelcomeCarousel() {
   const { colors } = useTheme();
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(0);
-  const [storyProgress, setStoryProgress] = useState(0);
-  const progressRef = useRef(0);
+  const storyProgress = useSharedValue(0);
   const pausedRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -82,16 +93,15 @@ function WelcomeCarousel() {
   }
 
   function startTimer() {
-    progressRef.current = 0;
-    setStoryProgress(0);
+    storyProgress.set(0);
     pausedRef.current = false;
     timerRef.current = setInterval(() => {
       if (pausedRef.current) return;
-      progressRef.current += TICK_MS / SLIDE_DURATION_MS;
-      if (progressRef.current >= 1) {
+      const next = storyProgress.get() + TICK_MS / SLIDE_DURATION_MS;
+      if (next >= 1) {
         goNext();
       } else {
-        setStoryProgress(progressRef.current);
+        storyProgress.set(next);
       }
     }, TICK_MS);
   }
@@ -140,12 +150,6 @@ function WelcomeCarousel() {
 
   const slide = SLIDES[currentPage] ?? SLIDES[0]!;
 
-  function fillFraction(index: number): number {
-    if (index < currentPage) return 1;
-    if (index === currentPage) return storyProgress;
-    return 0;
-  }
-
   return (
     <View style={styles.root}>
       <StatusBar style="dark" />
@@ -167,7 +171,7 @@ function WelcomeCarousel() {
       <SafeAreaView style={styles.content} edges={['top', 'bottom']}>
         <View style={styles.progressRow}>
           {SLIDES.map((_, i) => (
-            <ProgressSegment key={i} fill={fillFraction(i)} />
+            <ProgressSegment key={i} index={i} currentPage={currentPage} progress={storyProgress} />
           ))}
         </View>
 
@@ -181,6 +185,7 @@ function WelcomeCarousel() {
         <Animated.Text
           key={currentPage}
           entering={FadeIn.duration(250)}
+          exiting={FadeOut.duration(250)}
           style={[text.largeTitle, styles.headline]}
         >
           {slide.headline}
