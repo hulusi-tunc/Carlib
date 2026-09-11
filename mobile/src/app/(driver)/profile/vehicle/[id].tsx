@@ -7,7 +7,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CarBrandLogo } from '@/components/CarBrandLogo';
 import { RemixIcon } from '@/components/RemixIcon';
@@ -63,19 +62,9 @@ export default function VehicleDetailScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.screen, { backgroundColor: colors.carlibScreenBg }]} edges={['top']}>
+    <View style={[styles.screen, { backgroundColor: colors.carlibScreenBg }]}>
       {/* Inline nav bar — the profile stack hides native headers. */}
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={12} style={styles.backButton}>
-          <RemixIcon name="arrowLeftSLine" size={26} color={colors.carlibDark} />
-        </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.carlibDark }]}>
-          {t('vehicleDetail.title')}
-        </Text>
-        <View style={styles.backButton} />
-      </View>
-
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={styles.content}>
         {/* ── Identity card ── */}
         <View style={[styles.card, styles.identityCard, { backgroundColor: `${colors.tileSecondary}80` }]}>
           <View style={[styles.logoCircle, { backgroundColor: colors.tileSecondary }]}>
@@ -135,29 +124,12 @@ export default function VehicleDetailScreen() {
           </Pressable>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 44,
-    paddingHorizontal: spacing.xxs,
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    ...carlibFont(17, 'medium'),
-    flex: 1,
-    textAlign: 'center',
-  },
   content: {
     gap: spacing.lg,
     paddingHorizontal: spacing.lg,

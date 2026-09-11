@@ -6,7 +6,6 @@ import { useRouter, type Href } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/PressableScale';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
@@ -124,21 +123,8 @@ export function SettingsScreen({
   };
 
   return (
-    <SafeAreaView
-      style={[styles.screen, { backgroundColor: colors.carlibScreenBg }]}
-      edges={['top']}
-    >
-      {/* Inline nav bar — back chevron + centered inline title. */}
-      <View style={styles.toolbar}>
-        <Pressable onPress={() => router.back()} hitSlop={12} style={styles.back}>
-          <RemixIcon name="arrowLeftSLine" size={26} color={colors.carlibDark} />
-        </Pressable>
-        <Text style={[carlibFont(17, 'medium'), { color: colors.carlibDark }]}>
-          {t('settings.title')}
-        </Text>
-      </View>
-
-      <ScrollView contentContainerStyle={styles.content}>
+    <View style={[styles.screen, { backgroundColor: colors.carlibScreenBg }]}>
+      <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={styles.content}>
         <Section title={t('settings.sectionAppearance')}>
           <View style={styles.chipRow}>
             {THEME_OPTIONS.map((option) => (
@@ -184,26 +170,12 @@ export function SettingsScreen({
           </Text>
         </Pressable>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-  toolbar: {
-    minHeight: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  back: {
-    position: 'absolute',
-    left: spacing.xxs,
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1,
-  },
   content: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
