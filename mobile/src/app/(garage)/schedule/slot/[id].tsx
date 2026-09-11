@@ -151,10 +151,12 @@ export default function SlotDetailSheet() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* ── Hero ── */}
         <CarlibCard style={styles.heroCard}>
-          <View style={[styles.badge, { backgroundColor: kindColor.bg }]}>
-            <RemixIcon name={kindIcon} size={11} color={kindColor.fg} />
-            <Text style={[text.caption, { color: kindColor.fg }]}>{kindLabel}</Text>
-          </View>
+          <CarlibStatusBadge
+            text={kindLabel}
+            color={kindColor.fg}
+            backgroundColor={kindColor.bg}
+            icon={kindIcon}
+          />
 
           <Text style={[text.title1, { color: colors.carlibDark }]}>
             {`${timeFormatted(slot.startTime)} – ${timeFormatted(slot.endTime)}`}
@@ -307,14 +309,6 @@ const styles = StyleSheet.create({
   },
 
   heroCard: { gap: spacing.sm },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xxs,
-    paddingHorizontal: spacing.xs,
-    paddingVertical: spacing.xxs,
-    borderRadius: radius.full,
-  },
   blockedNote: { paddingTop: spacing.xxs },
 
   contactCard: { gap: spacing.sm },

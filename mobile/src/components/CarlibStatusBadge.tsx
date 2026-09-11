@@ -47,7 +47,7 @@ const repairStatusSpecs: Record<RepairStatus, StatusSpec> = {
   pret: { color: 'completed', icon: 'thumbUpFill', label: 'Ready for Pickup' },
 };
 
-export type CarlibStatusBadgeProps = {
+type StatusBadgeProps = {
   /** Overrides the built-in English label (i18n). */
   label?: string;
 } & (
@@ -56,7 +56,17 @@ export type CarlibStatusBadgeProps = {
   | { claimStatus?: never; bookingStatus?: never; repairStatus: RepairStatus }
 );
 
-function resolveSpec(props: CarlibStatusBadgeProps): StatusSpec {
+/** Swift's primary init — free-form text and colours (slot kinds, ad-hoc pills). */
+type CustomBadgeProps = {
+  text: string;
+  color: string;
+  backgroundColor: string;
+  icon?: RemixIconName;
+};
+
+export type CarlibStatusBadgeProps = StatusBadgeProps | CustomBadgeProps;
+
+function resolveSpec(props: StatusBadgeProps): StatusSpec {
   if (props.claimStatus !== undefined) return claimStatusSpecs[props.claimStatus];
   if (props.bookingStatus !== undefined) return bookingStatusSpecs[props.bookingStatus];
   return repairStatusSpecs[props.repairStatus];
@@ -64,13 +74,23 @@ function resolveSpec(props: CarlibStatusBadgeProps): StatusSpec {
 
 export function CarlibStatusBadge(props: CarlibStatusBadgeProps) {
   const { colors } = useTheme();
-  const spec = resolveSpec(props);
-  const { fg, bg } = colors.status[spec.color];
+  let fg: string;
+  let bg: string;
+  let icon: RemixIconName | undefined;
+  let label: string;
+  if ('text' in props) {
+    ({ color: fg, backgroundColor: bg, icon, text: label } = props);
+  } else {
+    const spec = resolveSpec(props);
+    ({ fg, bg } = colors.status[spec.color]);
+    icon = spec.icon;
+    label = props.label ?? spec.label;
+  }
 
   return (
     <View style={[styles.badge, { backgroundColor: bg }]}>
-      <RemixIcon name={spec.icon} size={11} color={fg} />
-      <Text style={[text.caption, { color: fg }]}>{props.label ?? spec.label}</Text>
+      {icon != null && <RemixIcon name={icon} size={11} color={fg} />}
+      <Text style={[text.caption, { color: fg }]}>{label}</Text>
     </View>
   );
 }
