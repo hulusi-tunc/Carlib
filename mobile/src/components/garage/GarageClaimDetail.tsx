@@ -7,7 +7,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -349,14 +349,6 @@ export function GarageClaimDetail({ claimId }: GarageClaimDetailProps) {
         </View>
       </ScrollView>
 
-      {/* Floating back chevron over the transparent header area. */}
-      <Pressable
-        onPress={() => router.back()}
-        hitSlop={12}
-        style={[styles.backButton, { top: insets.top }]}
-      >
-        <RemixIcon name="arrowLeftSLine" size={26} color={colors.carlibDark} />
-      </Pressable>
     </View>
   );
 }
@@ -369,14 +361,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 380,
-  },
-  backButton: {
-    position: 'absolute',
-    left: spacing.xxs,
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   hero: {
     alignItems: 'center',
