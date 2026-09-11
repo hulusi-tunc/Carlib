@@ -9,6 +9,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.carlib.fr",
+      "usesAppleSignIn": true,
       "icon": "./assets/carlib.icon",
       "infoPlist": {
         "CFBundleDevelopmentRegion": "fr",
@@ -53,6 +54,22 @@
             "./assets/fonts/Aeonik-Bold.otf",
             "./assets/fonts/remixicon.ttf"
           ]
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "16.4"
+          }
+        }
+      ],
+      "expo-apple-authentication",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Carlib acc\u00e8de \u00e0 vos photos pour joindre des images \u00e0 votre d\u00e9claration de sinistre.",
+          "cameraPermission": "Carlib utilise l'appareil photo pour prendre des photos des d\u00e9g\u00e2ts de votre v\u00e9hicule."
         }
       ]
     ],
