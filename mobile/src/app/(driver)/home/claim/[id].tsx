@@ -18,7 +18,7 @@ import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
 import { StatusTimeline } from '@/components/StatusTimeline';
 import { openTel } from '@/lib/links';
 import { fromDialCode } from '@/models/countryDialCodes';
-import type { AccidentType, ClaimStatus } from '@/models/enums';
+import { ACCIDENT_KEY, type ClaimStatus } from '@/models/enums';
 import { garageFormattedPhone, type Garage } from '@/models/types';
 import { garageForId } from '@/services/mockData';
 import { useClaimStore } from '@/stores/claimStore';
@@ -49,14 +49,6 @@ const STATUS_ICON: Record<ClaimStatus, RemixIconName> = {
   annule: 'closeLine',
   expire: 'timeLine',
 };
-
-const ACCIDENT_KEY = {
-  collision: 'collision',
-  stationnement: 'parking',
-  vandalisme: 'vandalism',
-  intemperies: 'weather',
-  autre: 'other',
-} as const satisfies Record<AccidentType, string>;
 
 // Swift: [.draft, .submitted, .matched, .accepted].contains(claim.status)
 const CANCELLABLE: readonly ClaimStatus[] = ['brouillon', 'soumis', 'en_recherche', 'accepte'];

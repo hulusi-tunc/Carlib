@@ -14,7 +14,7 @@ import { claimPhotoURL } from '@/components/DummyImage';
 import { PressableScale } from '@/components/PressableScale';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
 import { relativeFormatted } from '@/lib/dates';
-import type { AccidentType, ClaimStatus, RepairStatus } from '@/models/enums';
+import { ACCIDENT_KEY, type AccidentType, type ClaimStatus, type RepairStatus } from '@/models/enums';
 import type { Claim, PhotoAttachment } from '@/models/types';
 import { garageForId } from '@/services/mockData';
 import { carlibFont, radius, text, useTheme, type ColorTokens } from '@/theme';
@@ -39,14 +39,6 @@ const ACCIDENT_ICON: Record<AccidentType, RemixIconName> = {
   intemperies: 'thunderstormsLine',
   autre: 'questionLine',
 };
-
-const ACCIDENT_KEY = {
-  collision: 'collision',
-  stationnement: 'parking',
-  vandalisme: 'vandalism',
-  intemperies: 'weather',
-  autre: 'other',
-} as const satisfies Record<AccidentType, string>;
 
 const REPAIR_KEY = {
   diagnostic: 'diagnostic',

@@ -13,7 +13,7 @@ import { CarlibButton } from '@/components/CarlibButton';
 import { CarlibCard } from '@/components/CarlibCard';
 import { CarlibTextField } from '@/components/CarlibTextField';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
-import { ACCIDENT_TYPES, type AccidentType } from '@/models/enums';
+import { ACCIDENT_KEY, ACCIDENT_TYPES, type AccidentType } from '@/models/enums';
 import type { Claim, PhotoAttachment, VehicleInfo } from '@/models/types';
 import { useClaimStore } from '@/stores/claimStore';
 import { carlibFont, fontFamilies, radius, spacing, text, useTheme } from '@/theme';
@@ -29,14 +29,6 @@ const ACCIDENT_ICON: Record<AccidentType, RemixIconName> = {
   autre: 'questionLine',
 };
 
-// French raw value → English i18n key (accidentTypeLabel.* uses Swift case names).
-const ACCIDENT_KEY = {
-  collision: 'collision',
-  stationnement: 'parking',
-  vandalisme: 'vandalism',
-  intemperies: 'weather',
-  autre: 'other',
-} as const satisfies Record<AccidentType, string>;
 
 function randomId(): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {

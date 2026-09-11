@@ -45,6 +45,15 @@ export const ACCIDENT_TYPES = [
 ] as const;
 export type AccidentType = (typeof ACCIDENT_TYPES)[number];
 
+/** i18n key per accident type: `t(`accidentTypeLabel.${ACCIDENT_KEY[type]}`)`. */
+export const ACCIDENT_KEY = {
+  collision: 'collision',
+  stationnement: 'parking',
+  vandalisme: 'vandalism',
+  intemperies: 'weather',
+  autre: 'other',
+} as const satisfies Record<AccidentType, string>;
+
 export const REPAIR_SPECIALTIES = [
   'carrosserie', // bodywork
   'peinture', // painting

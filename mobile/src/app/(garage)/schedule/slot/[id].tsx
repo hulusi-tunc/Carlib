@@ -15,7 +15,7 @@ import { PressableScale } from '@/components/PressableScale';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
 import { longFormatted, timeFormatted } from '@/lib/dates';
 import { openTel } from '@/lib/links';
-import type { AccidentType, ClaimStatus } from '@/models/enums';
+import { ACCIDENT_KEY, type ClaimStatus } from '@/models/enums';
 import type { Claim } from '@/models/types';
 import { useClaimStore } from '@/stores/claimStore';
 import { carlibFont, radius, spacing, text, useTheme, type ColorTokens } from '@/theme';
@@ -31,14 +31,6 @@ const STATUS_KEY = {
   annule: 'cancelled',
   expire: 'expired',
 } as const satisfies Record<ClaimStatus, keyof ColorTokens['status']>;
-
-const ACCIDENT_KEY = {
-  collision: 'collision',
-  stationnement: 'parking',
-  vandalisme: 'vandalism',
-  intemperies: 'weather',
-  autre: 'other',
-} as const satisfies Record<AccidentType, string>;
 
 // Swift dial()/text(): keep digits and '+' only.
 function phoneDigits(phone: string): string {

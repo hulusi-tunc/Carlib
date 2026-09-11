@@ -19,7 +19,7 @@ import { CarlibStatusBadge } from '@/components/CarlibStatusBadge';
 import { PressableScale } from '@/components/PressableScale';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
 import { relativeFormatted, timeFormatted } from '@/lib/dates';
-import type { AccidentType, ClaimStatus } from '@/models/enums';
+import { ACCIDENT_KEY, type ClaimStatus } from '@/models/enums';
 import type { Claim, TimeSlot } from '@/models/types';
 import {
   selectAvailableClaims,
@@ -61,14 +61,6 @@ const STATUS_KEY = {
   annule: 'cancelled',
   expire: 'expired',
 } as const satisfies Record<ClaimStatus, keyof ColorTokens['status']>;
-
-const ACCIDENT_KEY = {
-  collision: 'collision',
-  stationnement: 'parking',
-  vandalisme: 'vandalism',
-  intemperies: 'weather',
-  autre: 'other',
-} as const satisfies Record<AccidentType, string>;
 
 function vehicleTitle(claim: Claim): string {
   const v = claim.vehicleInfo;
