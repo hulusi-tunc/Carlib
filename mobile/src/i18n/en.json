@@ -150,6 +150,7 @@
     "cancelMessage": "This action cannot be undone."
   },
   "garageSearch": {
+    "mapUnavailable": "Map unavailable",
     "title": "Find a Body Shop",
     "placeholder": "Search body shops...",
     "modeLabel": "View Mode",

@@ -7,6 +7,7 @@
 // instead — the garage list/carousel panel on top stays fully usable.
 import Constants from 'expo-constants';
 import React, { forwardRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 import MapView, { type Region } from 'react-native-maps';
 
@@ -31,13 +32,14 @@ export interface GarageMapCanvasProps {
 export const GarageMapCanvas = forwardRef<MapView, GarageMapCanvasProps>(
   function GarageMapCanvas({ region, garages, selectedId, onSelect }, ref) {
     const { colors } = useTheme();
+    const { t } = useTranslation();
 
     if (!mapsAvailable) {
       return (
         <View style={[StyleSheet.absoluteFill, styles.fallback, { backgroundColor: colors.carlibAccent }]}>
           <RemixIcon name="mapPinLine" size={32} color={colors.carlibLabel} />
           <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
-            Map unavailable
+            {t('garageSearch.mapUnavailable')}
           </Text>
         </View>
       );

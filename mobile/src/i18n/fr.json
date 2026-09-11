@@ -150,6 +150,7 @@
     "cancelMessage": "Cette action est définitive."
   },
   "garageSearch": {
+    "mapUnavailable": "Carte indisponible",
     "title": "Trouver un carrossier",
     "placeholder": "Rechercher un carrossier...",
     "modeLabel": "Affichage",
