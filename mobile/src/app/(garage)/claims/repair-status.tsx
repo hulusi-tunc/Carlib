@@ -151,7 +151,8 @@ export default function RepairStatusSheetRoute() {
       />
 
       {/* Inline nav bar — Cancel + inline title (Swift toolbar). */}
-      <View style={styles.toolbar}>
+      {/* At the full detent the sheet reaches the status bar; keep the row below it. */}
+      <View style={[styles.toolbar, { marginTop: insets.top }]}>
         <Pressable onPress={() => router.back()} hitSlop={12} style={styles.toolbarSide}>
           <Text style={[carlibFont(17, 'regular'), { color: colors.carlibSecondary }]}>
             {t('common.cancel')}
