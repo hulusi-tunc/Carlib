@@ -1,8 +1,10 @@
 // Port of Carlib/Views/Driver/BookingFlowView.swift as an expo-router
 // formSheet: inline graphical calendar, horizontal slot chips, Confirm →
-// addBooking → native success alert. Deliberately NOT linked to any claim
-// (iOS parity — Booking(garageId:slotId:) leaves claimId nil). Section
-// headers are verbatim uppercase strings exactly as in Swift.
+// addBooking → native success alert. Unlike iOS the booking attaches to a
+// file (`claimId`, else the latest open claim) and the confirmation quotes
+// its date, time, address and reference (CARLIB-BOOKING-01). Reached with
+// `rescheduleId` it moves an existing appointment instead (BOOKING-02).
+// Section headers are verbatim uppercase strings exactly as in Swift.
 import { DateTimePicker } from '@expo/ui/community/datetime-picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -11,8 +13,15 @@ import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 
 import { CarlibButton } from '@/components/CarlibButton';
-import { timeFormatted } from '@/lib/dates';
-import { slotsForDate, useClaimStore } from '@/stores/claimStore';
+import { BOOKING_NOTICE_HOURS } from '@/lib/bookingRules';
+import { longFormatted, timeFormatted } from '@/lib/dates';
+import { claimReference } from '@/models/types';
+import {
+  selectClaimToBook,
+  slotsForDate,
+  useClaimStore,
+  type BookingResult,
+} from '@/stores/claimStore';
 import { carlibFont, radius, sectionHeaderText, spacing, text, useTheme } from '@/theme';
 
 // Same v4-UUID shape the store/mock data use for fresh ids.
@@ -28,9 +37,17 @@ export default function BookingSheet() {
   const { t } = useTranslation();
   const { colors, scheme } = useTheme();
   const router = useRouter();
-  const { garageId } = useLocalSearchParams<{ garageId: string }>();
+  const { garageId, claimId, rescheduleId } = useLocalSearchParams<{
+    garageId: string;
+    claimId?: string;
+    rescheduleId?: string;
+  }>();
   const garage = useClaimStore((s) => s.garages.find((g) => g.id === garageId));
   const addBooking = useClaimStore((s) => s.addBooking);
+  const rescheduleBooking = useClaimStore((s) => s.rescheduleBooking);
+  const explicitClaim = useClaimStore((s) => s.claims.find((c) => c.id === claimId));
+  const fallbackClaim = useClaimStore(selectClaimToBook);
+  const claim = explicitClaim ?? fallbackClaim;
 
   const [minimumDate] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(() => new Date());
@@ -48,17 +65,48 @@ export default function BookingSheet() {
   if (garage == null) return null;
 
   const confirm = () => {
-    if (selectedSlotId == null) return;
-    addBooking({
-      id: randomId(),
-      garageId: garage.id,
-      slotId: selectedSlotId,
-      status: 'en_attente',
-      createdAt: new Date(),
+    const slot = openSlots.find((item) => item.id === selectedSlotId);
+    if (slot == null) return;
+    const now = new Date();
+    const result: BookingResult =
+      rescheduleId != null
+        ? rescheduleBooking(rescheduleId, slot.id, now)
+        : addBooking({
+            id: randomId(),
+            claimId: claim?.id,
+            garageId: garage.id,
+            slotId: slot.id,
+            // BOOKING-01: confirmed at once, no action from the shop.
+            status: 'confirme',
+            createdAt: now,
+          });
+    if (!result.ok) {
+      // The store already dropped a taken slot, so the chips refresh on their own.
+      setSelectedSlotId(null);
+      if (result.reason === 'notice_period') {
+        Alert.alert(
+          t('booking.noticeTitle'),
+          t('booking.noticeMessage', { hours: BOOKING_NOTICE_HOURS }),
+        );
+      } else {
+        Alert.alert(t('booking.slotTakenTitle'), t('booking.slotTakenMessage'));
+      }
+      return;
+    }
+    const details = t('booking.successDetails', {
+      date: longFormatted(slot.date),
+      time: timeFormatted(slot.startTime),
+      address: garage.address,
     });
-    Alert.alert(t('booking.successTitle'), t('booking.successMessage'), [
-      { text: 'OK', onPress: () => router.back() },
-    ]);
+    const reference =
+      claim != null
+        ? `\n${t('booking.successReference', { reference: claimReference(claim) })}`
+        : '';
+    Alert.alert(
+      rescheduleId != null ? t('booking.rescheduledTitle') : t('booking.successTitle'),
+      `${details}${reference}`,
+      [{ text: 'OK', onPress: () => router.back() }],
+    );
   };
 
   return (
@@ -69,7 +117,9 @@ export default function BookingSheet() {
           numberOfLines={1}
           style={[carlibFont(17, 'medium'), styles.title, { color: colors.carlibDark }]}
         >
-          {t('booking.titleAt', { name: garage.name })}
+          {rescheduleId != null
+            ? t('booking.rescheduleTitleAt', { name: garage.name })
+            : t('booking.titleAt', { name: garage.name })}
         </Text>
         <Pressable onPress={() => router.back()} hitSlop={12} style={styles.cancel}>
           <Text style={[carlibFont(17, 'regular'), { color: colors.carlibSecondary }]}>

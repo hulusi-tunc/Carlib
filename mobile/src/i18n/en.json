@@ -172,7 +172,13 @@
     "actionCancel": "Cancel Claim",
     "cancelTitle": "Cancel Claim",
     "cancelConfirm": "Confirm Cancellation",
-    "cancelMessage": "This action cannot be undone."
+    "cancelMessage": "This action cannot be undone.",
+    "sectionAppointment": "Appointment",
+    "appointmentReschedule": "Reschedule",
+    "appointmentCancel": "Cancel appointment",
+    "appointmentCancelTitle": "Cancel this appointment?",
+    "appointmentCancelMessage": "The slot goes back to the shop's planning.",
+    "appointmentLocked": "Changes stop {{hours}} h before the appointment — call the shop to arrange."
   },
   "garageSearch": {
     "mapUnavailable": "Map unavailable",
@@ -427,7 +433,14 @@
     "noSlots": "No slots available for this date",
     "confirm": "Confirm Booking",
     "successTitle": "Booking Confirmed",
-    "successMessage": "Your appointment has been booked."
+    "rescheduleTitleAt": "Move appointment at {{name}}",
+    "successDetails": "{{date}} at {{time}}\n{{address}}",
+    "successReference": "File {{reference}}",
+    "rescheduledTitle": "Appointment moved",
+    "slotTakenTitle": "Slot just taken",
+    "slotTakenMessage": "Someone booked it before you. The calendar has been refreshed.",
+    "noticeTitle": "Too late to change",
+    "noticeMessage": "Changes stop {{hours}} h before the appointment. Call the shop instead."
   },
   "notificationSettings": {
     "title": "Notifications",

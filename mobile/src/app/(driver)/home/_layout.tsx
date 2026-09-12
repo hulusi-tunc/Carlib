@@ -20,6 +20,15 @@ export default function HomeStackLayout() {
       <Stack.Screen name="declare-confirm" options={{ headerShown: false }} />
       {/* Form sheets never get a native bar — they keep their own title rows. */}
       <Stack.Screen name="add-vehicle" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="claim/booking"
+        options={{
+          headerShown: false,
+          presentation: 'formSheet',
+          sheetGrabberVisible: true,
+          sheetAllowedDetents: [1],
+        }}
+      />
     </Stack>
   );
 }

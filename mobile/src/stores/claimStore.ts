@@ -3,7 +3,8 @@
 import { isSameDay } from 'date-fns';
 import { create } from 'zustand';
 
-import type { ClaimStatus, RepairStatus } from '@/models/enums';
+import { canChangeBooking } from '@/lib/bookingRules';
+import type { BookingStatus, ClaimStatus, RepairStatus } from '@/models/enums';
 import type {
   Booking,
   Claim,
@@ -28,6 +29,11 @@ function randomId(): string {
   });
 }
 
+/** Outcome of a booking mutation — the UI explains every refusal (CARLIB-BOOKING-01/02). */
+export type BookingResult =
+  | { ok: true; booking: Booking }
+  | { ok: false; reason: 'slot_taken' | 'notice_period' | 'not_found' };
+
 export interface ClaimStoreState {
   claims: Claim[];
   timeSlots: TimeSlot[];
@@ -47,7 +53,9 @@ export interface ClaimStoreState {
   removeTimeSlot: (id: string) => void;
   setSlotBlocked: (id: string, blocked: boolean) => void;
   updateSlotTimes: (id: string, start: Date, end: Date) => void;
-  addBooking: (booking: Booking) => void;
+  addBooking: (booking: Booking) => BookingResult;
+  cancelBooking: (bookingId: string, now: Date) => BookingResult;
+  rescheduleBooking: (bookingId: string, slotId: string, now: Date) => BookingResult;
   addGaragePhoto: (garageId: string, photo?: PhotoAttachment) => void;
   removeGaragePhoto: (garageId: string, photoId: string) => void;
   updateGarage: (garage: Garage) => void;
@@ -57,7 +65,35 @@ function updateClaim(claims: Claim[], id: string, mutate: (claim: Claim) => Clai
   return claims.map((claim) => (claim.id === id ? mutate(claim) : claim));
 }
 
-export const useClaimStore = create<ClaimStoreState>()((set) => ({
+// A booked slot leaves the shop's offer and carries the file it was booked for,
+// which is how the garage planning shows the appointment (CARLIB-BOOKING-03).
+function takeSlot(slots: TimeSlot[], slotId: string, claimId: string | undefined): TimeSlot[] {
+  return slots.map((slot) =>
+    slot.id === slotId ? { ...slot, isAvailable: false, claimId } : slot,
+  );
+}
+
+function releaseSlot(slots: TimeSlot[], slotId: string): TimeSlot[] {
+  return slots.map((slot) =>
+    slot.id === slotId ? { ...slot, isAvailable: true, claimId: undefined } : slot,
+  );
+}
+
+function isOpen(slot: TimeSlot | undefined): slot is TimeSlot {
+  return slot != null && slot.isAvailable && !slot.isBlocked;
+}
+
+function withBookingStatus(claims: Claim[], booking: Booking, status: BookingStatus): Claim[] {
+  if (booking.claimId == null) return claims;
+  return updateClaim(claims, booking.claimId, (claim) => ({
+    ...claim,
+    assignedGarageId: booking.garageId,
+    bookingStatus: status,
+    updatedAt: new Date(),
+  }));
+}
+
+export const useClaimStore = create<ClaimStoreState>()((set, get) => ({
   claims: [...seedClaims],
   timeSlots: generateTimeSlots(),
   bookings: [],
@@ -170,15 +206,54 @@ export const useClaimStore = create<ClaimStoreState>()((set) => ({
       ),
     })),
 
-  // Booking mutations
+  // Booking mutations — CARLIB-BOOKING-01/02/03. A booking is refused when
+  // the slot went between display and validation; cancel and reschedule stay
+  // open until the notice period and release the slot immediately.
 
-  addBooking: (booking) =>
+  addBooking: (booking) => {
+    if (!isOpen(get().timeSlots.find((slot) => slot.id === booking.slotId))) {
+      return { ok: false, reason: 'slot_taken' };
+    }
     set((state) => ({
       bookings: [...state.bookings, booking],
-      timeSlots: state.timeSlots.map((slot) =>
-        slot.id === booking.slotId ? { ...slot, isAvailable: false } : slot,
-      ),
-    })),
+      timeSlots: takeSlot(state.timeSlots, booking.slotId, booking.claimId),
+      claims: withBookingStatus(state.claims, booking, booking.status),
+    }));
+    return { ok: true, booking };
+  },
+
+  cancelBooking: (bookingId, now) => {
+    const { bookings, timeSlots } = get();
+    const booking = bookings.find((item) => item.id === bookingId);
+    const slot = timeSlots.find((item) => item.id === booking?.slotId);
+    if (booking == null || slot == null) return { ok: false, reason: 'not_found' };
+    if (!canChangeBooking(slot, now)) return { ok: false, reason: 'notice_period' };
+    const cancelled: Booking = { ...booking, status: 'annule_conducteur' };
+    set((state) => ({
+      bookings: state.bookings.map((item) => (item.id === bookingId ? cancelled : item)),
+      timeSlots: releaseSlot(state.timeSlots, booking.slotId),
+      claims: withBookingStatus(state.claims, cancelled, 'annule_conducteur'),
+    }));
+    return { ok: true, booking: cancelled };
+  },
+
+  rescheduleBooking: (bookingId, slotId, now) => {
+    const { bookings, timeSlots } = get();
+    const booking = bookings.find((item) => item.id === bookingId);
+    const current = timeSlots.find((item) => item.id === booking?.slotId);
+    if (booking == null || current == null) return { ok: false, reason: 'not_found' };
+    if (!canChangeBooking(current, now)) return { ok: false, reason: 'notice_period' };
+    if (!isOpen(timeSlots.find((item) => item.id === slotId))) {
+      return { ok: false, reason: 'slot_taken' };
+    }
+    const moved: Booking = { ...booking, slotId, status: 'replanifie' };
+    set((state) => ({
+      bookings: state.bookings.map((item) => (item.id === bookingId ? moved : item)),
+      timeSlots: takeSlot(releaseSlot(state.timeSlots, booking.slotId), slotId, booking.claimId),
+      claims: withBookingStatus(state.claims, moved, 'replanifie'),
+    }));
+    return { ok: true, booking: moved };
+  },
 
   // Garage mutations
 
@@ -258,6 +333,30 @@ export function slotsForDate(date: Date, garageId?: string) {
     state.timeSlots.filter(
       (slot) => isSameDay(slot.date, date) && (garageId == null || slot.garageId === garageId),
     );
+}
+
+const CANCELLED_BOOKING: readonly BookingStatus[] = ['annule_conducteur', 'annule_garage'];
+const BOOKABLE_CLAIM: readonly ClaimStatus[] = ['soumis', 'en_recherche', 'accepte'];
+
+/** Curried selector: the live (not cancelled) booking on a file, if any. */
+export function bookingForClaim(claimId: string) {
+  return (state: ClaimStoreState): Booking | undefined =>
+    state.bookings.find(
+      (booking) => booking.claimId === claimId && !CANCELLED_BOOKING.includes(booking.status),
+    );
+}
+
+function hasAppointment(claim: Claim, bookings: Booking[]): boolean {
+  if (bookingForClaim(claim.id)({ bookings } as ClaimStoreState) != null) return true;
+  // Seed claims carry a denormalised bookingStatus with no Booking record (iOS parity).
+  return claim.bookingStatus != null && !CANCELLED_BOOKING.includes(claim.bookingStatus);
+}
+
+/** The file a new booking attaches to: the latest open claim without an appointment. */
+export function selectClaimToBook(state: ClaimStoreState): Claim | undefined {
+  return state.claims
+    .filter((claim) => BOOKABLE_CLAIM.includes(claim.status) && !hasAppointment(claim, state.bookings))
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0];
 }
 
 /** Curried selector: `useClaimStore(availableSlots(garageId))`. */

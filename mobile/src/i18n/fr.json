@@ -172,7 +172,13 @@
     "actionCancel": "Annuler le dossier",
     "cancelTitle": "Annuler le dossier",
     "cancelConfirm": "Confirmer l'annulation",
-    "cancelMessage": "Cette action est définitive."
+    "cancelMessage": "Cette action est définitive.",
+    "sectionAppointment": "Rendez-vous",
+    "appointmentReschedule": "Reporter",
+    "appointmentCancel": "Annuler le rendez-vous",
+    "appointmentCancelTitle": "Annuler ce rendez-vous ?",
+    "appointmentCancelMessage": "Le créneau est rendu au planning de l'atelier.",
+    "appointmentLocked": "Plus de modification {{hours}} h avant le rendez-vous — appelez l'atelier."
   },
   "garageSearch": {
     "mapUnavailable": "Carte indisponible",
@@ -427,7 +433,14 @@
     "noSlots": "Aucun créneau disponible pour cette date",
     "confirm": "Confirmer le rendez-vous",
     "successTitle": "Rendez-vous confirmé",
-    "successMessage": "Votre rendez-vous est enregistré."
+    "rescheduleTitleAt": "Reporter chez {{name}}",
+    "successDetails": "{{date}} à {{time}}\n{{address}}",
+    "successReference": "Dossier {{reference}}",
+    "rescheduledTitle": "Rendez-vous reporté",
+    "slotTakenTitle": "Créneau déjà pris",
+    "slotTakenMessage": "Quelqu'un l'a réservé avant vous. Le calendrier a été actualisé.",
+    "noticeTitle": "Trop tard pour modifier",
+    "noticeMessage": "Les modifications s'arrêtent {{hours}} h avant le rendez-vous. Appelez l'atelier."
   },
   "notificationSettings": {
     "title": "Notifications",
