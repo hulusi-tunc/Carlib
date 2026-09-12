@@ -563,5 +563,21 @@
       "takenUpTitle": "Dossier pris en charge",
       "takenUpBody": "Vous avez pris le dossier {{reference}}."
     }
+  },
+  "privacy": {
+    "title": "Confidentialité et consentement",
+    "policyIntro": "Carlib traite vos données d'identité, de véhicule et de sinistre pour vous mettre en relation avec des carrossiers et suivre vos dossiers. Elles sont conservées pendant la durée légale et jamais vendues. Texte complet : version 1.0, provisoire en attendant le juridique.",
+    "statusAccepted": "Politique v{{version}} · acceptée le {{date}}",
+    "statusWithdrawn": "Retiré le {{date}} · compte en lecture seule",
+    "statusNone": "Pas encore acceptée",
+    "accept": "Accepter la politique de confidentialité (v{{version}})",
+    "withdraw": "Retirer mon consentement",
+    "withdrawTitle": "Retirer votre consentement ?",
+    "withdrawMessage": "Votre compte passe en lecture seule : aucun nouveau dossier tant que la politique n'est pas acceptée à nouveau.",
+    "marketing": "E-mails marketing",
+    "marketingHint": "Distinct du consentement de service. Désactivé par défaut.",
+    "consentRequired": "J'accepte la politique de confidentialité (v{{version}})",
+    "consentAgain": "Vous avez retiré votre consentement. Acceptez à nouveau la politique (v{{version}}) pour envoyer.",
+    "readPolicy": "Lire"
   }
 }

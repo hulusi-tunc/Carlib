@@ -563,5 +563,21 @@
       "takenUpTitle": "File taken",
       "takenUpBody": "You took file {{reference}}."
     }
+  },
+  "privacy": {
+    "title": "Privacy & consent",
+    "policyIntro": "Carlib processes your identity, vehicle and claim data to connect you with body shops and follow your files. Data is kept for the legal retention period and never sold. Full policy text: version 1.0, placeholder until legal delivers it.",
+    "statusAccepted": "Policy v{{version}} · accepted {{date}}",
+    "statusWithdrawn": "Withdrawn {{date}} · account read-only",
+    "statusNone": "Not accepted yet",
+    "accept": "Accept the privacy policy (v{{version}})",
+    "withdraw": "Withdraw consent",
+    "withdrawTitle": "Withdraw consent?",
+    "withdrawMessage": "Your account becomes read-only: no new file until you accept the policy again.",
+    "marketing": "Marketing emails",
+    "marketingHint": "Separate from the service consent. Off by default.",
+    "consentRequired": "I accept the privacy policy (v{{version}})",
+    "consentAgain": "You withdrew consent. Accept the policy again (v{{version}}) to submit.",
+    "readPolicy": "Read"
   }
 }

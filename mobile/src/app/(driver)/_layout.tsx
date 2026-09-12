@@ -10,6 +10,7 @@ import { CarlibIcon } from '@/components/icons';
 import { RemixIcon } from '@/components/RemixIcon';
 import { tabBarStyleProps } from '@/components/tabBarStyle';
 import { useAppStore } from '@/stores/appStore';
+import { useConsentStore } from '@/stores/consentStore';
 import { useShopsUiStore } from '@/stores/shopsUiStore';
 import { useUiStore } from '@/stores/uiStore';
 import { useTheme } from '@/theme';
@@ -25,6 +26,11 @@ export default function DriverTabsLayout() {
   // Shops drawer expanded → hide the bar (SwiftUI .toolbar(.hidden, for: .tabBar)).
   const shopsPanelExpanded = useShopsUiStore((s) => s.panelExpanded);
   const tabBarHidden = useUiStore((s) => s.tabBarHidden);
+  // USERAUTH-03: the consent record is read once the driver shell is up.
+  const hydrateConsent = useConsentStore((s) => s.hydrate);
+  useEffect(() => {
+    void hydrateConsent();
+  }, [hydrateConsent]);
 
   // Cross-flow tab intents (AppState.pendingDriverTab): navigate, then clear.
   useEffect(() => {

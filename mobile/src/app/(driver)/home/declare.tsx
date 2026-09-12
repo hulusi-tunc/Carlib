@@ -20,12 +20,14 @@ import { CarlibTextField } from '@/components/CarlibTextField';
 import { Glass } from '@/components/Glass';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
 import { shortFormatted } from '@/lib/dates';
+import { POLICY_VERSION, consentCoversFiles } from '@/lib/consent';
 import { clearDraft, loadDraft, saveDraft } from '@/lib/declarationDraft';
 import { useHeaderHeight } from '@/lib/header';
 import { getCurrentAddress } from '@/lib/location';
 import { ACCIDENT_KEY, ACCIDENT_TYPES, type AccidentType } from '@/models/enums';
 import type { Claim, Coordinate, PhotoAttachment } from '@/models/types';
 import { useClaimStore } from '@/stores/claimStore';
+import { useConsentStore } from '@/stores/consentStore';
 import { carlibFont, radius, spacing, text, useTheme } from '@/theme';
 
 const TOTAL_STEPS = 4;
@@ -114,6 +116,12 @@ export default function DeclareScreen() {
     vehicles[0];
 
   // CLAIMDECL-01: Next is disabled until the step's mandatory fields are filled.
+  // USERAUTH-03: the first submission needs explicit consent to the policy version in force.
+  const consent = useConsentStore((s) => s.consent);
+  const acceptConsent = useConsentStore((s) => s.accept);
+  const consentCovers = consentCoversFiles(consent);
+  const [consentChecked, setConsentChecked] = useState(false);
+
   const canContinue =
     currentStep === 1
       ? selectedType != null
@@ -121,7 +129,7 @@ export default function DeclareScreen() {
         ? photos.length >= MIN_PHOTOS
         : currentStep === 3
           ? address.trim().length > 0 || coords != null
-          : selectedVehicle != null;
+          : selectedVehicle != null && (consentCovers || consentChecked);
 
   function addPhotos(assets: ImagePicker.ImagePickerAsset[]) {
     const picked: PhotoAttachment[] = assets.map((asset) => ({
@@ -199,6 +207,8 @@ export default function DeclareScreen() {
       setCurrentStep(1);
       return;
     }
+    // Timestamped with the version accepted; the record outlives the session.
+    if (!consentCovers) void acceptConsent(false);
     const now = new Date();
     const claim: Claim = {
       id: randomId(),
@@ -528,6 +538,33 @@ export default function DeclareScreen() {
             <Text style={[text.caption, styles.disclaimer, { color: colors.carlibSecondary }]}>
               {t('declaration.summaryDisclaimer')}
             </Text>
+            {!consentCovers && (
+              <View style={styles.consentRow}>
+                <Pressable
+                  onPress={() => setConsentChecked((checked) => !checked)}
+                  hitSlop={8}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: consentChecked }}
+                  style={styles.consentCheck}
+                >
+                  <RemixIcon
+                    name={consentChecked ? 'checkboxCircleFill' : 'checkboxBlankCircleLine'}
+                    size={22}
+                    color={consentChecked ? colors.brandYellow : colors.carlibLabel}
+                  />
+                  <Text style={[text.footnote, styles.consentText, { color: colors.carlibDark }]}>
+                    {consent?.withdrawnAt != null
+                      ? t('privacy.consentAgain', { version: POLICY_VERSION })
+                      : t('privacy.consentRequired', { version: POLICY_VERSION })}
+                  </Text>
+                </Pressable>
+                <Pressable onPress={() => router.push('/home/privacy')} hitSlop={8}>
+                  <Text style={[text.footnote, styles.consentLink, { color: colors.carlibSecondary }]}>
+                    {t('privacy.readPolicy')}
+                  </Text>
+                </Pressable>
+              </View>
+            )}
           </Animated.View>
         )}
       </ScrollView>
@@ -677,6 +714,20 @@ const styles = StyleSheet.create({
     height: StyleSheet.hairlineWidth,
     alignSelf: 'stretch',
   },
+  consentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingTop: spacing.sm,
+  },
+  consentCheck: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  consentText: { flex: 1 },
+  consentLink: { textDecorationLine: 'underline' },
   disclaimer: { textAlign: 'center' },
   footerBar: { position: 'absolute', left: 0, right: 0, bottom: 0 },
   footer: {
