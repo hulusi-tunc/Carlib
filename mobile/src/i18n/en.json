@@ -534,5 +534,34 @@
     "email": "Email",
     "send": "Send Reset Link",
     "success": "Check your email for a reset link"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "emptyTitle": "Nothing yet",
+    "emptyBody": "Every step of your files will show up here.",
+    "driver": {
+      "fileCreatedTitle": "File {{reference}} created",
+      "fileCreatedBody": "Your declaration is in. We're finding you a body shop.",
+      "bookingConfirmedTitle": "Appointment confirmed",
+      "bookingConfirmedBody": "{{date}} at {{garage}} · file {{reference}}",
+      "bookingChangedTitle": "Appointment moved",
+      "bookingChangedBody": "Now {{date}} at {{garage}} · file {{reference}}",
+      "bookingCancelledTitle": "Appointment cancelled",
+      "bookingCancelledBody": "File {{reference}} — the slot at {{garage}} is free again.",
+      "takenUpTitle": "{{garage}} took your file",
+      "takenUpBody": "File {{reference}} is now handled by {{garage}}."
+    },
+    "garage": {
+      "fileCreatedTitle": "New file nearby",
+      "fileCreatedBody": "File {{reference}} is waiting for a body shop.",
+      "bookingConfirmedTitle": "New appointment",
+      "bookingConfirmedBody": "{{date}} · file {{reference}}",
+      "bookingChangedTitle": "Appointment moved",
+      "bookingChangedBody": "Now {{date}} · file {{reference}}",
+      "bookingCancelledTitle": "Appointment cancelled",
+      "bookingCancelledBody": "File {{reference}} — the slot is open again.",
+      "takenUpTitle": "File taken",
+      "takenUpBody": "You took file {{reference}}."
+    }
   }
 }

@@ -19,6 +19,7 @@ import {
   generateTimeSlots,
   vehicles as seedVehicles,
 } from '@/services/mockData';
+import { notify } from '@/services/notifications';
 
 // Matches Swift's UUID() for on-the-fly PhotoAttachment defaults.
 function randomId(): string {
@@ -83,6 +84,20 @@ function isOpen(slot: TimeSlot | undefined): slot is TimeSlot {
   return slot != null && slot.isAvailable && !slot.isBlocked;
 }
 
+// BOOKING-02: both parties hear about every booking, change and cancellation.
+function notifyBooking(
+  state: Pick<ClaimStoreState, 'claims' | 'garages' | 'timeSlots'>,
+  booking: Booking,
+  kind: 'bookingConfirmed' | 'bookingChanged' | 'bookingCancelled',
+): void {
+  const claim = state.claims.find((item) => item.id === booking.claimId);
+  if (claim == null) return;
+  const garage = state.garages.find((item) => item.id === booking.garageId);
+  const slot = state.timeSlots.find((item) => item.id === booking.slotId);
+  notify('driver', kind, claim, { garage, slot });
+  notify('garage', kind, claim, { garage, slot });
+}
+
 function withBookingStatus(claims: Claim[], booking: Booking, status: BookingStatus): Claim[] {
   if (booking.claimId == null) return claims;
   return updateClaim(claims, booking.claimId, (claim) => ({
@@ -102,11 +117,15 @@ export const useClaimStore = create<ClaimStoreState>()((set, get) => ({
 
   // Claim mutations
 
-  addClaim: (claim) => set((state) => ({ claims: [claim, ...state.claims] })),
+  addClaim: (claim) => {
+    set((state) => ({ claims: [claim, ...state.claims] }));
+    notify('driver', 'fileCreated', claim);
+    notify('garage', 'fileCreated', claim);
+  },
 
   // Accepting only tags the claim; the Booking is created later in the
   // booking flow (matches iOS — no Booking record here).
-  acceptClaim: (id, garageId) =>
+  acceptClaim: (id, garageId) => {
     set((state) => ({
       claims: updateClaim(state.claims, id, (claim) => ({
         ...claim,
@@ -115,7 +134,15 @@ export const useClaimStore = create<ClaimStoreState>()((set, get) => ({
         bookingStatus: 'en_attente',
         updatedAt: new Date(),
       })),
-    })),
+    }));
+    const { claims, garages } = get();
+    const claim = claims.find((item) => item.id === id);
+    const garage = garages.find((item) => item.id === garageId);
+    if (claim) {
+      notify('driver', 'takenUp', claim, { garage });
+      notify('garage', 'takenUp', claim, { garage });
+    }
+  },
 
   // For MVP, just remove from available — in real app, hide from this garage only
   declineClaim: (id) =>
@@ -219,6 +246,7 @@ export const useClaimStore = create<ClaimStoreState>()((set, get) => ({
       timeSlots: takeSlot(state.timeSlots, booking.slotId, booking.claimId),
       claims: withBookingStatus(state.claims, booking, booking.status),
     }));
+    notifyBooking(get(), booking, 'bookingConfirmed');
     return { ok: true, booking };
   },
 
@@ -234,6 +262,7 @@ export const useClaimStore = create<ClaimStoreState>()((set, get) => ({
       timeSlots: releaseSlot(state.timeSlots, booking.slotId),
       claims: withBookingStatus(state.claims, cancelled, 'annule_conducteur'),
     }));
+    notifyBooking(get(), cancelled, 'bookingCancelled');
     return { ok: true, booking: cancelled };
   },
 
@@ -252,6 +281,7 @@ export const useClaimStore = create<ClaimStoreState>()((set, get) => ({
       timeSlots: takeSlot(releaseSlot(state.timeSlots, booking.slotId), slotId, booking.claimId),
       claims: withBookingStatus(state.claims, moved, 'replanifie'),
     }));
+    notifyBooking(get(), moved, 'bookingChanged');
     return { ok: true, booking: moved };
   },
 

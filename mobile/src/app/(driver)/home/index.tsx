@@ -30,6 +30,7 @@ import { selectPastClaims, useClaimStore } from '@/stores/claimStore';
 import { useShopsUiStore } from '@/stores/shopsUiStore';
 import { carlibFont, radius, spacing, text, useTheme } from '@/theme';
 import { TAB_BAR_SCROLL_PADDING } from '@/components/tabBarStyle';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 // Intrinsic asset sizes, for aspect-correct full-width rendering.
 const TOP_BG_LIGHT = { width: 1179, height: 774 };
@@ -361,6 +362,9 @@ export default function DriverHomeScreen() {
       {/* Carlib logo — stands in for the iOS toolbar principal item. */}
       <View style={[styles.logoBar, { marginTop: insets.top }]}>
         <CarlibLogo width={(16 * LOGO.width) / LOGO.height} height={16} />
+        <View style={styles.bellSlot}>
+          <NotificationBell audience="driver" href="/home/notifications" />
+        </View>
       </View>
 
       <ScrollView
@@ -508,6 +512,13 @@ const styles = StyleSheet.create({
   logoBar: {
     height: 44,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bellSlot: {
+    position: 'absolute',
+    right: 12,
+    top: 0,
+    height: 44,
     justifyContent: 'center',
   },
   scrollContent: {

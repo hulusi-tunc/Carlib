@@ -102,6 +102,26 @@ export interface TimeSlot {
   isBlocked: boolean;
 }
 
+export type NotificationAudience = 'driver' | 'garage';
+export type NotificationKind =
+  | 'fileCreated'
+  | 'bookingConfirmed'
+  | 'bookingChanged'
+  | 'bookingCancelled'
+  | 'takenUp';
+
+/** One entry of the in-app notification centre (CARLIB-NOTIFS-01). */
+export interface AppNotification {
+  id: string;
+  audience: NotificationAudience;
+  kind: NotificationKind;
+  claimId: string;
+  /** Copy parameters: the file reference always, the shop and the slot when relevant. */
+  params: { reference: string; garage?: string; date?: string };
+  createdAt: Date;
+  read: boolean;
+}
+
 export interface CountryDialCode {
   /** ISO alpha-2 (e.g. "FR"). */
   id: string;

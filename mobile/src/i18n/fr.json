@@ -534,5 +534,34 @@
     "email": "E-mail",
     "send": "Envoyer le lien",
     "success": "Consultez votre e-mail pour réinitialiser votre mot de passe"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "emptyTitle": "Rien pour l'instant",
+    "emptyBody": "Chaque étape de vos dossiers apparaîtra ici.",
+    "driver": {
+      "fileCreatedTitle": "Dossier {{reference}} créé",
+      "fileCreatedBody": "Votre déclaration est envoyée. Nous cherchons un carrossier.",
+      "bookingConfirmedTitle": "Rendez-vous confirmé",
+      "bookingConfirmedBody": "{{date}} chez {{garage}} · dossier {{reference}}",
+      "bookingChangedTitle": "Rendez-vous reporté",
+      "bookingChangedBody": "Désormais {{date}} chez {{garage}} · dossier {{reference}}",
+      "bookingCancelledTitle": "Rendez-vous annulé",
+      "bookingCancelledBody": "Dossier {{reference}} — le créneau chez {{garage}} est libéré.",
+      "takenUpTitle": "{{garage}} a pris votre dossier",
+      "takenUpBody": "Le dossier {{reference}} est désormais suivi par {{garage}}."
+    },
+    "garage": {
+      "fileCreatedTitle": "Nouveau dossier à proximité",
+      "fileCreatedBody": "Le dossier {{reference}} attend un carrossier.",
+      "bookingConfirmedTitle": "Nouveau rendez-vous",
+      "bookingConfirmedBody": "{{date}} · dossier {{reference}}",
+      "bookingChangedTitle": "Rendez-vous reporté",
+      "bookingChangedBody": "Désormais {{date}} · dossier {{reference}}",
+      "bookingCancelledTitle": "Rendez-vous annulé",
+      "bookingCancelledBody": "Dossier {{reference}} — le créneau est de nouveau libre.",
+      "takenUpTitle": "Dossier pris en charge",
+      "takenUpBody": "Vous avez pris le dossier {{reference}}."
+    }
   }
 }
