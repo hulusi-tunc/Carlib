@@ -102,6 +102,8 @@
     "helpHowItWorks": "Comment ça marche"
   },
   "declaration": {
+    "draftRestored": "Brouillon du {{date}} restauré",
+    "draftExpired": "Votre brouillon du {{date}} a expiré après 30 jours et a été effacé.",
     "photosTake": "Prendre une photo",
     "photosChoose": "Choisir dans la galerie",
     "photosCameraDenied": "L'accès à l'appareil photo est désactivé — vous pouvez toujours choisir des photos dans votre galerie.",

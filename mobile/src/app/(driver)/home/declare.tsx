@@ -7,7 +7,7 @@
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
@@ -19,6 +19,8 @@ import { CarlibCard } from '@/components/CarlibCard';
 import { CarlibTextField } from '@/components/CarlibTextField';
 import { Glass } from '@/components/Glass';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
+import { shortFormatted } from '@/lib/dates';
+import { clearDraft, loadDraft, saveDraft } from '@/lib/declarationDraft';
 import { useHeaderHeight } from '@/lib/header';
 import { getCurrentAddress } from '@/lib/location';
 import { ACCIDENT_KEY, ACCIDENT_TYPES, type AccidentType } from '@/models/enums';
@@ -47,6 +49,7 @@ const ACCIDENT_ICON: Record<AccidentType, RemixIconName> = {
 };
 
 type LocateState = 'idle' | 'locating' | 'granted' | 'denied' | 'unavailable';
+type DraftNotice = { kind: 'restored' | 'expired'; savedAt: Date } | null;
 
 function randomId(): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
@@ -75,6 +78,33 @@ export default function DeclareScreen() {
   const [address, setAddress] = useState('');
   const [description, setDescription] = useState('');
   const [vehicleId, setVehicleId] = useState<string | null>(null);
+  const [draftNotice, setDraftNotice] = useState<DraftNotice>(null);
+
+  // CLAIMDECL-02: restore the draft at the step it was left on; an expired one
+  // is cleared and said so. State is set after the read resolves, never synchronously.
+  useEffect(() => {
+    let cancelled = false;
+    void loadDraft().then((loaded) => {
+      if (cancelled || loaded.status === 'none') return;
+      if (loaded.status === 'expired') {
+        setDraftNotice({ kind: 'expired', savedAt: loaded.savedAt });
+        return;
+      }
+      const { draft } = loaded;
+      setSelectedType(draft.type);
+      setPhotos(draft.photos);
+      setCoords(draft.coords);
+      setAddress(draft.address);
+      setDescription(draft.description);
+      setVehicleId(draft.vehicleId);
+      setCurrentStep(draft.step);
+      if (draft.coords != null) setLocate('granted');
+      setDraftNotice({ kind: 'restored', savedAt: loaded.savedAt });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // The profile's default vehicle unless the driver picked another. Derived, so a
   // vehicle added mid-flow from the sheet shows up without an effect.
@@ -143,13 +173,22 @@ export default function DeclareScreen() {
     setLocate('granted');
   }
 
+  function persistDraft(step: number) {
+    void saveDraft({ step, type: selectedType, photos, coords, address, description, vehicleId });
+  }
+
+  function goToStep(step: number) {
+    setCurrentStep(step);
+    persistDraft(step); // CLAIMDECL-02: saved at each step transition
+  }
+
   function goNext() {
     if (currentStep === TOTAL_STEPS) {
       submitClaim();
       return;
     }
     const next = currentStep + 1;
-    setCurrentStep(next);
+    goToStep(next);
     if (next === 3 && locate === 'idle') void locateDriver();
   }
 
@@ -174,6 +213,7 @@ export default function DeclareScreen() {
       updatedAt: now,
     };
     addClaim(claim);
+    void clearDraft();
     router.push('/home/declare-confirm');
   }
 
@@ -225,6 +265,22 @@ export default function DeclareScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: FOOTER_HEIGHT + insets.bottom }]}
         keyboardShouldPersistTaps="handled"
       >
+        {draftNotice != null && (
+          <View style={[styles.draftNotice, { backgroundColor: colors.tileSecondary }]}>
+            <RemixIcon name="draftLine" size={16} color={colors.carlibSecondary} />
+            <Text style={[text.caption, styles.draftText, { color: colors.carlibSecondary }]}>
+              {t(
+                draftNotice.kind === 'restored'
+                  ? 'declaration.draftRestored'
+                  : 'declaration.draftExpired',
+                { date: shortFormatted(draftNotice.savedAt) },
+              )}
+            </Text>
+            <Pressable onPress={() => setDraftNotice(null)} hitSlop={8}>
+              <RemixIcon name="closeLine" size={16} color={colors.carlibSecondary} />
+            </Pressable>
+          </View>
+        )}
         {currentStep === 1 && (
           <Animated.View style={styles.step} entering={STEP_FADE_IN} exiting={STEP_FADE_OUT}>
             <Text style={[text.title2, { color: colors.carlibDark }]}>
@@ -488,7 +544,7 @@ export default function DeclareScreen() {
             <CarlibButton
               label={t('declaration.back')}
               variant="secondary"
-              onPress={() => setCurrentStep((step) => step - 1)}
+              onPress={() => goToStep(currentStep - 1)}
               style={styles.footerButton}
             />
           )}
@@ -526,6 +582,15 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
   },
   step: { gap: spacing.lg },
+  draftNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    padding: spacing.sm,
+    borderRadius: radius.md,
+    marginBottom: spacing.md,
+  },
+  draftText: { flex: 1 },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',

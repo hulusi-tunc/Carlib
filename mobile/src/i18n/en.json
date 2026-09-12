@@ -102,6 +102,8 @@
     "helpHowItWorks": "How It Works"
   },
   "declaration": {
+    "draftRestored": "Draft restored from {{date}}",
+    "draftExpired": "Your draft from {{date}} expired after 30 days and was cleared.",
     "photosTake": "Take a photo",
     "photosChoose": "Choose from library",
     "photosCameraDenied": "Camera access is off — you can still choose photos from your library.",
