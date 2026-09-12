@@ -27,6 +27,7 @@ In-app copy is **bilingual EN + FR** (`mobile/src/i18n/{en,fr}.json`, ~400 keys,
 cd mobile
 npx tsc --noEmit                      # type-check — must be clean before every commit
 npx expo lint                         # ESLint incl. React Compiler rules — must be clean (was 22 problems → 0)
+npm test                              # jest-expo over the pure modules — must be green
 
 scripts/build-sim.sh <simulator-udid> # Release build → iOS simulator (see below)
 scripts/build-android.sh              # Release build → a running Android emulator
@@ -40,7 +41,7 @@ scripts/build-android.sh              # Release build → a running Android emul
 
 **Simulators:** several may be booted on this machine (other projects use their own). Always address a device by UDID — never `booted` — and give Carlib a dedicated one (`xcrun simctl create Carlib-Claude com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro <ios-26-runtime>`). Android: `CARLIB_ANDROID_DEVICE=<avd name>` picks the emulator; the script otherwise grabs whichever AVD exists.
 
-**No test target exists** (decision: parity is verified on device). Don't hunt for jest/Maestro recipes.
+**Tests:** `npm test` runs jest-expo over the pure modules (`src/lib`, `src/models`, `src/stores` — `**/__tests__/*.test.ts`, globals imported from `@jest/globals` — no ambient Jest types in the app). Screens are verified on device, not with Maestro or snapshot tests. AsyncStorage is mocked in `jest.setup.js`; the `@/` alias is mapped in `jest.config.js`. Installing anything Jest-related needs `--legacy-peer-deps` (react-native pins an older `@react-native/jest-preset` than jest-expo asks for).
 
 ### Signing in, and jumping straight to a screen
 
@@ -49,6 +50,11 @@ Auth is mocked. Seed credentials live in `mobile/src/services/defaultUsers.ts` a
 The screenshot harness (`src/app/(auth)/index.tsx`, baked in at bundle time via `.env.local`) is driven by the build scripts' env vars:
 - `CARLIB_SEED=<seed email>` force-signs-in that user · `CARLIB_TAB=shops|profile` lands on a tab · `CARLIB_THEME=dark|light|system`
 - `CARLIB_ROUTES=/home/claims,/profile/settings,…` pushes each route in turn, `CARLIB_ROUTE_DWELL` ms apart (default 5000) — one build, then `xcrun simctl io <udid> screenshot` on a timer. Routes are group-less (`/home/…`, `/shops/…`, `/claims/…`); `/profile/…` resolves inside the signed-in role's group.
+- **Persisted state** (drafts, theme, language) can be seeded from outside: terminate the app, write `<container>/Library/Application Support/com.carlib.fr/RCTAsyncLocalStorage_V1/manifest.json` (`xcrun simctl get_app_container <udid> com.carlib.fr data`; a JSON map of key → value string, values under 1 KB inline), relaunch. AsyncStorage 2.x reads there, not `Documents/`. This is how mid-flow screens (a declaration at step 3) are reached without taps.
+- `simctl` on a long-lived simulator can hang (`launch`, `get_app_container`); time-box every call and reboot the device (`shutdown` + `boot`) when it does.
+- **Location:** `xcrun simctl location <udid> set 48.86,2.35` gives the app a fix; `clear` removes it (the first fix then times out after 8 s → "unavailable"). Answer the permission dialog from outside with `xcrun simctl privacy <udid> grant|revoke|reset location com.carlib.fr` — the dialog itself cannot be tapped by the harness. Revoke + relaunch exercises the file-address fallback of the shop search.
+- An unanswered location prompt is kept by locationd as an in-flight request: it survives app termination and comes back at the next launch, before any JS runs, and `privacy grant` does not clear it. Reboot the simulator. After a reboot `simctl privacy`/`location` may hang for a while — alarm-wrap them and retry.
+- On the first launch after a boot the native tab bar can show labels without icons (the icon font isn't ready yet); relaunch before judging tab-bar captures.
 
 ## Architecture
 

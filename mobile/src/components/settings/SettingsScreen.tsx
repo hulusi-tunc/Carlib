@@ -6,11 +6,15 @@ import { useRouter, type Href } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useShallow } from 'zustand/react/shallow';
 
 import { PressableScale } from '@/components/PressableScale';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
+import { ACCIDENT_KEY, isClaimOpen } from '@/models/enums';
+import { claimReference, type Claim } from '@/models/types';
 import { signOut } from '@/services/auth';
 import { useAppStore } from '@/stores/appStore';
+import { useClaimStore } from '@/stores/claimStore';
 import { carlibFont, radius, spacing, text, useTheme } from '@/theme';
 
 // Swift AppTheme.allCases order + icons (ThemeManager.swift).
@@ -19,6 +23,11 @@ const THEME_OPTIONS = [
   { mode: 'dark', icon: 'moonFill', labelKey: 'profile.appearanceDark' },
   { mode: 'light', icon: 'sunFill', labelKey: 'profile.appearanceLight' },
 ] as const;
+
+// USERAUTH-02: a file still being handled blocks deletion; the driver sees which.
+function selectOpenClaims(state: { claims: Claim[] }): Claim[] {
+  return state.claims.filter((claim) => isClaimOpen(claim.status));
+}
 
 function ThemeChip({ option }: { option: (typeof THEME_OPTIONS)[number] }) {
   const { t } = useTranslation();
@@ -101,8 +110,25 @@ export function SettingsScreen({
   const { colors } = useTheme();
   const router = useRouter();
   const resetToSignedOut = useAppStore((s) => s.resetToSignedOut);
+  const openClaims = useClaimStore(useShallow(selectOpenClaims));
 
   const confirmDelete = () => {
+    if (openClaims.length > 0) {
+      const files = openClaims
+        .map((claim) => {
+          const label =
+            claim.accidentType != null
+              ? t(`accidentTypeLabel.${ACCIDENT_KEY[claim.accidentType]}`)
+              : claim.description;
+          return `${claimReference(claim)} · ${label}`;
+        })
+        .join('\n');
+      Alert.alert(
+        t('settings.deleteAccountBlockedTitle'),
+        t('settings.deleteAccountBlockedMessage', { files }),
+      );
+      return;
+    }
     Alert.alert(
       t('settings.deleteAccountConfirmTitle'),
       t('settings.deleteAccountConfirmMessage'),

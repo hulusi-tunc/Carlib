@@ -2,7 +2,7 @@
 // carousel) and full (vertical list) variants. Additions over iOS per the
 // migration plan: the full variant shows the address plus icon-only call /
 // directions actions (no L10n keys exist for those labels — Swift had none).
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -13,7 +13,11 @@ import { RemixIcon } from '@/components/RemixIcon';
 import { openMaps, openTel } from '@/lib/links';
 import type { RepairSpecialty } from '@/models/enums';
 import { garageFormattedPhone, type Garage } from '@/models/types';
-import { garageDistances } from '@/services/mockData';
+import { isGarageBookable } from '@/lib/availability';
+import { formatDistance } from '@/lib/geo';
+import { distanceFromOrigin } from '@/lib/shopSearch';
+import { useClaimStore } from '@/stores/claimStore';
+import { useShopsUiStore } from '@/stores/shopsUiStore';
 import { carlibFont, radius, spacing, text, useTheme } from '@/theme';
 
 const SPECIALTY_KEY = {
@@ -29,7 +33,7 @@ export type GarageCardVariant = 'compact' | 'full';
 export interface GarageCardProps {
   garage: Garage;
   variant?: GarageCardVariant;
-  /** km from the user — defaults to the mock distance table. */
+  /** km override; by default the distance from the shared search origin, hidden when unknown. */
   distance?: number;
 }
 
@@ -37,7 +41,10 @@ export function GarageCard({ garage, variant = 'full', distance }: GarageCardPro
   const { t } = useTranslation();
   const { colors, scheme } = useTheme();
 
-  const km = distance ?? garageDistances[garage.id];
+  const origin = useShopsUiStore((s) => s.origin);
+  const km = distance ?? distanceFromOrigin(origin, garage.location);
+  const [now] = useState(() => new Date());
+  const available = useClaimStore((s) => isGarageBookable(garage, s.timeSlots, now));
   // carlibAccent === tileSecondary in dark, so the chip would melt into the
   // card it sits on; step down to screenBg there. Light keeps the accent fill.
   const chipBg = scheme === 'dark' ? colors.carlibScreenBg : colors.carlibAccent;
@@ -58,7 +65,7 @@ export function GarageCard({ garage, variant = 'full', distance }: GarageCardPro
           </Text>
           {km != null && (
             <Text style={[text.caption, { color: colors.carlibSecondary }]}>
-              {`${km.toFixed(1)} km`}
+              {formatDistance(km)}
             </Text>
           )}
         </View>
@@ -86,7 +93,7 @@ export function GarageCard({ garage, variant = 'full', distance }: GarageCardPro
           </Text>
           {km != null && (
             <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
-              {`${km.toFixed(1)} km`}
+              {formatDistance(km)}
             </Text>
           )}
 
@@ -108,14 +115,14 @@ export function GarageCard({ garage, variant = 'full', distance }: GarageCardPro
               style={[
                 styles.availabilityDot,
                 {
-                  backgroundColor: garage.isAvailable
+                  backgroundColor: available
                     ? colors.status.completed.fg
                     : colors.status.cancelled.fg,
                 },
               ]}
             />
             <Text style={[text.caption, { color: colors.carlibSecondary }]}>
-              {garage.isAvailable ? t('garageCard.available') : t('garageCard.unavailable')}
+              {available ? t('garageCard.available') : t('garageCard.unavailable')}
             </Text>
           </View>
         </View>

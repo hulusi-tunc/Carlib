@@ -31,6 +31,7 @@ const easeInOut = Easing.bezier(0.42, 0, 0.58, 1);
 export default function Splash() {
   const router = useRouter();
   const completeAuth = useAppStore((state) => state.completeAuth);
+  const setPendingDriverTab = useAppStore((state) => state.setPendingDriverTab);
   const { width, height } = useWindowDimensions();
 
   const glowOpacity = useSharedValue(0);
@@ -83,14 +84,14 @@ export default function Splash() {
       if (seed) {
         if (!cancelled) {
           completeAuth(seed.user);
+          router.replace(
+            (seed.user.role == null ? '/role-selection' : homeForRole(seed.user.role)) as never,
+          );
+          // Landing on another tab goes through the pending-tab intent, like the
+          // app's own cross-flow switches: a replace aimed straight at the tab
+          // while the NativeTabs shell is still mounting leaves it on Home.
           const seedTab = process.env.EXPO_PUBLIC_CARLIB_TAB;
-          const target =
-            seed.user.role == null
-              ? '/role-selection'
-              : seedTab === 'shops' || seedTab === 'profile'
-                ? `/${seedTab}`
-                : homeForRole(seed.user.role);
-          router.replace(target as never);
+          if (seedTab === 'shops' || seedTab === 'profile') setPendingDriverTab(seedTab);
           // Twin of CARLIB_SHEET: EXPO_PUBLIC_CARLIB_ROUTES pushes each route
           // in turn, EXPO_PUBLIC_CARLIB_ROUTE_DWELL ms apart (default 5000), so
           // one build can be captured screen by screen.
@@ -120,7 +121,7 @@ export default function Splash() {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [completeAuth, router]);
+  }, [completeAuth, router, setPendingDriverTab]);
 
   const glowWidth = width * 2.2;
   const glowHeight = height * 2.2;

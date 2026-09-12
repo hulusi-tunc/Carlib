@@ -31,6 +31,7 @@ import {
 import { useAppStore } from '@/stores/appStore';
 import { carlibFont, radius, text, useTheme, type ColorTokens } from '@/theme';
 import { TAB_BAR_SCROLL_PADDING } from '@/components/tabBarStyle';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 // Intrinsic asset sizes, for aspect-correct full-width rendering.
 const TOP_BG_LIGHT = { width: 1179, height: 774 };
@@ -340,6 +341,9 @@ export default function GarageDashboardScreen() {
       {/* Carlib logo — stands in for the iOS toolbar principal item. */}
       <View style={[styles.logoBar, { marginTop: insets.top }]}>
         <CarlibLogo width={(16 * LOGO.width) / LOGO.height} height={16} />
+        <View style={styles.bellSlot}>
+          <NotificationBell audience="garage" href="/dashboard/notifications" />
+        </View>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -509,6 +513,13 @@ const styles = StyleSheet.create({
   logoBar: {
     height: 44,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bellSlot: {
+    position: 'absolute',
+    right: 12,
+    top: 0,
+    height: 44,
     justifyContent: 'center',
   },
   scrollContent: {

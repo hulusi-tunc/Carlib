@@ -5,7 +5,7 @@ import { addDays } from 'date-fns';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,14 +19,18 @@ import { PressableScale } from '@/components/PressableScale';
 import { RecentFileRow } from '@/components/RecentFileRow';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
 import { relativeFormatted, shortFormatted } from '@/lib/dates';
+import { formatDistance } from '@/lib/geo';
 import { openMaps, openTel } from '@/lib/links';
+import { distanceFromOrigin, resolveSearchOrigin } from '@/lib/shopSearch';
 import { CLAIM_STAGE_INDEX, CLAIM_TOTAL_STAGES } from '@/models/enums';
 import type { Claim, Garage } from '@/models/types';
-import { distanceForGarage, garageForId } from '@/services/mockData';
+import { garageForId } from '@/services/mockData';
 import { useAppStore } from '@/stores/appStore';
 import { selectPastClaims, useClaimStore } from '@/stores/claimStore';
+import { useShopsUiStore } from '@/stores/shopsUiStore';
 import { carlibFont, radius, spacing, text, useTheme } from '@/theme';
 import { TAB_BAR_SCROLL_PADDING } from '@/components/tabBarStyle';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 // Intrinsic asset sizes, for aspect-correct full-width rendering.
 const TOP_BG_LIGHT = { width: 1179, height: 774 };
@@ -126,6 +130,8 @@ function GarageInfoCard({ data }: { data: GarageCardData }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const garage = data.garage;
+  const origin = useShopsUiStore((s) => s.origin);
+  const km = distanceFromOrigin(origin, garage.location);
   return (
     <View style={[styles.garageCard, { backgroundColor: colors.carlibAccent }]}>
       <View style={styles.etaRow}>
@@ -135,9 +141,11 @@ function GarageInfoCard({ data }: { data: GarageCardData }) {
       <View style={styles.garageRow}>
         <View style={styles.garageText}>
           <Text style={[text.callout, { color: colors.carlibDark }]}>{garage.name}</Text>
-          <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
-            {t('driverHome.distanceAway', { km: distanceForGarage(garage.id) })}
-          </Text>
+          {km != null && (
+            <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
+              {t('driverHome.distanceAway', { distance: formatDistance(km) })}
+            </Text>
+          )}
         </View>
         <View style={styles.garageActions}>
           <GarageActionButton icon="phoneLine" onPress={() => callGarage(garage)} />
@@ -312,6 +320,23 @@ export default function DriverHomeScreen() {
   const heroClaim = useClaimStore((s) => topActiveClaim(s.claims));
   const vehicleCount = useClaimStore((s) => s.vehicles.length);
   const pastClaims = useClaimStore(useShallow(selectPastClaims));
+  const claims = useClaimStore((s) => s.claims);
+  const origin = useShopsUiStore((s) => s.origin);
+  const setOrigin = useShopsUiStore((s) => s.setOrigin);
+
+  // Distances on Home never trigger the permission dialog — that belongs to
+  // the Shops tab, where the driver is actually searching. An existing grant
+  // or the latest file's address is used silently; otherwise nothing shows.
+  useEffect(() => {
+    if (origin != null) return;
+    let cancelled = false;
+    void resolveSearchOrigin(claims, { prompt: false }).then((next) => {
+      if (!cancelled) setOrigin(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [claims, origin, setOrigin]);
 
   const recentClaims = pastClaims.slice(0, 3);
   const openClaim = (id: string) => router.push(`/home/claim/${id}`);
@@ -337,6 +362,9 @@ export default function DriverHomeScreen() {
       {/* Carlib logo — stands in for the iOS toolbar principal item. */}
       <View style={[styles.logoBar, { marginTop: insets.top }]}>
         <CarlibLogo width={(16 * LOGO.width) / LOGO.height} height={16} />
+        <View style={styles.bellSlot}>
+          <NotificationBell audience="driver" href="/home/notifications" />
+        </View>
       </View>
 
       <ScrollView
@@ -484,6 +512,13 @@ const styles = StyleSheet.create({
   logoBar: {
     height: 44,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bellSlot: {
+    position: 'absolute',
+    right: 12,
+    top: 0,
+    height: 44,
     justifyContent: 'center',
   },
   scrollContent: {

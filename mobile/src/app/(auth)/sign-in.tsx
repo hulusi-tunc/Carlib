@@ -17,7 +17,7 @@ import {
 import { CarlibButton } from '@/components/CarlibButton';
 import { CarlibSecureField, CarlibTextField } from '@/components/CarlibTextField';
 import type { User } from '@/models/types';
-import { signIn, signInWithApple } from '@/services/auth';
+import { signIn, signInLockMinutes, signInWithApple } from '@/services/auth';
 import { useAppStore } from '@/stores/appStore';
 import { carlibFont, spacing, text, useTheme } from '@/theme';
 import { homeForRole } from '@/lib/routes';
@@ -51,7 +51,9 @@ export default function SignInScreen() {
     try {
       finishAuth(await signIn(email, password));
     } catch {
-      setError(t('signIn.errorInvalid'));
+      // The third failure locks the account, so the lock is checked after every failure.
+      const minutes = signInLockMinutes(email);
+      setError(minutes > 0 ? t('signIn.errorLocked', { minutes }) : t('signIn.errorInvalid'));
     } finally {
       setIsLoading(false);
     }

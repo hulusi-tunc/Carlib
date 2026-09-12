@@ -68,7 +68,7 @@
     "emptyFileHeadline": "Nothing on file right now.",
     "viewClaim": "View claim",
     "comePickUp": "Come pick it up",
-    "distanceAway": "{{km}} km away",
+    "distanceAway": "{{distance}} away",
     "readyBy": "Ready {{date}}",
     "reportCtaTitle": "Report damage",
     "reportCtaBody": "Declare in a few minutes\nand find a garage nearby",
@@ -102,6 +102,31 @@
     "helpHowItWorks": "How It Works"
   },
   "declaration": {
+    "draftRestored": "Draft restored from {{date}}",
+    "draftExpired": "Your draft from {{date}} expired after 30 days and was cleared.",
+    "photosTake": "Take a photo",
+    "photosChoose": "Choose from library",
+    "photosCameraDenied": "Camera access is off — you can still choose photos from your library.",
+    "photosMinimum": "Add at least {{count}} photos to continue",
+    "photosCount": "{{count}} of {{max}}",
+    "photoAngleFront": "Front",
+    "photoAngleRear": "Rear",
+    "photoAngleLeft": "Left side",
+    "photoAngleRight": "Right side",
+    "locationLocating": "Finding your position…",
+    "locationFound": "Position found",
+    "locationDenied": "Location access is off — enter the address by hand.",
+    "locationUnavailable": "We couldn't get your position — enter the address by hand.",
+    "addressLabel": "Address",
+    "addressPlaceholder": "12 rue de la Roquette, 75011 Paris",
+    "descriptionLabel": "What happened?",
+    "descriptionPlaceholder": "A few words — e.g. rear-ended at a red light",
+    "vehicleLabel": "Vehicle",
+    "vehicleNone": "No vehicle on your profile yet.",
+    "vehicleAdd": "Add a vehicle",
+    "summaryLocation": "Location",
+    "summaryDescription": "Description",
+    "typeRequired": "Choose an accident type to continue.",
     "title": "Report",
     "back": "Back",
     "next": "Next",
@@ -111,8 +136,8 @@
     "step1Subtitle": "Select the type of incident",
     "step2Title": "Vehicle Photos",
     "step2Subtitle": "Take photos of the damage for your file",
-    "step3Title": "Vehicle Info",
-    "step3Subtitle": "Enter your vehicle details",
+    "step3Title": "Where did it happen?",
+    "step3Subtitle": "Your position fills in the address. You can edit it.",
     "step4Title": "Summary",
     "step4Subtitle": "Review the information before submitting",
     "photosAdd": "Add Photo",
@@ -130,7 +155,8 @@
     "confirmationTitle": "Claim Submitted",
     "confirmationSubtitle": "Your claim has been recorded. We're searching for available body shops.",
     "confirmationReference": "Reference",
-    "confirmationCtaHome": "Back to home"
+    "confirmationCtaHome": "Back to home",
+    "vehiclePlateDuplicate": "This plate is already on your account."
   },
   "driverClaims": {
     "title": "Claim history",
@@ -147,7 +173,13 @@
     "actionCancel": "Cancel Claim",
     "cancelTitle": "Cancel Claim",
     "cancelConfirm": "Confirm Cancellation",
-    "cancelMessage": "This action cannot be undone."
+    "cancelMessage": "This action cannot be undone.",
+    "sectionAppointment": "Appointment",
+    "appointmentReschedule": "Reschedule",
+    "appointmentCancel": "Cancel appointment",
+    "appointmentCancelTitle": "Cancel this appointment?",
+    "appointmentCancelMessage": "The slot goes back to the shop's planning.",
+    "appointmentLocked": "Changes stop {{hours}} h before the appointment — call the shop to arrange."
   },
   "garageSearch": {
     "mapUnavailable": "Map unavailable",
@@ -156,7 +188,25 @@
     "modeLabel": "View Mode",
     "modeList": "List",
     "modeMap": "Map",
-    "mapPlaceholder": "Map coming soon"
+    "mapPlaceholder": "Map coming soon",
+    "panelTitle": "Body shops",
+    "searchShops": "Search shops",
+    "noMatchTitle": "No shops match",
+    "noMatchBody": "Try a different name or neighbourhood.",
+    "nearby_one": "{{count}} shop nearby",
+    "nearby_other": "{{count}} shops nearby",
+    "listAction": "List",
+    "found_one": "{{count}} shop found",
+    "found_other": "{{count}} shops found",
+    "nearFile_one": "{{count}} shop near your file",
+    "nearFile_other": "{{count}} shops near your file",
+    "noLocation_one": "{{count}} shop · location off",
+    "noLocation_other": "{{count}} shops · location off",
+    "locationDenied": "Location is off. Turn it on to see distances.",
+    "locationUnavailable": "Position unavailable right now.",
+    "noneInRadius": "No body shop within {{km}} km",
+    "widenSearch": "Search within {{km}} km",
+    "supportFallback": "Carlib support will find one for you."
   },
   "garageDetail": {
     "notFoundTitle": "Shop not found",
@@ -164,7 +214,8 @@
     "coverage": "{{km}} km radius",
     "sectionSpecialties": "Specialties",
     "sectionSlots": "Available Slots",
-    "ctaBook": "Book Appointment"
+    "ctaBook": "Book Appointment",
+    "unavailableBody": "No open slot in the next {{days}} days."
   },
   "garageCard": {
     "available": "Available",
@@ -215,7 +266,9 @@
     "notificationPreferences": "Push & status updates",
     "sectionLanguage": "Language",
     "languageNote": "Pick the language Carlib uses throughout the app.",
-    "sectionAppearance": "Appearance"
+    "sectionAppearance": "Appearance",
+    "deleteAccountBlockedTitle": "Deletion blocked",
+    "deleteAccountBlockedMessage": "Files still in progress keep the account open. Close them first:\n{{files}}"
   },
   "changePassword": {
     "title": "Change password",
@@ -373,7 +426,12 @@
     "brand": "Brand",
     "model": "Model",
     "year": "Year",
-    "color": "Color"
+    "color": "Color",
+    "defaultBadge": "Default",
+    "setDefault": "Set as default",
+    "deleteVehicle": "Delete vehicle",
+    "deleteTitle": "Delete this vehicle?",
+    "deleteMessage": "{{name}} will be removed from your garage. This action can't be undone."
   },
   "booking": {
     "title": "Book Appointment",
@@ -383,7 +441,14 @@
     "noSlots": "No slots available for this date",
     "confirm": "Confirm Booking",
     "successTitle": "Booking Confirmed",
-    "successMessage": "Your appointment has been booked."
+    "rescheduleTitleAt": "Move appointment at {{name}}",
+    "successDetails": "{{date}} at {{time}}\n{{address}}",
+    "successReference": "File {{reference}}",
+    "rescheduledTitle": "Appointment moved",
+    "slotTakenTitle": "Slot just taken",
+    "slotTakenMessage": "Someone booked it before you. The calendar has been refreshed.",
+    "noticeTitle": "Too late to change",
+    "noticeMessage": "Changes stop {{hours}} h before the appointment. Call the shop instead."
   },
   "notificationSettings": {
     "title": "Notifications",
@@ -446,7 +511,8 @@
     "forgotPassword": "Forgot password?",
     "signIn": "Sign In",
     "noAccount": "Don't have an account?",
-    "errorInvalid": "Invalid email or password"
+    "errorInvalid": "Invalid email or password",
+    "errorLocked": "Too many attempts. Try again in {{minutes}} min."
   },
   "signUp": {
     "title": "Create Account",
@@ -473,5 +539,77 @@
     "email": "Email",
     "send": "Send Reset Link",
     "success": "Check your email for a reset link"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "emptyTitle": "Nothing yet",
+    "emptyBody": "Every step of your files will show up here.",
+    "driver": {
+      "fileCreatedTitle": "File {{reference}} created",
+      "fileCreatedBody": "Your declaration is in. We're finding you a body shop.",
+      "bookingConfirmedTitle": "Appointment confirmed",
+      "bookingConfirmedBody": "{{date}} at {{garage}} · file {{reference}}",
+      "bookingChangedTitle": "Appointment moved",
+      "bookingChangedBody": "Now {{date}} at {{garage}} · file {{reference}}",
+      "bookingCancelledTitle": "Appointment cancelled",
+      "bookingCancelledBody": "File {{reference}} — the slot at {{garage}} is free again.",
+      "takenUpTitle": "{{garage}} took your file",
+      "takenUpBody": "File {{reference}} is now handled by {{garage}}."
+    },
+    "garage": {
+      "fileCreatedTitle": "New file nearby",
+      "fileCreatedBody": "File {{reference}} is waiting for a body shop.",
+      "bookingConfirmedTitle": "New appointment",
+      "bookingConfirmedBody": "{{date}} · file {{reference}}",
+      "bookingChangedTitle": "Appointment moved",
+      "bookingChangedBody": "Now {{date}} · file {{reference}}",
+      "bookingCancelledTitle": "Appointment cancelled",
+      "bookingCancelledBody": "File {{reference}} — the slot is open again.",
+      "takenUpTitle": "File taken",
+      "takenUpBody": "You took file {{reference}}."
+    }
+  },
+  "privacy": {
+    "title": "Privacy & consent",
+    "policyIntro": "Carlib processes your identity, vehicle and claim data to connect you with body shops and follow your files. Data is kept for the legal retention period and never sold. Full policy text: version 1.0, placeholder until legal delivers it.",
+    "statusAccepted": "Policy v{{version}} · accepted {{date}}",
+    "statusWithdrawn": "Withdrawn {{date}} · account read-only",
+    "statusNone": "Not accepted yet",
+    "accept": "Accept the privacy policy (v{{version}})",
+    "withdraw": "Withdraw consent",
+    "withdrawTitle": "Withdraw consent?",
+    "withdrawMessage": "Your account becomes read-only: no new file until you accept the policy again.",
+    "marketing": "Marketing emails",
+    "marketingHint": "Separate from the service consent. Off by default.",
+    "consentRequired": "I accept the privacy policy (v{{version}})",
+    "consentAgain": "You withdrew consent. Accept the policy again (v{{version}}) to submit.",
+    "readPolicy": "Read"
+  },
+  "vehicleSpace": {
+    "sectionOpen": "Open files",
+    "sectionBookings": "Upcoming appointments",
+    "sectionHistory": "History",
+    "updated": "Updated {{date}}",
+    "neverUpdated": "Nothing yet",
+    "emptyOpen": "No open file for this vehicle.",
+    "emptyBookings": "No upcoming appointment.",
+    "emptyHistory": "No closed file yet — closed files land here on their own."
+  },
+  "documents": {
+    "section": "Documents",
+    "add": "Add a document",
+    "empty": "No document yet. Start with the carte grise.",
+    "replace": "Replace",
+    "earlierVersions_one": "{{count}} earlier version kept",
+    "earlierVersions_other": "{{count}} earlier versions kept",
+    "typeCarteGrise": "Carte grise",
+    "typeFacture": "Invoice",
+    "typeRapport": "Report",
+    "typeAutre": "Other",
+    "chooseTypeTitle": "What is this document?",
+    "chooseTypeMessage": "Each document is attached to the vehicle with a type.",
+    "rejectedTitle": "File not accepted",
+    "rejectedFormat": "Only PDF, JPG and PNG files are accepted.",
+    "rejectedSize": "Files must be under {{mb}} MB."
   }
 }

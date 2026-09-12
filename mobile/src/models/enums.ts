@@ -16,6 +16,19 @@ export const CLAIM_STATUSES = [
 ] as const;
 export type ClaimStatus = (typeof CLAIM_STATUSES)[number];
 
+/** A file still being handled — it blocks account deletion and counts as open in the vehicle space. */
+export const OPEN_CLAIM_STATUSES: readonly ClaimStatus[] = [
+  'soumis',
+  'en_recherche',
+  'accepte',
+  'pris_en_charge',
+  'en_reparation',
+];
+
+export function isClaimOpen(status: ClaimStatus): boolean {
+  return OPEN_CLAIM_STATUSES.includes(status);
+}
+
 export const BOOKING_STATUSES = [
   'en_attente', // pending
   'confirme', // confirmed
@@ -35,6 +48,10 @@ export const REPAIR_STATUSES = [
   'pret', // readyForPickup
 ] as const;
 export type RepairStatus = (typeof REPAIR_STATUSES)[number];
+
+/** Vehicle document types (CARLIB-USERDOCS-01); French raw values like the other enums. */
+export const DOCUMENT_TYPES = ['carte_grise', 'facture', 'rapport', 'autre'] as const;
+export type DocumentType = (typeof DOCUMENT_TYPES)[number];
 
 export const ACCIDENT_TYPES = [
   'collision',

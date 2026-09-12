@@ -22,6 +22,8 @@ export interface CarlibTextFieldProps {
   keyboardType?: KeyboardTypeOptions;
   textContentType?: TextInputProps['textContentType'];
   error?: string;
+  /** A taller, top-aligned field for free text (descriptions, notes). */
+  multiline?: boolean;
 }
 
 export function CarlibTextField({
@@ -32,6 +34,7 @@ export function CarlibTextField({
   keyboardType = 'default',
   textContentType,
   error,
+  multiline = false,
 }: CarlibTextFieldProps) {
   const { colors } = useTheme();
 
@@ -39,7 +42,13 @@ export function CarlibTextField({
     <View style={styles.container}>
       <Text style={[text.callout, { color: colors.carlibSecondary }]}>{label}</Text>
       <TextInput
-        style={[styles.input, text.body, { backgroundColor: colors.tileSecondary, color: colors.carlibDark }]}
+        style={[
+          styles.input,
+          multiline && styles.inputMultiline,
+          text.body,
+          { backgroundColor: colors.tileSecondary, color: colors.carlibDark },
+        ]}
+        multiline={multiline}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
@@ -47,7 +56,7 @@ export function CarlibTextField({
         keyboardType={keyboardType}
         textContentType={textContentType}
         autoCorrect={false}
-        autoCapitalize={keyboardType === 'email-address' ? 'none' : 'words'}
+        autoCapitalize={multiline ? 'sentences' : keyboardType === 'email-address' ? 'none' : 'words'}
       />
       {error != null && (
         <Text style={[text.caption, { color: colors.destructiveRed }]}>{error}</Text>
@@ -119,6 +128,8 @@ const styles = StyleSheet.create({
     // Android TextInput ships with default vertical padding.
     paddingVertical: 0,
   },
+  // Four lines of body text; the 52pt single-line height no longer applies.
+  inputMultiline: { height: undefined, minHeight: 104, paddingVertical: 14, textAlignVertical: 'top' },
   row: {
     height: 52,
     borderRadius: radius.md,

@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 
 import { DummyImage } from '@/components/DummyImage';
 import { RemixIcon } from '@/components/RemixIcon';
+import { formatDistance } from '@/lib/geo';
 import type { Garage } from '@/models/types';
-import { garageDistances } from '@/services/mockData';
 import { carlibFont, text, useTheme } from '@/theme';
 
 /** 6-digit hex token + 0–1 alpha → 8-digit hex. */
@@ -20,19 +20,25 @@ export function withAlpha(hex: string, alpha: number): string {
 
 export const CAROUSEL_CARD_HEIGHT = 118;
 
-function distanceLabel(garageId: string): string {
-  return `${(garageDistances[garageId] ?? 0).toFixed(1)} km`;
+function DistanceRow({ km, iconSize }: { km: number; iconSize: number }) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.metaRow}>
+      <RemixIcon name="mapPinLine" size={iconSize} color={colors.carlibSecondary} />
+      <Text style={[text.footnote, { color: colors.carlibSecondary }]}>{formatDistance(km)}</Text>
+    </View>
+  );
 }
 
-function AvailabilityRow({ garage }: { garage: Garage }) {
+function AvailabilityRow({ available }: { available: boolean }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const dotColor = garage.isAvailable ? colors.status.completed.fg : colors.status.cancelled.fg;
+  const dotColor = available ? colors.status.completed.fg : colors.status.cancelled.fg;
   return (
     <View style={styles.metaRow}>
       <View style={[styles.availabilityDot, { backgroundColor: dotColor }]} />
       <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
-        {garage.isAvailable ? t('garageCard.available') : t('garageCard.unavailable')}
+        {available ? t('garageCard.available') : t('garageCard.unavailable')}
       </Text>
     </View>
   );
@@ -41,9 +47,18 @@ function AvailabilityRow({ garage }: { garage: Garage }) {
 export interface CarouselGarageCardProps {
   garage: Garage;
   width: number;
+  /** km from the search origin — hidden when unknown (PROSEARCH-02: no empty fields). */
+  distanceKm?: number;
+  /** Open with a slot inside the horizon — see isGarageBookable, not the profile flag alone. */
+  available: boolean;
 }
 
-export function CarouselGarageCard({ garage, width }: CarouselGarageCardProps) {
+export function CarouselGarageCard({
+  garage,
+  width,
+  distanceKm,
+  available,
+}: CarouselGarageCardProps) {
   const { colors } = useTheme();
   const neighbourhood = garage.address.split(',').pop()?.trim() ?? '';
 
@@ -64,13 +79,8 @@ export function CarouselGarageCard({ garage, width }: CarouselGarageCardProps) {
         <Text style={[carlibFont(15, 'medium'), { color: colors.carlibDark }]} numberOfLines={1}>
           {garage.name}
         </Text>
-        <View style={styles.metaRow}>
-          <RemixIcon name="mapPinLine" size={12} color={colors.carlibSecondary} />
-          <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
-            {distanceLabel(garage.id)}
-          </Text>
-        </View>
-        <AvailabilityRow garage={garage} />
+        {distanceKm != null && <DistanceRow km={distanceKm} iconSize={12} />}
+        <AvailabilityRow available={available} />
         <View style={styles.spacer} />
         <Text style={[text.footnote, { color: colors.carlibLabel }]} numberOfLines={1}>
           {neighbourhood}
@@ -85,9 +95,11 @@ export function CarouselGarageCard({ garage, width }: CarouselGarageCardProps) {
 export interface ListGarageRowProps {
   garage: Garage;
   selected: boolean;
+  distanceKm?: number;
+  available: boolean;
 }
 
-export function ListGarageRow({ garage, selected }: ListGarageRowProps) {
+export function ListGarageRow({ garage, selected, distanceKm, available }: ListGarageRowProps) {
   const { colors } = useTheme();
 
   return (
@@ -113,16 +125,11 @@ export function ListGarageRow({ garage, selected }: ListGarageRowProps) {
         <Text style={[carlibFont(15, 'medium'), { color: colors.carlibDark }]} numberOfLines={1}>
           {garage.name}
         </Text>
-        <View style={styles.metaRow}>
-          <RemixIcon name="mapPinLine" size={11} color={colors.carlibSecondary} />
-          <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
-            {distanceLabel(garage.id)}
-          </Text>
-        </View>
+        {distanceKm != null && <DistanceRow km={distanceKm} iconSize={11} />}
         <Text style={[text.footnote, { color: colors.carlibSecondary }]} numberOfLines={1}>
           {garage.address}
         </Text>
-        <AvailabilityRow garage={garage} />
+        <AvailabilityRow available={available} />
       </View>
     </View>
   );

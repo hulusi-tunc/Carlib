@@ -6,6 +6,7 @@ import type {
   AccidentType,
   BookingStatus,
   ClaimStatus,
+  DocumentType,
   RepairSpecialty,
   RepairStatus,
   UserRole,
@@ -56,6 +57,8 @@ export interface Claim {
   description: string;
   photos: PhotoAttachment[];
   location?: Coordinate;
+  /** One-line address of the incident — geocoded from `location` or typed by the driver. */
+  address?: string;
   vehicleInfo?: VehicleInfo;
   assignedGarageId?: string;
   /** Denormalized on the claim, separate from the bookings array — matches iOS. */
@@ -100,6 +103,42 @@ export interface TimeSlot {
   isBlocked: boolean;
 }
 
+/** A file attached to a vehicle (CARLIB-USERDOCS-01). Replacing keeps the old one, dated. */
+export interface VehicleDocument {
+  id: string;
+  vehicleId: string;
+  type: DocumentType;
+  name: string;
+  uri: string;
+  mimeType: string;
+  size: number;
+  addedAt: Date;
+  /** The version this one replaced, when any. */
+  previousId?: string;
+  /** Set on the old version when a newer one replaced it — never erased. */
+  replacedAt?: Date;
+}
+
+export type NotificationAudience = 'driver' | 'garage';
+export type NotificationKind =
+  | 'fileCreated'
+  | 'bookingConfirmed'
+  | 'bookingChanged'
+  | 'bookingCancelled'
+  | 'takenUp';
+
+/** One entry of the in-app notification centre (CARLIB-NOTIFS-01). */
+export interface AppNotification {
+  id: string;
+  audience: NotificationAudience;
+  kind: NotificationKind;
+  claimId: string;
+  /** Copy parameters: the file reference always, the shop and the slot when relevant. */
+  params: { reference: string; garage?: string; date?: string };
+  createdAt: Date;
+  read: boolean;
+}
+
 export interface CountryDialCode {
   /** ISO alpha-2 (e.g. "FR"). */
   id: string;
@@ -108,8 +147,24 @@ export interface CountryDialCode {
   flag: string;
 }
 
+/** "AA-123-BB", "aa123bb" and "AA 123 BB" are the same plate. */
+export function plateKey(plate: string): string {
+  return plate.toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
 export function vehicleDisplayName(vehicle: Vehicle): string {
   return vehicle.nickname ?? `${vehicle.info.brand} ${vehicle.info.model}`;
+}
+
+/**
+ * "SIN-2026-0417" — the file reference quoted to the driver on the confirmation
+ * and on every booking. Derived from the claim, so it is the same everywhere it
+ * is shown (Swift's confirmation drew a random number and never kept it).
+ */
+export function claimReference(claim: Pick<Claim, 'id' | 'createdAt'>): string {
+  let hash = 0;
+  for (const char of claim.id) hash = (hash * 31 + char.charCodeAt(0)) % 9999;
+  return `SIN-${claim.createdAt.getFullYear()}-${String(hash + 1).padStart(4, '0')}`;
 }
 
 export function garageFormattedPhone(garage: Garage): string {

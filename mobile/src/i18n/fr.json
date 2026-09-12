@@ -68,7 +68,7 @@
     "emptyFileHeadline": "Aucun dossier en cours.",
     "viewClaim": "Voir le dossier",
     "comePickUp": "Venir le récupérer",
-    "distanceAway": "À {{km}} km",
+    "distanceAway": "à {{distance}}",
     "readyBy": "Prêt le {{date}}",
     "reportCtaTitle": "Déclarer des dommages",
     "reportCtaBody": "Déclarez en quelques minutes\net trouvez un carrossier proche",
@@ -102,6 +102,31 @@
     "helpHowItWorks": "Comment ça marche"
   },
   "declaration": {
+    "draftRestored": "Brouillon du {{date}} restauré",
+    "draftExpired": "Votre brouillon du {{date}} a expiré après 30 jours et a été effacé.",
+    "photosTake": "Prendre une photo",
+    "photosChoose": "Choisir dans la galerie",
+    "photosCameraDenied": "L'accès à l'appareil photo est désactivé — vous pouvez toujours choisir des photos dans votre galerie.",
+    "photosMinimum": "Ajoutez au moins {{count}} photos pour continuer",
+    "photosCount": "{{count}} sur {{max}}",
+    "photoAngleFront": "Avant",
+    "photoAngleRear": "Arrière",
+    "photoAngleLeft": "Côté gauche",
+    "photoAngleRight": "Côté droit",
+    "locationLocating": "Recherche de votre position…",
+    "locationFound": "Position trouvée",
+    "locationDenied": "L'accès à la position est désactivé — saisissez l'adresse manuellement.",
+    "locationUnavailable": "Impossible d'obtenir votre position — saisissez l'adresse manuellement.",
+    "addressLabel": "Adresse",
+    "addressPlaceholder": "12 rue de la Roquette, 75011 Paris",
+    "descriptionLabel": "Que s'est-il passé ?",
+    "descriptionPlaceholder": "Quelques mots — ex. percuté à l'arrière à un feu rouge",
+    "vehicleLabel": "Véhicule",
+    "vehicleNone": "Aucun véhicule sur votre profil pour l'instant.",
+    "vehicleAdd": "Ajouter un véhicule",
+    "summaryLocation": "Lieu",
+    "summaryDescription": "Description",
+    "typeRequired": "Choisissez un type de sinistre pour continuer.",
     "title": "Déclaration",
     "back": "Retour",
     "next": "Suivant",
@@ -111,8 +136,8 @@
     "step1Subtitle": "Sélectionnez la nature du sinistre",
     "step2Title": "Photos du véhicule",
     "step2Subtitle": "Prenez des photos des dommages pour votre dossier",
-    "step3Title": "Informations véhicule",
-    "step3Subtitle": "Renseignez les informations de votre véhicule",
+    "step3Title": "Où cela s'est-il passé ?",
+    "step3Subtitle": "Votre position remplit l'adresse. Vous pouvez la modifier.",
     "step4Title": "Récapitulatif",
     "step4Subtitle": "Vérifiez les informations avant d'envoyer",
     "photosAdd": "Ajouter une photo",
@@ -130,7 +155,8 @@
     "confirmationTitle": "Sinistre déclaré",
     "confirmationSubtitle": "Votre dossier est enregistré. Nous recherchons un carrossier disponible.",
     "confirmationReference": "Référence",
-    "confirmationCtaHome": "Retour à l'accueil"
+    "confirmationCtaHome": "Retour à l'accueil",
+    "vehiclePlateDuplicate": "Cette plaque est déjà sur votre compte."
   },
   "driverClaims": {
     "title": "Historique des dossiers",
@@ -147,7 +173,13 @@
     "actionCancel": "Annuler le dossier",
     "cancelTitle": "Annuler le dossier",
     "cancelConfirm": "Confirmer l'annulation",
-    "cancelMessage": "Cette action est définitive."
+    "cancelMessage": "Cette action est définitive.",
+    "sectionAppointment": "Rendez-vous",
+    "appointmentReschedule": "Reporter",
+    "appointmentCancel": "Annuler le rendez-vous",
+    "appointmentCancelTitle": "Annuler ce rendez-vous ?",
+    "appointmentCancelMessage": "Le créneau est rendu au planning de l'atelier.",
+    "appointmentLocked": "Plus de modification {{hours}} h avant le rendez-vous — appelez l'atelier."
   },
   "garageSearch": {
     "mapUnavailable": "Carte indisponible",
@@ -156,7 +188,25 @@
     "modeLabel": "Affichage",
     "modeList": "Liste",
     "modeMap": "Carte",
-    "mapPlaceholder": "Carte bientôt disponible"
+    "mapPlaceholder": "Carte bientôt disponible",
+    "panelTitle": "Carrossiers",
+    "searchShops": "Rechercher un carrossier",
+    "noMatchTitle": "Aucun carrossier trouvé",
+    "noMatchBody": "Essayez un autre nom ou un autre quartier.",
+    "nearby_one": "{{count}} carrossier à proximité",
+    "nearby_other": "{{count}} carrossiers à proximité",
+    "listAction": "Liste",
+    "found_one": "{{count}} carrossier trouvé",
+    "found_other": "{{count}} carrossiers trouvés",
+    "nearFile_one": "{{count}} carrossier près de votre dossier",
+    "nearFile_other": "{{count}} carrossiers près de votre dossier",
+    "noLocation_one": "{{count}} carrossier · position désactivée",
+    "noLocation_other": "{{count}} carrossiers · position désactivée",
+    "locationDenied": "Position désactivée. Activez-la pour voir les distances.",
+    "locationUnavailable": "Position indisponible pour le moment.",
+    "noneInRadius": "Aucun carrossier à moins de {{km}} km",
+    "widenSearch": "Chercher à {{km}} km",
+    "supportFallback": "Le support Carlib vous en trouvera un."
   },
   "garageDetail": {
     "notFoundTitle": "Carrossier introuvable",
@@ -164,7 +214,8 @@
     "coverage": "Rayon de {{km}} km",
     "sectionSpecialties": "Spécialités",
     "sectionSlots": "Créneaux disponibles",
-    "ctaBook": "Prendre rendez-vous"
+    "ctaBook": "Prendre rendez-vous",
+    "unavailableBody": "Aucun créneau ouvert dans les {{days}} prochains jours."
   },
   "garageCard": {
     "available": "Disponible",
@@ -215,7 +266,9 @@
     "notificationPreferences": "Push et suivi des dossiers",
     "sectionLanguage": "Langue",
     "languageNote": "Choisissez la langue utilisée dans toute l'application.",
-    "sectionAppearance": "Apparence"
+    "sectionAppearance": "Apparence",
+    "deleteAccountBlockedTitle": "Suppression impossible",
+    "deleteAccountBlockedMessage": "Des dossiers en cours maintiennent le compte ouvert. Clôturez-les d'abord :\n{{files}}"
   },
   "changePassword": {
     "title": "Changer le mot de passe",
@@ -373,7 +426,12 @@
     "brand": "Marque",
     "model": "Modèle",
     "year": "Année",
-    "color": "Couleur"
+    "color": "Couleur",
+    "defaultBadge": "Par défaut",
+    "setDefault": "Définir par défaut",
+    "deleteVehicle": "Supprimer le véhicule",
+    "deleteTitle": "Supprimer ce véhicule ?",
+    "deleteMessage": "{{name}} sera retiré de votre garage. Cette action est irréversible."
   },
   "booking": {
     "title": "Prendre rendez-vous",
@@ -383,7 +441,14 @@
     "noSlots": "Aucun créneau disponible pour cette date",
     "confirm": "Confirmer le rendez-vous",
     "successTitle": "Rendez-vous confirmé",
-    "successMessage": "Votre rendez-vous est enregistré."
+    "rescheduleTitleAt": "Reporter chez {{name}}",
+    "successDetails": "{{date}} à {{time}}\n{{address}}",
+    "successReference": "Dossier {{reference}}",
+    "rescheduledTitle": "Rendez-vous reporté",
+    "slotTakenTitle": "Créneau déjà pris",
+    "slotTakenMessage": "Quelqu'un l'a réservé avant vous. Le calendrier a été actualisé.",
+    "noticeTitle": "Trop tard pour modifier",
+    "noticeMessage": "Les modifications s'arrêtent {{hours}} h avant le rendez-vous. Appelez l'atelier."
   },
   "notificationSettings": {
     "title": "Notifications",
@@ -446,7 +511,8 @@
     "forgotPassword": "Mot de passe oublié ?",
     "signIn": "Se connecter",
     "noAccount": "Pas encore de compte ?",
-    "errorInvalid": "E-mail ou mot de passe incorrect"
+    "errorInvalid": "E-mail ou mot de passe incorrect",
+    "errorLocked": "Trop de tentatives. Réessayez dans {{minutes}} min."
   },
   "signUp": {
     "title": "Créer un compte",
@@ -473,5 +539,77 @@
     "email": "E-mail",
     "send": "Envoyer le lien",
     "success": "Consultez votre e-mail pour réinitialiser votre mot de passe"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "emptyTitle": "Rien pour l'instant",
+    "emptyBody": "Chaque étape de vos dossiers apparaîtra ici.",
+    "driver": {
+      "fileCreatedTitle": "Dossier {{reference}} créé",
+      "fileCreatedBody": "Votre déclaration est envoyée. Nous cherchons un carrossier.",
+      "bookingConfirmedTitle": "Rendez-vous confirmé",
+      "bookingConfirmedBody": "{{date}} chez {{garage}} · dossier {{reference}}",
+      "bookingChangedTitle": "Rendez-vous reporté",
+      "bookingChangedBody": "Désormais {{date}} chez {{garage}} · dossier {{reference}}",
+      "bookingCancelledTitle": "Rendez-vous annulé",
+      "bookingCancelledBody": "Dossier {{reference}} — le créneau chez {{garage}} est libéré.",
+      "takenUpTitle": "{{garage}} a pris votre dossier",
+      "takenUpBody": "Le dossier {{reference}} est désormais suivi par {{garage}}."
+    },
+    "garage": {
+      "fileCreatedTitle": "Nouveau dossier à proximité",
+      "fileCreatedBody": "Le dossier {{reference}} attend un carrossier.",
+      "bookingConfirmedTitle": "Nouveau rendez-vous",
+      "bookingConfirmedBody": "{{date}} · dossier {{reference}}",
+      "bookingChangedTitle": "Rendez-vous reporté",
+      "bookingChangedBody": "Désormais {{date}} · dossier {{reference}}",
+      "bookingCancelledTitle": "Rendez-vous annulé",
+      "bookingCancelledBody": "Dossier {{reference}} — le créneau est de nouveau libre.",
+      "takenUpTitle": "Dossier pris en charge",
+      "takenUpBody": "Vous avez pris le dossier {{reference}}."
+    }
+  },
+  "privacy": {
+    "title": "Confidentialité et consentement",
+    "policyIntro": "Carlib traite vos données d'identité, de véhicule et de sinistre pour vous mettre en relation avec des carrossiers et suivre vos dossiers. Elles sont conservées pendant la durée légale et jamais vendues. Texte complet : version 1.0, provisoire en attendant le juridique.",
+    "statusAccepted": "Politique v{{version}} · acceptée le {{date}}",
+    "statusWithdrawn": "Retiré le {{date}} · compte en lecture seule",
+    "statusNone": "Pas encore acceptée",
+    "accept": "Accepter la politique de confidentialité (v{{version}})",
+    "withdraw": "Retirer mon consentement",
+    "withdrawTitle": "Retirer votre consentement ?",
+    "withdrawMessage": "Votre compte passe en lecture seule : aucun nouveau dossier tant que la politique n'est pas acceptée à nouveau.",
+    "marketing": "E-mails marketing",
+    "marketingHint": "Distinct du consentement de service. Désactivé par défaut.",
+    "consentRequired": "J'accepte la politique de confidentialité (v{{version}})",
+    "consentAgain": "Vous avez retiré votre consentement. Acceptez à nouveau la politique (v{{version}}) pour envoyer.",
+    "readPolicy": "Lire"
+  },
+  "vehicleSpace": {
+    "sectionOpen": "Dossiers en cours",
+    "sectionBookings": "Rendez-vous à venir",
+    "sectionHistory": "Historique",
+    "updated": "Mis à jour le {{date}}",
+    "neverUpdated": "Rien pour l'instant",
+    "emptyOpen": "Aucun dossier en cours pour ce véhicule.",
+    "emptyBookings": "Aucun rendez-vous à venir.",
+    "emptyHistory": "Aucun dossier clôturé — ils arrivent ici automatiquement."
+  },
+  "documents": {
+    "section": "Documents",
+    "add": "Ajouter un document",
+    "empty": "Aucun document. Commencez par la carte grise.",
+    "replace": "Remplacer",
+    "earlierVersions_one": "{{count}} version antérieure conservée",
+    "earlierVersions_other": "{{count}} versions antérieures conservées",
+    "typeCarteGrise": "Carte grise",
+    "typeFacture": "Facture",
+    "typeRapport": "Rapport",
+    "typeAutre": "Autre",
+    "chooseTypeTitle": "De quel document s'agit-il ?",
+    "chooseTypeMessage": "Chaque document est rattaché au véhicule avec un type.",
+    "rejectedTitle": "Fichier refusé",
+    "rejectedFormat": "Seuls les PDF, JPG et PNG sont acceptés.",
+    "rejectedSize": "Les fichiers doivent faire moins de {{mb}} Mo."
   }
 }

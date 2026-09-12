@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 import { CarlibTextField } from '@/components/CarlibTextField';
-import type { Vehicle } from '@/models/types';
+import { plateKey, type Vehicle } from '@/models/types';
 import { useClaimStore } from '@/stores/claimStore';
 import { carlibFont, sectionHeaderText, spacing, useTheme } from '@/theme';
 
@@ -32,6 +32,7 @@ export default function AddVehicleScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const addVehicle = useClaimStore((s) => s.addVehicle);
+  const vehicles = useClaimStore((s) => s.vehicles);
 
   const [plate, setPlate] = useState('');
   const [brand, setBrand] = useState('');
@@ -40,7 +41,11 @@ export default function AddVehicleScreen() {
   const [color, setColor] = useState('');
   const [nickname, setNickname] = useState('');
 
-  const canSave = plate.length > 0 && brand.length > 0 && model.length > 0;
+  // USERAUTH-02: no vehicle without a plate, and no plate twice on one account.
+  const duplicatePlate =
+    plate.trim().length > 0 &&
+    vehicles.some((vehicle) => plateKey(vehicle.info.licensePlate) === plateKey(plate));
+  const canSave = plate.trim().length > 0 && !duplicatePlate && brand.length > 0 && model.length > 0;
 
   function save() {
     // Swift Int(year): nil unless the whole string is a number.
@@ -48,7 +53,7 @@ export default function AddVehicleScreen() {
     const vehicle: Vehicle = {
       id: randomId(),
       info: {
-        licensePlate: plate,
+        licensePlate: plate.trim().toUpperCase(),
         brand,
         model,
         year: /^\d+$/.test(trimmedYear) ? Number(trimmedYear) : undefined,
@@ -109,6 +114,7 @@ export default function AddVehicleScreen() {
             placeholder="AA-123-BB"
             value={plate}
             onChangeText={setPlate}
+            error={duplicatePlate ? t('declaration.vehiclePlateDuplicate') : undefined}
           />
           <CarlibTextField
             label={t('declaration.vehicleBrand')}

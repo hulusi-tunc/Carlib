@@ -1,27 +1,40 @@
-// Port of Carlib/Views/Driver/DeclarationFlowView.swift — guided accident
-// declaration, 4 steps. Next is always enabled (iOS parity: no validation).
-// Photos hold picker file URIs (migration plan §5), not image data.
+// Guided accident declaration, rebuilt to the Phase 2 stories
+// (CARLIB-CLAIMDECL-01, CARLIB-PHOTOCAP-01): type → photos → where and what →
+// validation. Next stays disabled until the step's mandatory fields are filled,
+// submission is guarded on the accident type, and the vehicle is picked from
+// the profile (CARLIB-USERAUTH-02) rather than typed. Photos hold picker file
+// URIs (migration plan §5), not image data.
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { CarBrandLogo } from '@/components/CarBrandLogo';
 import { CarlibButton } from '@/components/CarlibButton';
 import { CarlibCard } from '@/components/CarlibCard';
 import { CarlibTextField } from '@/components/CarlibTextField';
 import { Glass } from '@/components/Glass';
-import { useHeaderHeight } from '@/lib/header';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
+import { shortFormatted } from '@/lib/dates';
+import { POLICY_VERSION, consentCoversFiles } from '@/lib/consent';
+import { clearDraft, loadDraft, saveDraft } from '@/lib/declarationDraft';
+import { useHeaderHeight } from '@/lib/header';
+import { getCurrentAddress } from '@/lib/location';
 import { ACCIDENT_KEY, ACCIDENT_TYPES, type AccidentType } from '@/models/enums';
-import type { Claim, PhotoAttachment, VehicleInfo } from '@/models/types';
+import type { Claim, Coordinate, PhotoAttachment } from '@/models/types';
 import { useClaimStore } from '@/stores/claimStore';
+import { useConsentStore } from '@/stores/consentStore';
 import { carlibFont, radius, spacing, text, useTheme } from '@/theme';
 
 const TOTAL_STEPS = 4;
+/** The four angles a file needs (CARLIB-PHOTOCAP-01); the hint copy names them too. */
+const PHOTO_ANGLES = ['Front', 'Rear', 'Left', 'Right'] as const;
+const MIN_PHOTOS = PHOTO_ANGLES.length;
+const MAX_PHOTOS = 8;
 // Footer = one 52pt button row plus its padding; the scroll content clears it.
 const FOOTER_HEIGHT = 52 + spacing.screenHorizontal * 2;
 // Swift .animation(.easeInOut(0.25), value: currentStep): steps cross-fade.
@@ -37,6 +50,8 @@ const ACCIDENT_ICON: Record<AccidentType, RemixIconName> = {
   autre: 'questionLine',
 };
 
+type LocateState = 'idle' | 'locating' | 'granted' | 'denied' | 'unavailable';
+type DraftNotice = { kind: 'restored' | 'expired'; savedAt: Date } | null;
 
 function randomId(): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
@@ -53,61 +68,163 @@ export default function DeclareScreen() {
   // Not a ScrollView root: pad below the transparent native bar by hand.
   const headerHeight = useHeaderHeight();
   const addClaim = useClaimStore((s) => s.addClaim);
+  const vehicles = useClaimStore((s) => s.vehicles);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedType, setSelectedType] = useState<AccidentType | null>(null);
+  const [typeMissing, setTypeMissing] = useState(false);
   const [photos, setPhotos] = useState<PhotoAttachment[]>([]);
-  const [licensePlate, setLicensePlate] = useState('');
-  const [brand, setBrand] = useState('');
-  const [model, setModel] = useState('');
-  const [year, setYear] = useState('');
-  const [color, setColor] = useState('');
+  const [cameraDenied, setCameraDenied] = useState(false);
+  const [locate, setLocate] = useState<LocateState>('idle');
+  const [coords, setCoords] = useState<Coordinate | null>(null);
+  const [address, setAddress] = useState('');
+  const [description, setDescription] = useState('');
+  const [vehicleId, setVehicleId] = useState<string | null>(null);
+  const [draftNotice, setDraftNotice] = useState<DraftNotice>(null);
 
-  async function pickPhotos() {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsMultipleSelection: true,
-      selectionLimit: 8,
-      quality: 0.7,
+  // CLAIMDECL-02: restore the draft at the step it was left on; an expired one
+  // is cleared and said so. State is set after the read resolves, never synchronously.
+  useEffect(() => {
+    let cancelled = false;
+    void loadDraft().then((loaded) => {
+      if (cancelled || loaded.status === 'none') return;
+      if (loaded.status === 'expired') {
+        setDraftNotice({ kind: 'expired', savedAt: loaded.savedAt });
+        return;
+      }
+      const { draft } = loaded;
+      setSelectedType(draft.type);
+      setPhotos(draft.photos);
+      setCoords(draft.coords);
+      setAddress(draft.address);
+      setDescription(draft.description);
+      setVehicleId(draft.vehicleId);
+      setCurrentStep(draft.step);
+      if (draft.coords != null) setLocate('granted');
+      setDraftNotice({ kind: 'restored', savedAt: loaded.savedAt });
     });
-    if (result.canceled) return;
-    const picked: PhotoAttachment[] = result.assets.map((asset) => ({
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // The profile's default vehicle unless the driver picked another. Derived, so a
+  // vehicle added mid-flow from the sheet shows up without an effect.
+  const selectedVehicle =
+    vehicles.find((vehicle) => vehicle.id === vehicleId) ??
+    vehicles.find((vehicle) => vehicle.isDefault) ??
+    vehicles[0];
+
+  // CLAIMDECL-01: Next is disabled until the step's mandatory fields are filled.
+  // USERAUTH-03: the first submission needs explicit consent to the policy version in force.
+  const consent = useConsentStore((s) => s.consent);
+  const acceptConsent = useConsentStore((s) => s.accept);
+  const consentCovers = consentCoversFiles(consent);
+  const [consentChecked, setConsentChecked] = useState(false);
+
+  const canContinue =
+    currentStep === 1
+      ? selectedType != null
+      : currentStep === 2
+        ? photos.length >= MIN_PHOTOS
+        : currentStep === 3
+          ? address.trim().length > 0 || coords != null
+          : selectedVehicle != null && (consentCovers || consentChecked);
+
+  function addPhotos(assets: ImagePicker.ImagePickerAsset[]) {
+    const picked: PhotoAttachment[] = assets.map((asset) => ({
       id: randomId(),
       imageUri: asset.uri,
       caption: '',
       timestamp: new Date(),
     }));
-    setPhotos((prev) => [...prev, ...picked].slice(0, 8));
+    setPhotos((prev) => [...prev, ...picked].slice(0, MAX_PHOTOS));
+  }
+
+  async function pickFromLibrary() {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsMultipleSelection: true,
+      selectionLimit: Math.max(1, MAX_PHOTOS - photos.length),
+      quality: 0.7,
+    });
+    if (!result.canceled) addPhotos(result.assets);
+  }
+
+  // PHOTOCAP-01: a refused camera is stated, and the library still works.
+  async function takePhoto() {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      setCameraDenied(true);
+      return;
+    }
+    setCameraDenied(false);
+    const result = await ImagePicker.launchCameraAsync({ quality: 0.7 });
+    if (!result.canceled) addPhotos(result.assets);
   }
 
   function removePhoto(id: string) {
     setPhotos((prev) => prev.filter((photo) => photo.id !== id));
   }
 
+  // CLAIMDECL-01: a refused or failed position falls back to a typed address.
+  async function locateDriver() {
+    setLocate('locating');
+    const result = await getCurrentAddress();
+    if (result.status !== 'granted') {
+      setLocate(result.status);
+      return;
+    }
+    setCoords(result.coords);
+    const found = result.address;
+    if (found) setAddress((current) => (current.length > 0 ? current : found));
+    setLocate('granted');
+  }
+
+  function persistDraft(step: number) {
+    void saveDraft({ step, type: selectedType, photos, coords, address, description, vehicleId });
+  }
+
+  function goToStep(step: number) {
+    setCurrentStep(step);
+    persistDraft(step); // CLAIMDECL-02: saved at each step transition
+  }
+
+  function goNext() {
+    if (currentStep === TOTAL_STEPS) {
+      submitClaim();
+      return;
+    }
+    const next = currentStep + 1;
+    goToStep(next);
+    if (next === 3 && locate === 'idle') void locateDriver();
+  }
+
   function submitClaim() {
-    // Swift Int(year): nil unless the whole string is a number.
-    const trimmedYear = year.trim();
-    const parsedYear = /^\d+$/.test(trimmedYear) ? Number(trimmedYear) : undefined;
-    const hasVehicleInfo = [licensePlate, brand, model, year, color].some(
-      (field) => field.trim().length > 0,
-    );
-    const vehicleInfo: VehicleInfo | undefined = hasVehicleInfo
-      ? { licensePlate, brand, model, year: parsedYear, color }
-      : undefined;
+    // CLAIMDECL-01: no type → the offending step is shown and highlighted.
+    if (selectedType == null) {
+      setTypeMissing(true);
+      setCurrentStep(1);
+      return;
+    }
+    // Timestamped with the version accepted; the record outlives the session.
+    if (!consentCovers) void acceptConsent(false);
     const now = new Date();
     const claim: Claim = {
       id: randomId(),
       status: 'soumis',
-      accidentType: selectedType ?? undefined,
-      description:
-        selectedType != null ? t(`accidentTypeLabel.${ACCIDENT_KEY[selectedType]}`) : '',
+      accidentType: selectedType,
+      description: description.trim() || t(`accidentTypeLabel.${ACCIDENT_KEY[selectedType]}`),
       photos,
-      vehicleInfo,
+      location: coords ?? undefined,
+      address: address.trim() || undefined,
+      vehicleInfo: selectedVehicle?.info,
       createdAt: now,
       updatedAt: now,
     };
     addClaim(claim);
-    router.push('/home/declare-confirm');
+    void clearDraft();
+    router.push({ pathname: '/home/declare-confirm', params: { claimId: claim.id } });
   }
 
   const divider = (
@@ -118,12 +235,29 @@ export default function DeclareScreen() {
     return (
       <View style={styles.summaryRow}>
         <Text style={[text.footnote, { color: colors.carlibSecondary }]}>{label}</Text>
-        <Text style={[carlibFont(13, 'medium'), { color: colors.carlibDark }]}>{value}</Text>
+        <Text
+          style={[carlibFont(13, 'medium'), styles.summaryValue, { color: colors.carlibDark }]}
+          numberOfLines={2}
+        >
+          {value}
+        </Text>
       </View>
     );
   }
 
-  const placeholderCount = Math.max(0, 3 - photos.length);
+  const locateCopy =
+    locate === 'locating'
+      ? t('declaration.locationLocating')
+      : locate === 'granted'
+        ? t('declaration.locationFound')
+        : locate === 'denied'
+          ? t('declaration.locationDenied')
+          : locate === 'unavailable'
+            ? t('declaration.locationUnavailable')
+            : '';
+  const locationSummary =
+    address.trim() ||
+    (coords != null ? `${coords.latitude.toFixed(4)}, ${coords.longitude.toFixed(4)}` : '—');
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.carlibScreenBg, paddingTop: headerHeight }]}>
@@ -139,7 +273,24 @@ export default function DeclareScreen() {
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: FOOTER_HEIGHT + insets.bottom }]}
+        keyboardShouldPersistTaps="handled"
       >
+        {draftNotice != null && (
+          <View style={[styles.draftNotice, { backgroundColor: colors.tileSecondary }]}>
+            <RemixIcon name="draftLine" size={16} color={colors.carlibSecondary} />
+            <Text style={[text.caption, styles.draftText, { color: colors.carlibSecondary }]}>
+              {t(
+                draftNotice.kind === 'restored'
+                  ? 'declaration.draftRestored'
+                  : 'declaration.draftExpired',
+                { date: shortFormatted(draftNotice.savedAt) },
+              )}
+            </Text>
+            <Pressable onPress={() => setDraftNotice(null)} hitSlop={8}>
+              <RemixIcon name="closeLine" size={16} color={colors.carlibSecondary} />
+            </Pressable>
+          </View>
+        )}
         {currentStep === 1 && (
           <Animated.View style={styles.step} entering={STEP_FADE_IN} exiting={STEP_FADE_OUT}>
             <Text style={[text.title2, { color: colors.carlibDark }]}>
@@ -148,18 +299,30 @@ export default function DeclareScreen() {
             <Text style={[text.body, { color: colors.carlibSecondary }]}>
               {t('declaration.step1Subtitle')}
             </Text>
+            {typeMissing && (
+              <Text style={[text.caption, { color: colors.destructiveRed }]}>
+                {t('declaration.typeRequired')}
+              </Text>
+            )}
             <View style={styles.grid}>
               {ACCIDENT_TYPES.map((type) => {
                 const selected = selectedType === type;
                 return (
                   <Pressable
                     key={type}
-                    onPress={() => setSelectedType(type)}
+                    onPress={() => {
+                      setSelectedType(type);
+                      setTypeMissing(false);
+                    }}
                     style={[
                       styles.typeCard,
                       {
                         backgroundColor: selected ? colors.brandYellowLight : colors.tileSecondary,
-                        borderColor: selected ? colors.brandYellow : 'transparent',
+                        borderColor: selected
+                          ? colors.brandYellow
+                          : typeMissing
+                            ? colors.destructiveRed
+                            : 'transparent',
                       },
                     ]}
                   >
@@ -180,25 +343,49 @@ export default function DeclareScreen() {
               {t('declaration.step2Title')}
             </Text>
             <Text style={[text.body, { color: colors.carlibSecondary }]}>
-              {t('declaration.step2Subtitle')}
+              {t('declaration.photosHint')}
             </Text>
-            <View style={styles.grid}>
+            <View style={styles.actionRow}>
               <Pressable
-                onPress={() => void pickPhotos()}
-                style={[styles.addPhotoCard, { borderColor: colors.carlibCardBorder }]}
+                onPress={() => void takePhoto()}
+                style={[styles.actionCard, { borderColor: colors.carlibCardBorder }]}
               >
-                <RemixIcon name="cameraFill" size={28} color={colors.brandYellow} />
+                <RemixIcon name="cameraFill" size={24} color={colors.brandYellow} />
                 <Text style={[text.caption, { color: colors.carlibDark }]}>
-                  {t('declaration.photosAdd')}
+                  {t('declaration.photosTake')}
                 </Text>
               </Pressable>
-              {photos.map((photo) => (
+              <Pressable
+                onPress={() => void pickFromLibrary()}
+                style={[styles.actionCard, { borderColor: colors.carlibCardBorder }]}
+              >
+                <RemixIcon name="imageAddLine" size={24} color={colors.brandYellow} />
+                <Text style={[text.caption, { color: colors.carlibDark }]}>
+                  {t('declaration.photosChoose')}
+                </Text>
+              </Pressable>
+            </View>
+            {cameraDenied && (
+              <Text style={[text.caption, { color: colors.destructiveRed }]}>
+                {t('declaration.photosCameraDenied')}
+              </Text>
+            )}
+            <View style={styles.grid}>
+              {photos.map((photo, index) => (
                 <View key={photo.id} style={styles.photoCell}>
                   <Image
                     source={{ uri: photo.imageUri }}
                     style={styles.photoImage}
                     contentFit="cover"
                   />
+                  {index < MIN_PHOTOS && (
+                    <View style={styles.angleTag}>
+                      {/* On the photo itself, not a themed surface — white on a scrim. */}
+                      <Text style={[text.micro, { color: '#FFFFFF' }]}>
+                        {t(`declaration.photoAngle${PHOTO_ANGLES[index]}`)}
+                      </Text>
+                    </View>
+                  )}
                   <Pressable
                     onPress={() => removePhoto(photo.id)}
                     hitSlop={8}
@@ -210,22 +397,22 @@ export default function DeclareScreen() {
                   </Pressable>
                 </View>
               ))}
-              {Array.from({ length: placeholderCount }, (_, index) => (
+              {PHOTO_ANGLES.slice(photos.length).map((angle) => (
                 <View
-                  key={`placeholder-${index}`}
+                  key={`placeholder-${angle}`}
                   style={[styles.photoPlaceholder, { backgroundColor: colors.tileSecondary }]}
                 >
                   <RemixIcon name="imageLine" size={24} color={colors.carlibSecondary} />
+                  <Text style={[text.caption, { color: colors.carlibSecondary }]}>
+                    {t(`declaration.photoAngle${angle}`)}
+                  </Text>
                 </View>
               ))}
             </View>
-            {photos.length > 0 && (
-              <Text style={[text.caption, { color: colors.carlibSecondary }]}>
-                {photos.length}/8
-              </Text>
-            )}
             <Text style={[text.caption, { color: colors.carlibSecondary }]}>
-              {t('declaration.photosHint')}
+              {photos.length < MIN_PHOTOS
+                ? t('declaration.photosMinimum', { count: MIN_PHOTOS })
+                : t('declaration.photosCount', { count: photos.length, max: MAX_PHOTOS })}
             </Text>
           </Animated.View>
         )}
@@ -238,37 +425,31 @@ export default function DeclareScreen() {
             <Text style={[text.body, { color: colors.carlibSecondary }]}>
               {t('declaration.step3Subtitle')}
             </Text>
+            {locateCopy.length > 0 && (
+              <View style={styles.locateRow}>
+                <RemixIcon
+                  name={locate === 'granted' ? 'mapPinFill' : 'mapPinLine'}
+                  size={18}
+                  color={locate === 'granted' ? colors.brandYellow : colors.carlibSecondary}
+                />
+                <Text style={[text.caption, styles.locateText, { color: colors.carlibSecondary }]}>
+                  {locateCopy}
+                </Text>
+              </View>
+            )}
             <View style={styles.form}>
               <CarlibTextField
-                label={t('declaration.vehiclePlate')}
-                placeholder="AA-123-BB"
-                value={licensePlate}
-                onChangeText={setLicensePlate}
+                label={t('declaration.addressLabel')}
+                placeholder={t('declaration.addressPlaceholder')}
+                value={address}
+                onChangeText={setAddress}
               />
               <CarlibTextField
-                label={t('declaration.vehicleBrand')}
-                placeholder="Renault"
-                value={brand}
-                onChangeText={setBrand}
-              />
-              <CarlibTextField
-                label={t('declaration.vehicleModel')}
-                placeholder="Clio V"
-                value={model}
-                onChangeText={setModel}
-              />
-              <CarlibTextField
-                label={t('declaration.vehicleYear')}
-                placeholder="2021"
-                value={year}
-                onChangeText={setYear}
-                keyboardType="number-pad"
-              />
-              <CarlibTextField
-                label={t('declaration.vehicleColor')}
-                placeholder="Gris Platine"
-                value={color}
-                onChangeText={setColor}
+                label={t('declaration.descriptionLabel')}
+                placeholder={t('declaration.descriptionPlaceholder')}
+                value={description}
+                onChangeText={setDescription}
+                multiline
               />
             </View>
           </Animated.View>
@@ -282,6 +463,55 @@ export default function DeclareScreen() {
             <Text style={[text.body, { color: colors.carlibSecondary }]}>
               {t('declaration.step4Subtitle')}
             </Text>
+
+            <View style={styles.vehicleBlock}>
+              <Text style={[text.callout, { color: colors.carlibSecondary }]}>
+                {t('declaration.vehicleLabel')}
+              </Text>
+              {vehicles.length === 0 ? (
+                <View style={styles.vehicleBlock}>
+                  <Text style={[text.body, { color: colors.carlibSecondary }]}>
+                    {t('declaration.vehicleNone')}
+                  </Text>
+                  <CarlibButton
+                    label={t('declaration.vehicleAdd')}
+                    variant="secondary"
+                    onPress={() => router.push('/home/add-vehicle')}
+                  />
+                </View>
+              ) : (
+                vehicles.map((vehicle) => {
+                  const selected = vehicle.id === selectedVehicle?.id;
+                  return (
+                    <Pressable
+                      key={vehicle.id}
+                      onPress={() => setVehicleId(vehicle.id)}
+                      style={[
+                        styles.vehicleRow,
+                        {
+                          backgroundColor: selected ? colors.brandYellowLight : colors.tileSecondary,
+                          borderColor: selected ? colors.brandYellow : 'transparent',
+                        },
+                      ]}
+                    >
+                      <CarBrandLogo brand={vehicle.info.brand} size={32} />
+                      <View style={styles.vehicleText}>
+                        <Text style={[carlibFont(15, 'medium'), { color: colors.carlibDark }]}>
+                          {`${vehicle.info.brand} ${vehicle.info.model}`}
+                        </Text>
+                        <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
+                          {vehicle.info.licensePlate}
+                        </Text>
+                      </View>
+                      {selected && (
+                        <RemixIcon name="checkboxCircleFill" size={20} color={colors.brandYellow} />
+                      )}
+                    </Pressable>
+                  );
+                })
+              )}
+            </View>
+
             <CarlibCard variant="flat">
               <View style={styles.summaryBody}>
                 {summaryRow(
@@ -293,20 +523,48 @@ export default function DeclareScreen() {
                 {divider}
                 {summaryRow(t('declaration.summaryPhotos'), String(photos.length))}
                 {divider}
-                {summaryRow(
-                  t('declaration.summaryPlate'),
-                  licensePlate.length === 0 ? '—' : licensePlate,
-                )}
+                {summaryRow(t('declaration.summaryLocation'), locationSummary)}
+                {divider}
+                {summaryRow(t('declaration.summaryDescription'), description.trim() || '—')}
                 {divider}
                 {summaryRow(
                   t('declaration.summaryVehicle'),
-                  brand.length === 0 ? '—' : `${brand} ${model}`,
+                  selectedVehicle != null
+                    ? `${selectedVehicle.info.brand} ${selectedVehicle.info.model} · ${selectedVehicle.info.licensePlate}`
+                    : '—',
                 )}
               </View>
             </CarlibCard>
             <Text style={[text.caption, styles.disclaimer, { color: colors.carlibSecondary }]}>
               {t('declaration.summaryDisclaimer')}
             </Text>
+            {!consentCovers && (
+              <View style={styles.consentRow}>
+                <Pressable
+                  onPress={() => setConsentChecked((checked) => !checked)}
+                  hitSlop={8}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: consentChecked }}
+                  style={styles.consentCheck}
+                >
+                  <RemixIcon
+                    name={consentChecked ? 'checkboxCircleFill' : 'checkboxBlankCircleLine'}
+                    size={22}
+                    color={consentChecked ? colors.brandYellow : colors.carlibLabel}
+                  />
+                  <Text style={[text.footnote, styles.consentText, { color: colors.carlibDark }]}>
+                    {consent?.withdrawnAt != null
+                      ? t('privacy.consentAgain', { version: POLICY_VERSION })
+                      : t('privacy.consentRequired', { version: POLICY_VERSION })}
+                  </Text>
+                </Pressable>
+                <Pressable onPress={() => router.push('/home/privacy')} hitSlop={8}>
+                  <Text style={[text.footnote, styles.consentLink, { color: colors.carlibSecondary }]}>
+                    {t('privacy.readPolicy')}
+                  </Text>
+                </Pressable>
+              </View>
+            )}
           </Animated.View>
         )}
       </ScrollView>
@@ -318,27 +576,22 @@ export default function DeclareScreen() {
         style={styles.footerBar}
         fallbackStyle={{ borderWidth: 0, backgroundColor: colors.carlibScreenBg }}
       >
-      <View style={[styles.footer, { paddingBottom: spacing.screenHorizontal + insets.bottom }]}>
-        {currentStep > 1 && (
+        <View style={[styles.footer, { paddingBottom: spacing.screenHorizontal + insets.bottom }]}>
+          {currentStep > 1 && (
+            <CarlibButton
+              label={t('declaration.back')}
+              variant="secondary"
+              onPress={() => goToStep(currentStep - 1)}
+              style={styles.footerButton}
+            />
+          )}
           <CarlibButton
-            label={t('declaration.back')}
-            variant="secondary"
-            onPress={() => setCurrentStep((step) => step - 1)}
+            label={currentStep < TOTAL_STEPS ? t('declaration.next') : t('declaration.submit')}
+            onPress={goNext}
+            isDisabled={!canContinue}
             style={styles.footerButton}
           />
-        )}
-        <CarlibButton
-          label={currentStep < TOTAL_STEPS ? t('declaration.next') : t('declaration.submit')}
-          onPress={() => {
-            if (currentStep < TOTAL_STEPS) {
-              setCurrentStep((step) => step + 1);
-            } else {
-              submitClaim();
-            }
-          }}
-          style={styles.footerButton}
-        />
-      </View>
+        </View>
       </Glass>
     </View>
   );
@@ -366,6 +619,15 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
   },
   step: { gap: spacing.lg },
+  draftNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    padding: spacing.sm,
+    borderRadius: radius.md,
+    marginBottom: spacing.md,
+  },
+  draftText: { flex: 1 },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -381,9 +643,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: spacing.xs,
   },
-  addPhotoCard: {
-    width: '48%',
-    height: 120,
+  actionRow: { flexDirection: 'row', gap: spacing.sm },
+  actionCard: {
+    flex: 1,
+    height: 88,
     borderRadius: radius.md,
     borderWidth: 2,
     borderStyle: 'dashed',
@@ -405,14 +668,37 @@ const styles = StyleSheet.create({
     top: 6,
     right: 6,
   },
+  angleTag: {
+    position: 'absolute',
+    left: 6,
+    bottom: 6,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: 2,
+    borderRadius: radius.full,
+    // 45% black scrim over the photo, like the lightbox chips' fallback.
+    backgroundColor: '#00000073',
+  },
   photoPlaceholder: {
     width: '48%',
     height: 120,
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: spacing.xxs,
   },
+  locateRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  locateText: { flex: 1 },
   form: { gap: spacing.md },
+  vehicleBlock: { gap: spacing.sm },
+  vehicleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    padding: spacing.sm,
+    borderRadius: radius.md,
+    borderWidth: 2,
+  },
+  vehicleText: { flex: 1, gap: 2 },
   summaryBody: {
     alignSelf: 'stretch',
     gap: spacing.sm,
@@ -420,13 +706,28 @@ const styles = StyleSheet.create({
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: spacing.sm,
   },
+  summaryValue: { flex: 1, textAlign: 'right' },
   divider: {
     height: StyleSheet.hairlineWidth,
     alignSelf: 'stretch',
   },
+  consentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingTop: spacing.sm,
+  },
+  consentCheck: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  consentText: { flex: 1 },
+  consentLink: { textDecorationLine: 'underline' },
   disclaimer: { textAlign: 'center' },
   footerBar: { position: 'absolute', left: 0, right: 0, bottom: 0 },
   footer: {

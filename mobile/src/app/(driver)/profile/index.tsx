@@ -113,14 +113,20 @@ function LinkRow({ icon, title, subtitle, onPress }: {
   );
 }
 
-function AboutRow({ icon, title, trailing }: {
+function AboutRow({
+  icon,
+  title,
+  trailing,
+  onPress,
+}: {
   icon: RemixIconName;
   title: string;
   trailing?: string;
+  onPress?: () => void;
 }) {
   const { colors } = useTheme();
   return (
-    <View style={styles.aboutRow}>
+    <Pressable onPress={onPress} disabled={onPress == null} style={styles.aboutRow}>
       <View style={styles.aboutIconFrame}>
         <RemixIcon name={icon} size={18} color={colors.carlibSecondary} />
       </View>
@@ -130,7 +136,7 @@ function AboutRow({ icon, title, trailing }: {
       ) : (
         <RemixIcon name="arrowRightLine" size={14} color={colors.carlibSecondary} />
       )}
-    </View>
+    </Pressable>
   );
 }
 
@@ -273,7 +279,11 @@ export default function DriverProfileScreen() {
           <View style={[styles.aboutCard, { backgroundColor: `${colors.tileSecondary}80` }]}>
             <AboutRow icon="fileTextLine" title={t('profileAbout.terms')} />
             <View style={[styles.aboutDivider, { backgroundColor: colors.carlibCardBorder }]} />
-            <AboutRow icon="shieldCheckLine" title={t('profileAbout.privacy')} />
+            <AboutRow
+              icon="shieldCheckLine"
+              title={t('profileAbout.privacy')}
+              onPress={() => router.push('/profile/privacy')}
+            />
             <View style={[styles.aboutDivider, { backgroundColor: colors.carlibCardBorder }]} />
             <AboutRow icon="informationLine" title={t('profileAbout.version')} trailing={APP_VERSION} />
           </View>
