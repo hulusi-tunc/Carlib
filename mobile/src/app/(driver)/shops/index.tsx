@@ -13,6 +13,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   FlatList,
   Pressable,
@@ -89,6 +90,7 @@ function CarouselSeparator() {
 }
 
 export default function GarageSearchScreen() {
+  const { t } = useTranslation();
   const { colors } = useTheme();
   // Reanimated springs/timings already honour the OS Reduce Motion setting
   // (ReduceMotion.System is the default); the map camera and the programmatic
@@ -317,7 +319,9 @@ export default function GarageSearchScreen() {
 
   const navBar = (
     <View style={styles.navBar}>
-      <Text style={[text.title3, styles.navTitle, { color: colors.carlibDark }]}>Body shops</Text>
+      <Text style={[text.title3, styles.navTitle, { color: colors.carlibDark }]}>
+        {t('garageSearch.panelTitle')}
+      </Text>
       <PressableScale
         scale={0.94}
         haptic="light"
@@ -337,7 +341,7 @@ export default function GarageSearchScreen() {
           style={[styles.searchInput, { color: colors.carlibDark }]}
           value={searchText}
           onChangeText={onSearchChange}
-          placeholder="Search shops"
+          placeholder={t('garageSearch.searchShops')}
           placeholderTextColor={colors.carlibLabel}
           autoCapitalize="none"
           autoCorrect={false}
@@ -355,9 +359,11 @@ export default function GarageSearchScreen() {
   const emptyResults = (
     <View style={styles.empty}>
       <RemixIcon name="searchEyeLine" size={28} color={colors.carlibLabel} />
-      <Text style={[carlibFont(15, 'medium'), { color: colors.carlibDark }]}>No shops match</Text>
+      <Text style={[carlibFont(15, 'medium'), { color: colors.carlibDark }]}>
+        {t('garageSearch.noMatchTitle')}
+      </Text>
       <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
-        Try a different name or neighbourhood.
+        {t('garageSearch.noMatchBody')}
       </Text>
     </View>
   );
@@ -382,10 +388,12 @@ export default function GarageSearchScreen() {
     <View style={styles.carouselSection}>
       <View style={styles.carouselHeader}>
         <Text style={[text.caption, styles.nearbyLabel, { color: colors.carlibLabel }]}>
-          {`${shopsCount} shop${shopsCount === 1 ? '' : 's'} nearby`}
+          {t('garageSearch.nearby', { count: shopsCount })}
         </Text>
         <Pressable onPress={() => settle(true)} hitSlop={8} style={styles.listButton}>
-          <Text style={[text.caption, { color: colors.carlibLabel }]}>List</Text>
+          <Text style={[text.caption, { color: colors.carlibLabel }]}>
+            {t('garageSearch.listAction')}
+          </Text>
           <RemixIcon name="arrowUpSLine" size={12} color={colors.carlibLabel} />
         </Pressable>
       </View>
@@ -431,7 +439,7 @@ export default function GarageSearchScreen() {
   const listBody = (
     <View style={styles.flex}>
       <Text style={[text.footnote, styles.foundLabel, { color: colors.carlibSecondary }]}>
-        {`${shopsCount} shop${shopsCount === 1 ? '' : 's'} found`}
+        {t('garageSearch.found', { count: shopsCount })}
       </Text>
       {shopsCount === 0 ? (
         <View style={styles.emptyExpanded}>{emptyResults}</View>

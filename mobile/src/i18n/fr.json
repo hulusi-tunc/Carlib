@@ -181,7 +181,16 @@
     "modeLabel": "Affichage",
     "modeList": "Liste",
     "modeMap": "Carte",
-    "mapPlaceholder": "Carte bientôt disponible"
+    "mapPlaceholder": "Carte bientôt disponible",
+    "panelTitle": "Carrossiers",
+    "searchShops": "Rechercher un carrossier",
+    "noMatchTitle": "Aucun carrossier trouvé",
+    "noMatchBody": "Essayez un autre nom ou un autre quartier.",
+    "nearby_one": "{{count}} carrossier à proximité",
+    "nearby_other": "{{count}} carrossiers à proximité",
+    "listAction": "Liste",
+    "found_one": "{{count}} carrossier trouvé",
+    "found_other": "{{count}} carrossiers trouvés"
   },
   "garageDetail": {
     "notFoundTitle": "Carrossier introuvable",

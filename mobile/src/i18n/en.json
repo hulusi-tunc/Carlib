@@ -181,7 +181,16 @@
     "modeLabel": "View Mode",
     "modeList": "List",
     "modeMap": "Map",
-    "mapPlaceholder": "Map coming soon"
+    "mapPlaceholder": "Map coming soon",
+    "panelTitle": "Body shops",
+    "searchShops": "Search shops",
+    "noMatchTitle": "No shops match",
+    "noMatchBody": "Try a different name or neighbourhood.",
+    "nearby_one": "{{count}} shop nearby",
+    "nearby_other": "{{count}} shops nearby",
+    "listAction": "List",
+    "found_one": "{{count}} shop found",
+    "found_other": "{{count}} shops found"
   },
   "garageDetail": {
     "notFoundTitle": "Shop not found",
