@@ -5,13 +5,14 @@ import { create } from 'zustand';
 
 import { canChangeBooking } from '@/lib/bookingRules';
 import type { BookingStatus, ClaimStatus, RepairStatus } from '@/models/enums';
-import type {
-  Booking,
-  Claim,
-  Garage,
-  PhotoAttachment,
-  TimeSlot,
-  Vehicle,
+import {
+  plateKey,
+  type Booking,
+  type Claim,
+  type Garage,
+  type PhotoAttachment,
+  type TimeSlot,
+  type Vehicle,
 } from '@/models/types';
 import {
   claims as seedClaims,
@@ -368,12 +369,25 @@ export function slotsForDate(date: Date, garageId?: string) {
 const CANCELLED_BOOKING: readonly BookingStatus[] = ['annule_conducteur', 'annule_garage'];
 const BOOKABLE_CLAIM: readonly ClaimStatus[] = ['soumis', 'en_recherche', 'accepte'];
 
+export function isBookingLive(booking: Booking): boolean {
+  return !CANCELLED_BOOKING.includes(booking.status);
+}
+
 /** Curried selector: the live (not cancelled) booking on a file, if any. */
 export function bookingForClaim(claimId: string) {
   return (state: ClaimStoreState): Booking | undefined =>
-    state.bookings.find(
-      (booking) => booking.claimId === claimId && !CANCELLED_BOOKING.includes(booking.status),
-    );
+    state.bookings.find((booking) => booking.claimId === claimId && isBookingLive(booking));
+}
+
+/** Curried selector: the files declared for a plate — the vehicle's stable identity. Pair with useShallow. */
+export function claimsForVehicle(licensePlate: string) {
+  const key = plateKey(licensePlate);
+  return (state: ClaimStoreState): Claim[] =>
+    key === ''
+      ? []
+      : state.claims.filter(
+          (claim) => claim.vehicleInfo != null && plateKey(claim.vehicleInfo.licensePlate) === key,
+        );
 }
 
 function hasAppointment(claim: Claim, bookings: Booking[]): boolean {

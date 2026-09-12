@@ -426,7 +426,12 @@
     "brand": "Marque",
     "model": "Modèle",
     "year": "Année",
-    "color": "Couleur"
+    "color": "Couleur",
+    "defaultBadge": "Par défaut",
+    "setDefault": "Définir par défaut",
+    "deleteVehicle": "Supprimer le véhicule",
+    "deleteTitle": "Supprimer ce véhicule ?",
+    "deleteMessage": "{{name}} sera retiré de votre garage. Cette action est irréversible."
   },
   "booking": {
     "title": "Prendre rendez-vous",
@@ -579,5 +584,15 @@
     "consentRequired": "J'accepte la politique de confidentialité (v{{version}})",
     "consentAgain": "Vous avez retiré votre consentement. Acceptez à nouveau la politique (v{{version}}) pour envoyer.",
     "readPolicy": "Lire"
+  },
+  "vehicleSpace": {
+    "sectionOpen": "Dossiers en cours",
+    "sectionBookings": "Rendez-vous à venir",
+    "sectionHistory": "Historique",
+    "updated": "Mis à jour le {{date}}",
+    "neverUpdated": "Rien pour l'instant",
+    "emptyOpen": "Aucun dossier en cours pour ce véhicule.",
+    "emptyBookings": "Aucun rendez-vous à venir.",
+    "emptyHistory": "Aucun dossier clôturé — ils arrivent ici automatiquement."
   }
 }

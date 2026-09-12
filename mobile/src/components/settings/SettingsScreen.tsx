@@ -10,7 +10,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { PressableScale } from '@/components/PressableScale';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
-import { ACCIDENT_KEY, type ClaimStatus } from '@/models/enums';
+import { ACCIDENT_KEY, isClaimOpen } from '@/models/enums';
 import { claimReference, type Claim } from '@/models/types';
 import { signOut } from '@/services/auth';
 import { useAppStore } from '@/stores/appStore';
@@ -25,16 +25,8 @@ const THEME_OPTIONS = [
 ] as const;
 
 // USERAUTH-02: a file still being handled blocks deletion; the driver sees which.
-const OPEN_STATUSES: readonly ClaimStatus[] = [
-  'soumis',
-  'en_recherche',
-  'accepte',
-  'pris_en_charge',
-  'en_reparation',
-];
-
 function selectOpenClaims(state: { claims: Claim[] }): Claim[] {
-  return state.claims.filter((claim) => OPEN_STATUSES.includes(claim.status));
+  return state.claims.filter((claim) => isClaimOpen(claim.status));
 }
 
 function ThemeChip({ option }: { option: (typeof THEME_OPTIONS)[number] }) {

@@ -426,7 +426,12 @@
     "brand": "Brand",
     "model": "Model",
     "year": "Year",
-    "color": "Color"
+    "color": "Color",
+    "defaultBadge": "Default",
+    "setDefault": "Set as default",
+    "deleteVehicle": "Delete vehicle",
+    "deleteTitle": "Delete this vehicle?",
+    "deleteMessage": "{{name}} will be removed from your garage. This action can't be undone."
   },
   "booking": {
     "title": "Book Appointment",
@@ -579,5 +584,15 @@
     "consentRequired": "I accept the privacy policy (v{{version}})",
     "consentAgain": "You withdrew consent. Accept the policy again (v{{version}}) to submit.",
     "readPolicy": "Read"
+  },
+  "vehicleSpace": {
+    "sectionOpen": "Open files",
+    "sectionBookings": "Upcoming appointments",
+    "sectionHistory": "History",
+    "updated": "Updated {{date}}",
+    "neverUpdated": "Nothing yet",
+    "emptyOpen": "No open file for this vehicle.",
+    "emptyBookings": "No upcoming appointment.",
+    "emptyHistory": "No closed file yet — closed files land here on their own."
   }
 }

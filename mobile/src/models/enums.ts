@@ -16,6 +16,19 @@ export const CLAIM_STATUSES = [
 ] as const;
 export type ClaimStatus = (typeof CLAIM_STATUSES)[number];
 
+/** A file still being handled — it blocks account deletion and counts as open in the vehicle space. */
+export const OPEN_CLAIM_STATUSES: readonly ClaimStatus[] = [
+  'soumis',
+  'en_recherche',
+  'accepte',
+  'pris_en_charge',
+  'en_reparation',
+];
+
+export function isClaimOpen(status: ClaimStatus): boolean {
+  return OPEN_CLAIM_STATUSES.includes(status);
+}
+
 export const BOOKING_STATUSES = [
   'en_attente', // pending
   'confirme', // confirmed
