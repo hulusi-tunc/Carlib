@@ -49,6 +49,8 @@ Auth is mocked. Seed credentials live in `mobile/src/services/defaultUsers.ts` a
 The screenshot harness (`src/app/(auth)/index.tsx`, baked in at bundle time via `.env.local`) is driven by the build scripts' env vars:
 - `CARLIB_SEED=<seed email>` force-signs-in that user · `CARLIB_TAB=shops|profile` lands on a tab · `CARLIB_THEME=dark|light|system`
 - `CARLIB_ROUTES=/home/claims,/profile/settings,…` pushes each route in turn, `CARLIB_ROUTE_DWELL` ms apart (default 5000) — one build, then `xcrun simctl io <udid> screenshot` on a timer. Routes are group-less (`/home/…`, `/shops/…`, `/claims/…`); `/profile/…` resolves inside the signed-in role's group.
+- **Persisted state** (drafts, theme, language) can be seeded from outside: terminate the app, write `<container>/Library/Application Support/com.carlib.fr/RCTAsyncLocalStorage_V1/manifest.json` (`xcrun simctl get_app_container <udid> com.carlib.fr data`; a JSON map of key → value string, values under 1 KB inline), relaunch. AsyncStorage 2.x reads there, not `Documents/`. This is how mid-flow screens (a declaration at step 3) are reached without taps.
+- `simctl` on a long-lived simulator can hang (`launch`, `get_app_container`); time-box every call and reboot the device (`shutdown` + `boot`) when it does.
 
 ## Architecture
 
