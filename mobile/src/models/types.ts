@@ -56,6 +56,8 @@ export interface Claim {
   description: string;
   photos: PhotoAttachment[];
   location?: Coordinate;
+  /** One-line address of the incident — geocoded from `location` or typed by the driver. */
+  address?: string;
   vehicleInfo?: VehicleInfo;
   assignedGarageId?: string;
   /** Denormalized on the claim, separate from the bookings array — matches iOS. */
