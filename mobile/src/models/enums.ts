@@ -49,6 +49,10 @@ export const REPAIR_STATUSES = [
 ] as const;
 export type RepairStatus = (typeof REPAIR_STATUSES)[number];
 
+/** Vehicle document types (CARLIB-USERDOCS-01); French raw values like the other enums. */
+export const DOCUMENT_TYPES = ['carte_grise', 'facture', 'rapport', 'autre'] as const;
+export type DocumentType = (typeof DOCUMENT_TYPES)[number];
+
 export const ACCIDENT_TYPES = [
   'collision',
   'stationnement', // parking

@@ -6,6 +6,7 @@ import type {
   AccidentType,
   BookingStatus,
   ClaimStatus,
+  DocumentType,
   RepairSpecialty,
   RepairStatus,
   UserRole,
@@ -100,6 +101,22 @@ export interface TimeSlot {
   endTime: Date;
   isAvailable: boolean;
   isBlocked: boolean;
+}
+
+/** A file attached to a vehicle (CARLIB-USERDOCS-01). Replacing keeps the old one, dated. */
+export interface VehicleDocument {
+  id: string;
+  vehicleId: string;
+  type: DocumentType;
+  name: string;
+  uri: string;
+  mimeType: string;
+  size: number;
+  addedAt: Date;
+  /** The version this one replaced, when any. */
+  previousId?: string;
+  /** Set on the old version when a newer one replaced it — never erased. */
+  replacedAt?: Date;
 }
 
 export type NotificationAudience = 'driver' | 'garage';

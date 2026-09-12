@@ -1,7 +1,9 @@
 // Port of Carlib/Views/Driver/VehicleDetailView.swift, grown into the vehicle
 // space of CARLIB-VEHPORTAL-02: one place for a vehicle's open files, upcoming
 // appointments and history, with a switcher when the driver has several
-// vehicles and an explicit state for every empty section. The info rows,
+// vehicles, the vehicle's documents (CARLIB-USERDOCS-01: typed, size- and
+// format-checked, replaced with the old version kept) and an explicit state
+// for every empty section. The info rows,
 // "Set as default" and "Delete vehicle" are the original port; the iOS List
 // becomes grouped tileSecondary cards like the other detail screens.
 import * as Haptics from 'expo-haptics';
@@ -17,10 +19,73 @@ import { PressableScale } from '@/components/PressableScale';
 import { RecentFileRow } from '@/components/RecentFileRow';
 import { RemixIcon } from '@/components/RemixIcon';
 import { longFormatted, shortFormatted, timeFormatted } from '@/lib/dates';
-import { isClaimOpen } from '@/models/enums';
-import { vehicleDisplayName, type Booking, type Claim, type TimeSlot } from '@/models/types';
-import { claimsForVehicle, isBookingLive, useClaimStore } from '@/stores/claimStore';
+import {
+  MAX_DOCUMENT_MB,
+  formatFileSize,
+  pickVehicleDocument,
+  type PickedDocument,
+} from '@/lib/documents';
+import { DOCUMENT_TYPES, isClaimOpen, type DocumentType } from '@/models/enums';
+import {
+  vehicleDisplayName,
+  type Booking,
+  type Claim,
+  type TimeSlot,
+  type VehicleDocument,
+} from '@/models/types';
+import {
+  claimsForVehicle,
+  documentsForVehicle,
+  isBookingLive,
+  useClaimStore,
+} from '@/stores/claimStore';
 import { carlibFont, spacing, text, useTheme } from '@/theme';
+
+// Raw enum values are French; the i18n keys are English.
+const DOCUMENT_TYPE_KEY = {
+  carte_grise: 'typeCarteGrise',
+  facture: 'typeFacture',
+  rapport: 'typeRapport',
+  autre: 'typeAutre',
+} as const satisfies Record<DocumentType, string>;
+
+function DocumentRow({
+  document,
+  earlierVersions,
+  onReplace,
+}: {
+  document: VehicleDocument;
+  earlierVersions: number;
+  onReplace: () => void;
+}) {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  return (
+    <View style={styles.documentRow}>
+      <RemixIcon
+        name={document.mimeType === 'application/pdf' ? 'filePdfLine' : 'imageLine'}
+        size={20}
+        color={colors.brandYellow}
+      />
+      <View style={styles.documentText}>
+        <Text style={[carlibFont(15, 'medium'), { color: colors.carlibDark }]} numberOfLines={1}>
+          {document.name}
+        </Text>
+        <Text style={[text.caption, { color: colors.carlibSecondary }]}>
+          {`${t(`documents.${DOCUMENT_TYPE_KEY[document.type]}`)} · ${formatFileSize(document.size)} · ${shortFormatted(document.addedAt)}`}
+        </Text>
+        {earlierVersions > 0 && (
+          <Text style={[text.caption, { color: colors.carlibLabel }]}>
+            {t('documents.earlierVersions', { count: earlierVersions })}
+          </Text>
+        )}
+      </View>
+      <Pressable onPress={onReplace} hitSlop={8}>
+        <Text style={[text.footnote, { color: colors.carlibSecondary }]}>{t('documents.replace')}</Text>
+      </Pressable>
+    </View>
+  );
+}
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   const { colors } = useTheme();
@@ -117,6 +182,9 @@ export default function VehicleSpaceScreen() {
   const timeSlots = useClaimStore((s) => s.timeSlots);
   const garages = useClaimStore((s) => s.garages);
   const claims = useClaimStore(useShallow(claimsForVehicle(vehicle?.info.licensePlate ?? '')));
+  const documents = useClaimStore(useShallow(documentsForVehicle(vehicle?.id ?? '')));
+  const addDocument = useClaimStore((s) => s.addDocument);
+  const replaceDocument = useClaimStore((s) => s.replaceDocument);
   const [now] = useState(() => new Date());
 
   const openClaims = useMemo(() => claims.filter((claim) => isClaimOpen(claim.status)), [claims]);
@@ -167,6 +235,51 @@ export default function VehicleSpaceScreen() {
   };
 
   const openClaim = (claim: Claim) => router.push(`/home/claim/${claim.id}`);
+
+  const currentDocuments = documents.filter((document) => document.replacedAt == null);
+  const earlierVersions = (document: VehicleDocument): number => {
+    let count = 0;
+    let current: VehicleDocument | undefined = document;
+    while (current?.previousId != null) {
+      const previousId: string = current.previousId;
+      current = documents.find((item) => item.id === previousId);
+      if (current == null) break;
+      count += 1;
+    }
+    return count;
+  };
+
+  // USERDOCS-01: a refused file says which limit it broke.
+  const pickDocument = async (onPicked: (picked: PickedDocument) => void) => {
+    const result = await pickVehicleDocument();
+    if (result.status === 'cancelled') return;
+    if (result.status === 'rejected') {
+      Alert.alert(
+        t('documents.rejectedTitle'),
+        result.reason === 'format'
+          ? t('documents.rejectedFormat')
+          : t('documents.rejectedSize', { mb: MAX_DOCUMENT_MB }),
+      );
+      return;
+    }
+    onPicked(result.document);
+  };
+
+  const handleAddDocument = () =>
+    void pickDocument((picked) => {
+      Alert.alert(t('documents.chooseTypeTitle'), t('documents.chooseTypeMessage'), [
+        ...DOCUMENT_TYPES.map((type) => ({
+          text: t(`documents.${DOCUMENT_TYPE_KEY[type]}`),
+          onPress: () => addDocument({ vehicleId: vehicle.id, type, ...picked }),
+        })),
+        { text: t('common.cancel'), style: 'cancel' as const },
+      ]);
+    });
+
+  const handleReplaceDocument = (document: VehicleDocument) =>
+    void pickDocument((picked) =>
+      replaceDocument(document.id, { vehicleId: vehicle.id, type: document.type, ...picked }),
+    );
   const divider = <View style={[styles.divider, { backgroundColor: colors.carlibCardBorder }]} />;
 
   return (
@@ -284,6 +397,33 @@ export default function VehicleSpaceScreen() {
             : null}
         </Section>
 
+        {/* ── Documents — replaced versions stay, dated ── */}
+        <Section
+          title={t('documents.section')}
+          updatedAt={latest(documents.map((document) => document.addedAt))}
+          empty={t('documents.empty')}
+        >
+          {currentDocuments.length > 0
+            ? currentDocuments.map((document, index) => (
+                <React.Fragment key={document.id}>
+                  {index > 0 && divider}
+                  <DocumentRow
+                    document={document}
+                    earlierVersions={earlierVersions(document)}
+                    onReplace={() => handleReplaceDocument(document)}
+                  />
+                </React.Fragment>
+              ))
+            : null}
+        </Section>
+        <Pressable
+          onPress={handleAddDocument}
+          style={[styles.card, styles.actionRow, { backgroundColor: `${colors.tileSecondary}80` }]}
+        >
+          <RemixIcon name="addLine" size={18} color={colors.brandYellow} />
+          <Text style={[text.body, { color: colors.carlibDark }]}>{t('documents.add')}</Text>
+        </Pressable>
+
         {/* ── Info rows ── */}
         <View style={[styles.card, { backgroundColor: `${colors.tileSecondary}80` }]}>
           <InfoRow label={t('vehicleDetail.plate')} value={vehicle.info.licensePlate} />
@@ -391,6 +531,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   bookingText: { flex: 1, gap: 2 },
+  documentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: 12,
+  },
+  documentText: { flex: 1, gap: 2 },
   divider: { height: StyleSheet.hairlineWidth },
   actionRow: {
     flexDirection: 'row',

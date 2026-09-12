@@ -594,5 +594,22 @@
     "emptyOpen": "Aucun dossier en cours pour ce véhicule.",
     "emptyBookings": "Aucun rendez-vous à venir.",
     "emptyHistory": "Aucun dossier clôturé — ils arrivent ici automatiquement."
+  },
+  "documents": {
+    "section": "Documents",
+    "add": "Ajouter un document",
+    "empty": "Aucun document. Commencez par la carte grise.",
+    "replace": "Remplacer",
+    "earlierVersions_one": "{{count}} version antérieure conservée",
+    "earlierVersions_other": "{{count}} versions antérieures conservées",
+    "typeCarteGrise": "Carte grise",
+    "typeFacture": "Facture",
+    "typeRapport": "Rapport",
+    "typeAutre": "Autre",
+    "chooseTypeTitle": "De quel document s'agit-il ?",
+    "chooseTypeMessage": "Chaque document est rattaché au véhicule avec un type.",
+    "rejectedTitle": "Fichier refusé",
+    "rejectedFormat": "Seuls les PDF, JPG et PNG sont acceptés.",
+    "rejectedSize": "Les fichiers doivent faire moins de {{mb}} Mo."
   }
 }

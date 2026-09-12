@@ -13,6 +13,7 @@ import {
   type PhotoAttachment,
   type TimeSlot,
   type Vehicle,
+  type VehicleDocument,
 } from '@/models/types';
 import {
   claims as seedClaims,
@@ -42,6 +43,7 @@ export interface ClaimStoreState {
   bookings: Booking[];
   vehicles: Vehicle[];
   garages: Garage[];
+  documents: VehicleDocument[];
   addClaim: (claim: Claim) => void;
   acceptClaim: (id: string, garageId: string) => void;
   declineClaim: (id: string) => void;
@@ -61,7 +63,12 @@ export interface ClaimStoreState {
   addGaragePhoto: (garageId: string, photo?: PhotoAttachment) => void;
   removeGaragePhoto: (garageId: string, photoId: string) => void;
   updateGarage: (garage: Garage) => void;
+  addDocument: (input: DocumentInput) => VehicleDocument;
+  /** Adds the new version and dates the old one; nothing is erased. */
+  replaceDocument: (previousId: string, input: DocumentInput) => VehicleDocument;
 }
+
+export type DocumentInput = Omit<VehicleDocument, 'id' | 'addedAt' | 'previousId' | 'replacedAt'>;
 
 function updateClaim(claims: Claim[], id: string, mutate: (claim: Claim) => Claim): Claim[] {
   return claims.map((claim) => (claim.id === id ? mutate(claim) : claim));
@@ -115,6 +122,7 @@ export const useClaimStore = create<ClaimStoreState>()((set, get) => ({
   bookings: [],
   vehicles: [...seedVehicles],
   garages: [...seedGarages],
+  documents: [],
 
   // Claim mutations
 
@@ -286,6 +294,28 @@ export const useClaimStore = create<ClaimStoreState>()((set, get) => ({
     return { ok: true, booking: moved };
   },
 
+  // Document mutations — CARLIB-USERDOCS-01
+
+  addDocument: (input) => {
+    const document: VehicleDocument = { ...input, id: randomId(), addedAt: new Date() };
+    set((state) => ({ documents: [document, ...state.documents] }));
+    return document;
+  },
+
+  replaceDocument: (previousId, input) => {
+    const now = new Date();
+    const document: VehicleDocument = { ...input, id: randomId(), addedAt: now, previousId };
+    set((state) => ({
+      documents: [
+        document,
+        ...state.documents.map((item) =>
+          item.id === previousId ? { ...item, replacedAt: now } : item,
+        ),
+      ],
+    }));
+    return document;
+  },
+
   // Garage mutations
 
   addGaragePhoto: (garageId, photo) =>
@@ -401,6 +431,12 @@ export function selectClaimToBook(state: ClaimStoreState): Claim | undefined {
   return state.claims
     .filter((claim) => BOOKABLE_CLAIM.includes(claim.status) && !hasAppointment(claim, state.bookings))
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0];
+}
+
+/** Curried selector: a vehicle's documents, newest first. Pair with useShallow. */
+export function documentsForVehicle(vehicleId: string) {
+  return (state: ClaimStoreState): VehicleDocument[] =>
+    state.documents.filter((document) => document.vehicleId === vehicleId);
 }
 
 /** Curried selector: `useClaimStore(availableSlots(garageId))`. */

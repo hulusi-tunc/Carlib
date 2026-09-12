@@ -594,5 +594,22 @@
     "emptyOpen": "No open file for this vehicle.",
     "emptyBookings": "No upcoming appointment.",
     "emptyHistory": "No closed file yet — closed files land here on their own."
+  },
+  "documents": {
+    "section": "Documents",
+    "add": "Add a document",
+    "empty": "No document yet. Start with the carte grise.",
+    "replace": "Replace",
+    "earlierVersions_one": "{{count}} earlier version kept",
+    "earlierVersions_other": "{{count}} earlier versions kept",
+    "typeCarteGrise": "Carte grise",
+    "typeFacture": "Invoice",
+    "typeRapport": "Report",
+    "typeAutre": "Other",
+    "chooseTypeTitle": "What is this document?",
+    "chooseTypeMessage": "Each document is attached to the vehicle with a type.",
+    "rejectedTitle": "File not accepted",
+    "rejectedFormat": "Only PDF, JPG and PNG files are accepted.",
+    "rejectedSize": "Files must be under {{mb}} MB."
   }
 }
