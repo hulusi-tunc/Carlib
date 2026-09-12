@@ -155,7 +155,8 @@
     "confirmationTitle": "Sinistre déclaré",
     "confirmationSubtitle": "Votre dossier est enregistré. Nous recherchons un carrossier disponible.",
     "confirmationReference": "Référence",
-    "confirmationCtaHome": "Retour à l'accueil"
+    "confirmationCtaHome": "Retour à l'accueil",
+    "vehiclePlateDuplicate": "Cette plaque est déjà sur votre compte."
   },
   "driverClaims": {
     "title": "Historique des dossiers",

@@ -155,7 +155,8 @@
     "confirmationTitle": "Claim Submitted",
     "confirmationSubtitle": "Your claim has been recorded. We're searching for available body shops.",
     "confirmationReference": "Reference",
-    "confirmationCtaHome": "Back to home"
+    "confirmationCtaHome": "Back to home",
+    "vehiclePlateDuplicate": "This plate is already on your account."
   },
   "driverClaims": {
     "title": "Claim history",

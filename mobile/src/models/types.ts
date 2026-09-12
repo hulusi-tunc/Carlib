@@ -110,6 +110,11 @@ export interface CountryDialCode {
   flag: string;
 }
 
+/** "AA-123-BB", "aa123bb" and "AA 123 BB" are the same plate. */
+export function plateKey(plate: string): string {
+  return plate.toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
 export function vehicleDisplayName(vehicle: Vehicle): string {
   return vehicle.nickname ?? `${vehicle.info.brand} ${vehicle.info.model}`;
 }
