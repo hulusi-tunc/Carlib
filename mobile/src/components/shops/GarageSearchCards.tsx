@@ -30,15 +30,15 @@ function DistanceRow({ km, iconSize }: { km: number; iconSize: number }) {
   );
 }
 
-function AvailabilityRow({ garage }: { garage: Garage }) {
+function AvailabilityRow({ available }: { available: boolean }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const dotColor = garage.isAvailable ? colors.status.completed.fg : colors.status.cancelled.fg;
+  const dotColor = available ? colors.status.completed.fg : colors.status.cancelled.fg;
   return (
     <View style={styles.metaRow}>
       <View style={[styles.availabilityDot, { backgroundColor: dotColor }]} />
       <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
-        {garage.isAvailable ? t('garageCard.available') : t('garageCard.unavailable')}
+        {available ? t('garageCard.available') : t('garageCard.unavailable')}
       </Text>
     </View>
   );
@@ -49,9 +49,16 @@ export interface CarouselGarageCardProps {
   width: number;
   /** km from the search origin — hidden when unknown (PROSEARCH-02: no empty fields). */
   distanceKm?: number;
+  /** Open with a slot inside the horizon — see isGarageBookable, not the profile flag alone. */
+  available: boolean;
 }
 
-export function CarouselGarageCard({ garage, width, distanceKm }: CarouselGarageCardProps) {
+export function CarouselGarageCard({
+  garage,
+  width,
+  distanceKm,
+  available,
+}: CarouselGarageCardProps) {
   const { colors } = useTheme();
   const neighbourhood = garage.address.split(',').pop()?.trim() ?? '';
 
@@ -73,7 +80,7 @@ export function CarouselGarageCard({ garage, width, distanceKm }: CarouselGarage
           {garage.name}
         </Text>
         {distanceKm != null && <DistanceRow km={distanceKm} iconSize={12} />}
-        <AvailabilityRow garage={garage} />
+        <AvailabilityRow available={available} />
         <View style={styles.spacer} />
         <Text style={[text.footnote, { color: colors.carlibLabel }]} numberOfLines={1}>
           {neighbourhood}
@@ -89,9 +96,10 @@ export interface ListGarageRowProps {
   garage: Garage;
   selected: boolean;
   distanceKm?: number;
+  available: boolean;
 }
 
-export function ListGarageRow({ garage, selected, distanceKm }: ListGarageRowProps) {
+export function ListGarageRow({ garage, selected, distanceKm, available }: ListGarageRowProps) {
   const { colors } = useTheme();
 
   return (
@@ -121,7 +129,7 @@ export function ListGarageRow({ garage, selected, distanceKm }: ListGarageRowPro
         <Text style={[text.footnote, { color: colors.carlibSecondary }]} numberOfLines={1}>
           {garage.address}
         </Text>
-        <AvailabilityRow garage={garage} />
+        <AvailabilityRow available={available} />
       </View>
     </View>
   );

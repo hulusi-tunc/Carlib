@@ -39,6 +39,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Glass } from '@/components/Glass';
+import { isGarageBookable } from '@/lib/availability';
 import { regionAround } from '@/lib/geo';
 import {
   nextRadius,
@@ -110,6 +111,7 @@ export default function GarageSearchScreen() {
   const garages = useClaimStore((s) => s.garages);
   const setPanelExpanded = useShopsUiStore((s) => s.setPanelExpanded);
   const claims = useClaimStore((s) => s.claims);
+  const timeSlots = useClaimStore((s) => s.timeSlots);
   const origin = useShopsUiStore((s) => s.origin);
   const setOrigin = useShopsUiStore((s) => s.setOrigin);
   const radiusKm = useShopsUiStore((s) => s.radiusKm);
@@ -121,6 +123,8 @@ export default function GarageSearchScreen() {
   const [contentExpanded, setContentExpanded] = useState(false);
   const liveExpanded = useSharedValue(false);
   const [searchText, setSearchText] = useState('');
+  // Fixed at mount: the availability horizon is measured from when the search opened.
+  const [now] = useState(() => new Date());
   // Swift onAppear: the first shop starts selected — the nearest once an origin is known.
   const [selectedId, setSelectedId] = useState<string | null>(
     () => rankGarages(garages, origin, radiusKm)[0]?.garage.id ?? null,
@@ -162,6 +166,15 @@ export default function GarageSearchScreen() {
 
   const ranked = useMemo(() => rankGarages(garages, origin, radiusKm), [garages, origin, radiusKm]);
   const mapGarages = useMemo(() => ranked.map((entry) => entry.garage), [ranked]);
+  const bookableIds = useMemo(
+    () =>
+      new Set(
+        garages
+          .filter((garage) => isGarageBookable(garage, timeSlots, now))
+          .map((garage) => garage.id),
+      ),
+    [garages, timeSlots, now],
+  );
   const filteredGarages = useMemo(() => filterRanked(ranked, searchText), [ranked, searchText]);
 
   // Swift onChange(searchText): keep the selection inside the filtered set.
@@ -530,6 +543,7 @@ export default function GarageSearchScreen() {
                 <CarouselGarageCard
                   garage={item.garage}
                   distanceKm={item.distanceKm}
+                  available={bookableIds.has(item.garage.id)}
                   width={cardWidth}
                 />
               </Pressable>
@@ -563,6 +577,7 @@ export default function GarageSearchScreen() {
               <ListGarageRow
                 garage={item.garage}
                 distanceKm={item.distanceKm}
+                available={bookableIds.has(item.garage.id)}
                 selected={item.garage.id === selectedId}
               />
             </Pressable>

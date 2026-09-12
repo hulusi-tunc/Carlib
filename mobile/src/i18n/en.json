@@ -207,7 +207,8 @@
     "coverage": "{{km}} km radius",
     "sectionSpecialties": "Specialties",
     "sectionSlots": "Available Slots",
-    "ctaBook": "Book Appointment"
+    "ctaBook": "Book Appointment",
+    "unavailableBody": "No open slot in the next {{days}} days."
   },
   "garageCard": {
     "available": "Available",

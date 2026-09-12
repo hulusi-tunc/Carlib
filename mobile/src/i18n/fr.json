@@ -207,7 +207,8 @@
     "coverage": "Rayon de {{km}} km",
     "sectionSpecialties": "Spécialités",
     "sectionSlots": "Créneaux disponibles",
-    "ctaBook": "Prendre rendez-vous"
+    "ctaBook": "Prendre rendez-vous",
+    "unavailableBody": "Aucun créneau ouvert dans les {{days}} prochains jours."
   },
   "garageCard": {
     "available": "Disponible",

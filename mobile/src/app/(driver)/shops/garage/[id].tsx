@@ -4,7 +4,7 @@
 // row is replaced by years active (per migration plan), and the Book button is
 // pinned instead of scrolling with the content.
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,6 +15,7 @@ import { CarlibCard } from '@/components/CarlibCard';
 import { DummyImage } from '@/components/DummyImage';
 import { EmptyState } from '@/components/EmptyState';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
+import { SEARCH_HORIZON_DAYS, isGarageBookable } from '@/lib/availability';
 import { shortFormatted, timeFormatted } from '@/lib/dates';
 import { formatDistance } from '@/lib/geo';
 import { openMaps, openTel } from '@/lib/links';
@@ -47,6 +48,11 @@ export default function GarageDetailScreen() {
   // Swift prefix(4) — the horizontal preview shows the first few open slots.
   const slots = useClaimStore(useShallow(availableSlots(id ?? ''))).slice(0, 4);
   const origin = useShopsUiStore((s) => s.origin);
+  const [now] = useState(() => new Date());
+  // PROSEARCH-02: a shop that became unavailable shows that, not a stale slot list.
+  const bookable = useClaimStore(
+    (s) => garage != null && isGarageBookable(garage, s.timeSlots, now),
+  );
 
   if (garage == null) {
     return (
@@ -153,9 +159,9 @@ export default function GarageDetailScreen() {
           <Text style={[text.title3, styles.sectionTitle, { color: colors.carlibDark }]}>
             {t('garageDetail.sectionSlots')}
           </Text>
-          {slots.length === 0 ? (
+          {!bookable ? (
             <Text style={[text.footnote, styles.sectionTitle, { color: colors.carlibSecondary }]}>
-              {t('booking.noSlots')}
+              {t('garageDetail.unavailableBody', { days: SEARCH_HORIZON_DAYS })}
             </Text>
           ) : (
             <ScrollView
@@ -183,6 +189,7 @@ export default function GarageDetailScreen() {
         <CarlibButton
           label={t('garageDetail.ctaBook')}
           icon="calendarEventLine"
+          isDisabled={!bookable}
           onPress={() => router.push(`/shops/garage/booking?garageId=${garage.id}`)}
         />
       </View>
