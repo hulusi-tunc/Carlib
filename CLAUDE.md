@@ -52,6 +52,8 @@ The screenshot harness (`src/app/(auth)/index.tsx`, baked in at bundle time via 
 - **Persisted state** (drafts, theme, language) can be seeded from outside: terminate the app, write `<container>/Library/Application Support/com.carlib.fr/RCTAsyncLocalStorage_V1/manifest.json` (`xcrun simctl get_app_container <udid> com.carlib.fr data`; a JSON map of key → value string, values under 1 KB inline), relaunch. AsyncStorage 2.x reads there, not `Documents/`. This is how mid-flow screens (a declaration at step 3) are reached without taps.
 - `simctl` on a long-lived simulator can hang (`launch`, `get_app_container`); time-box every call and reboot the device (`shutdown` + `boot`) when it does.
 - **Location:** `xcrun simctl location <udid> set 48.86,2.35` gives the app a fix; `clear` removes it (the first fix then times out after 8 s → "unavailable"). Answer the permission dialog from outside with `xcrun simctl privacy <udid> grant|revoke|reset location com.carlib.fr` — the dialog itself cannot be tapped by the harness. Revoke + relaunch exercises the file-address fallback of the shop search.
+- An unanswered location prompt is kept by locationd as an in-flight request: it survives app termination and comes back at the next launch, before any JS runs, and `privacy grant` does not clear it. Reboot the simulator. After a reboot `simctl privacy`/`location` may hang for a while — alarm-wrap them and retry.
+- On the first launch after a boot the native tab bar can show labels without icons (the icon font isn't ready yet); relaunch before judging tab-bar captures.
 
 ## Architecture
 
