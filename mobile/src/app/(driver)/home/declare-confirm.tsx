@@ -2,8 +2,7 @@
 // screen shown as a full-screen modal after submitting a declaration. The CTA
 // pops the whole declaration flow back to the home tab root (iOS set
 // pendingDriverTab = .home and dismissed the cover).
-import { Stack, router } from 'expo-router';
-import { useState } from 'react';
+import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,21 +10,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CarlibButton } from '@/components/CarlibButton';
 import { CarlibCard } from '@/components/CarlibCard';
 import { RemixIcon } from '@/components/RemixIcon';
+import { claimReference } from '@/models/types';
+import { useClaimStore } from '@/stores/claimStore';
 import { useHidesTabBar } from '@/stores/uiStore';
 import { carlibFont, spacing, text, useTheme } from '@/theme';
-
-function randomReference(): string {
-  // Swift: "SIN-2026-" + String(format: "%04d", Int.random(in: 1...9999)).
-  const n = Math.floor(Math.random() * 9999) + 1;
-  return `SIN-2026-${String(n).padStart(4, '0')}`;
-}
 
 export default function DeclareConfirmScreen() {
   // Swift .fullScreenCover: the confirmation covers the tab bar too.
   useHidesTabBar();
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const [reference] = useState(randomReference);
+  const { claimId } = useLocalSearchParams<{ claimId?: string }>();
+  const claim = useClaimStore((s) => s.claims.find((item) => item.id === claimId));
+  const reference = claim != null ? claimReference(claim) : null;
 
   return (
     <SafeAreaView
@@ -52,14 +49,16 @@ export default function DeclareConfirmScreen() {
         </Text>
       </View>
 
-      <CarlibCard variant="flat" style={styles.referenceCard}>
-        <View style={styles.referenceRow}>
-          <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
-            {t('declaration.confirmationReference')}
-          </Text>
-          <Text style={[carlibFont(15, 'medium'), { color: colors.carlibDark }]}>{reference}</Text>
-        </View>
-      </CarlibCard>
+      {reference != null && (
+        <CarlibCard variant="flat" style={styles.referenceCard}>
+          <View style={styles.referenceRow}>
+            <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
+              {t('declaration.confirmationReference')}
+            </Text>
+            <Text style={[carlibFont(15, 'medium'), { color: colors.carlibDark }]}>{reference}</Text>
+          </View>
+        </CarlibCard>
+      )}
 
       <View style={styles.spacer} />
 

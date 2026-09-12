@@ -114,6 +114,17 @@ export function vehicleDisplayName(vehicle: Vehicle): string {
   return vehicle.nickname ?? `${vehicle.info.brand} ${vehicle.info.model}`;
 }
 
+/**
+ * "SIN-2026-0417" — the file reference quoted to the driver on the confirmation
+ * and on every booking. Derived from the claim, so it is the same everywhere it
+ * is shown (Swift's confirmation drew a random number and never kept it).
+ */
+export function claimReference(claim: Pick<Claim, 'id' | 'createdAt'>): string {
+  let hash = 0;
+  for (const char of claim.id) hash = (hash * 31 + char.charCodeAt(0)) % 9999;
+  return `SIN-${claim.createdAt.getFullYear()}-${String(hash + 1).padStart(4, '0')}`;
+}
+
 export function garageFormattedPhone(garage: Garage): string {
   return garage.phone ? `${garage.dialCode} ${garage.phone}` : '';
 }

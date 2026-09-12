@@ -214,7 +214,7 @@ export default function DeclareScreen() {
     };
     addClaim(claim);
     void clearDraft();
-    router.push('/home/declare-confirm');
+    router.push({ pathname: '/home/declare-confirm', params: { claimId: claim.id } });
   }
 
   const divider = (
