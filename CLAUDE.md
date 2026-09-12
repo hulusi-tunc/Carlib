@@ -51,6 +51,7 @@ The screenshot harness (`src/app/(auth)/index.tsx`, baked in at bundle time via 
 - `CARLIB_ROUTES=/home/claims,/profile/settings,…` pushes each route in turn, `CARLIB_ROUTE_DWELL` ms apart (default 5000) — one build, then `xcrun simctl io <udid> screenshot` on a timer. Routes are group-less (`/home/…`, `/shops/…`, `/claims/…`); `/profile/…` resolves inside the signed-in role's group.
 - **Persisted state** (drafts, theme, language) can be seeded from outside: terminate the app, write `<container>/Library/Application Support/com.carlib.fr/RCTAsyncLocalStorage_V1/manifest.json` (`xcrun simctl get_app_container <udid> com.carlib.fr data`; a JSON map of key → value string, values under 1 KB inline), relaunch. AsyncStorage 2.x reads there, not `Documents/`. This is how mid-flow screens (a declaration at step 3) are reached without taps.
 - `simctl` on a long-lived simulator can hang (`launch`, `get_app_container`); time-box every call and reboot the device (`shutdown` + `boot`) when it does.
+- **Location:** `xcrun simctl location <udid> set 48.86,2.35` gives the app a fix; `clear` removes it (the first fix then times out after 8 s → "unavailable"). Answer the permission dialog from outside with `xcrun simctl privacy <udid> grant|revoke|reset location com.carlib.fr` — the dialog itself cannot be tapped by the harness. Revoke + relaunch exercises the file-address fallback of the shop search.
 
 ## Architecture
 
