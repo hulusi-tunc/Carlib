@@ -2,6 +2,7 @@ import { addHours, addMinutes } from 'date-fns';
 
 import { BOOKING_NOTICE_HOURS, canChangeBooking } from '@/lib/bookingRules';
 import type { TimeSlot } from '@/models/types';
+import { describe, expect, it } from '@jest/globals';
 
 const NOW = new Date('2026-09-12T10:00:00Z');
 

@@ -7,6 +7,7 @@ import {
   saveConsent,
   type PrivacyConsent,
 } from '@/lib/consent';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 
 const accepted: PrivacyConsent = {
   policyVersion: POLICY_VERSION,

@@ -1,4 +1,5 @@
 import { distanceKm, formatDistance, regionAround } from '@/lib/geo';
+import { describe, expect, it } from '@jest/globals';
 
 const PARIS = { latitude: 48.8566, longitude: 2.3522 };
 const LYON = { latitude: 45.764, longitude: 4.8357 };

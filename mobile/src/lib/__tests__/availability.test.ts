@@ -2,6 +2,7 @@ import { addDays, addHours } from 'date-fns';
 
 import { SEARCH_HORIZON_DAYS, isGarageBookable } from '@/lib/availability';
 import type { Garage, TimeSlot } from '@/models/types';
+import { describe, expect, it } from '@jest/globals';
 
 const NOW = new Date('2026-09-12T10:00:00Z');
 

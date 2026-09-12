@@ -1,4 +1,5 @@
 import { claimReference, plateKey } from '@/models/types';
+import { describe, expect, it } from '@jest/globals';
 
 describe('claimReference', () => {
   const createdAt = new Date('2026-09-12T10:00:00Z');

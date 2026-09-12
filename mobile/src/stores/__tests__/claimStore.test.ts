@@ -8,6 +8,7 @@ import {
   useClaimStore,
 } from '@/stores/claimStore';
 import { useNotificationStore } from '@/stores/notificationStore';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 
 const NOW = new Date('2026-09-12T10:00:00Z');
 const MARTIN = '00000002-0000-0000-0000-000000000002';

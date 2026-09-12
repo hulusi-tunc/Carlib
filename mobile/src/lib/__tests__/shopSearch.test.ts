@@ -7,6 +7,7 @@ import {
   type SearchOrigin,
 } from '@/lib/shopSearch';
 import type { Garage } from '@/models/types';
+import { describe, expect, it } from '@jest/globals';
 
 function garage(id: string, latitude: number, longitude: number): Garage {
   return {
