@@ -27,6 +27,7 @@ In-app copy is **bilingual EN + FR** (`mobile/src/i18n/{en,fr}.json`, ~400 keys,
 cd mobile
 npx tsc --noEmit                      # type-check — must be clean before every commit
 npx expo lint                         # ESLint incl. React Compiler rules — must be clean (was 22 problems → 0)
+npm test                              # jest-expo over the pure modules
 
 scripts/build-sim.sh <simulator-udid> # Release build → iOS simulator (see below)
 scripts/build-android.sh              # Release build → a running Android emulator
@@ -40,7 +41,7 @@ scripts/build-android.sh              # Release build → a running Android emul
 
 **Simulators:** several may be booted on this machine (other projects use their own). Always address a device by UDID — never `booted` — and give Carlib a dedicated one (`xcrun simctl create Carlib-Claude com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro <ios-26-runtime>`). Android: `CARLIB_ANDROID_DEVICE=<avd name>` picks the emulator; the script otherwise grabs whichever AVD exists.
 
-**No test target exists** (decision: parity is verified on device). Don't hunt for jest/Maestro recipes.
+**Tests:** `npm test` runs jest-expo over the pure modules (`src/lib`, `src/models`, `src/stores` — `**/__tests__/*.test.ts`). Screens are verified on device, not with Maestro or snapshot tests. AsyncStorage is mocked in `jest.setup.js`; the `@/` alias is mapped in `jest.config.js`. Installing anything Jest-related needs `--legacy-peer-deps` (react-native pins an older `@react-native/jest-preset` than jest-expo asks for).
 
 ### Signing in, and jumping straight to a screen
 
