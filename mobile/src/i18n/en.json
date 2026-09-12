@@ -503,7 +503,8 @@
     "forgotPassword": "Forgot password?",
     "signIn": "Sign In",
     "noAccount": "Don't have an account?",
-    "errorInvalid": "Invalid email or password"
+    "errorInvalid": "Invalid email or password",
+    "errorLocked": "Too many attempts. Try again in {{minutes}} min."
   },
   "signUp": {
     "title": "Create Account",

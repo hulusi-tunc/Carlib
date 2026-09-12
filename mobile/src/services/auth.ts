@@ -13,6 +13,35 @@ const SIGN_IN_ERROR = 'signIn.errorInvalid';
 // the keys extrapolate the signIn.errorInvalid convention.
 const SIGN_UP_INVALID_ERROR = 'signUp.errorInvalid';
 const SIGN_UP_EXISTS_ERROR = 'signUp.errorExists';
+const SIGN_IN_LOCKED_ERROR = 'signIn.errorLocked';
+
+// CARLIB-USERAUTH-01: three consecutive failures lock the account for five
+// minutes. Kept in memory until a backend owns it, so a restart clears it.
+const LOCKOUT_FAILURES = 3;
+const LOCKOUT_MINUTES = 5;
+const failures = new Map<string, { count: number; lockedUntil: number }>();
+
+function lockKey(email: string): string {
+  return email.trim().toLowerCase();
+}
+
+/** Minutes left on the lock, or 0 when the account may try again. */
+export function signInLockMinutes(email: string, now = Date.now()): number {
+  const entry = failures.get(lockKey(email));
+  if (entry == null || entry.lockedUntil <= now) return 0;
+  return Math.ceil((entry.lockedUntil - now) / 60_000);
+}
+
+function recordFailure(email: string, now = Date.now()): void {
+  const key = lockKey(email);
+  const count = (failures.get(key)?.count ?? 0) + 1;
+  failures.set(
+    key,
+    count >= LOCKOUT_FAILURES
+      ? { count: 0, lockedUntil: now + LOCKOUT_MINUTES * 60_000 }
+      : { count, lockedUntil: 0 },
+  );
+}
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -36,14 +65,16 @@ export async function checkExistingSession(): Promise<User | null> {
   return session?.user ?? null;
 }
 
-/** Rejects with 'signIn.errorInvalid' on failure. */
+/** Rejects with 'signIn.errorInvalid' on failure, 'signIn.errorLocked' while locked out. */
 export async function signIn(email: string, password: string): Promise<User> {
+  if (signInLockMinutes(email) > 0) throw new Error(SIGN_IN_LOCKED_ERROR);
   await delay(1000);
 
   if (!email || !password) throw new Error(SIGN_IN_ERROR);
 
   const seed = authenticate(email, password);
   if (seed) {
+    failures.delete(lockKey(email));
     await saveSession(seed, `email_${uuid()}`);
     return seed;
   }
@@ -54,10 +85,12 @@ export async function signIn(email: string, password: string): Promise<User> {
   // credential checks once a backend exists.
   const stored = (await loadSession())?.user;
   if (stored && stored.email.toLowerCase() === email.toLowerCase() && !isSeedEmail(stored.email)) {
+    failures.delete(lockKey(email));
     await saveSession(stored, `email_${uuid()}`);
     return stored;
   }
 
+  recordFailure(email);
   throw new Error(SIGN_IN_ERROR);
 }
 
