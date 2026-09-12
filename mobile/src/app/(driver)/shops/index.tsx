@@ -4,7 +4,7 @@
 // full-screen opaque surface (list) and the tab bar hides via shopsUiStore.
 // The panel is a fixed-size surface that is only ever TRANSLATED — the layout
 // flips at settle and the translation re-bases so the top edge stays put.
-import { useRouter } from 'expo-router';
+import { useIsFocused, useRouter } from 'expo-router';
 import React, {
   useCallback,
   useEffect,
@@ -230,12 +230,15 @@ export default function GarageSearchScreen() {
     [setPanelExpanded],
   );
 
-  // Resolve where the search is centred — once per mount, like Swift's
-  // onAppear. A device fix from an earlier visit is kept; anything weaker is
-  // retried so a permission granted meanwhile upgrades the origin. With
-  // nothing in range the camera shows the whole radius instead of a shop.
+  // Resolve where the search is centred when the tab gains focus — Swift's
+  // onAppear. Mount is too early: NativeTabs mounts every tab up front, and
+  // the permission dialog belongs to the driver actually opening Shops. A
+  // device fix from an earlier visit is kept; anything weaker is retried so a
+  // permission granted meanwhile upgrades the origin. With nothing in range
+  // the camera shows the whole radius instead of a shop.
+  const focused = useIsFocused();
   useEffect(() => {
-    if (origin?.kind !== 'device') {
+    if (focused && origin?.kind !== 'device') {
       void resolveSearchOrigin(claims, { prompt: true }).then((next) => {
         setOrigin(next);
         const nearest = rankGarages(garages, next, radiusKm)[0];
@@ -246,9 +249,9 @@ export default function GarageSearchScreen() {
         }
       });
     }
-    // Mount-only by design: the values read here are the mount-time ones.
+    // Focus-driven by design: the other values are read as of that moment.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [focused]);
 
   const widenSearch = useCallback(
     (nextRadiusKm: number) => {
