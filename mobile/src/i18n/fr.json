@@ -266,7 +266,9 @@
     "notificationPreferences": "Push et suivi des dossiers",
     "sectionLanguage": "Langue",
     "languageNote": "Choisissez la langue utilisée dans toute l'application.",
-    "sectionAppearance": "Apparence"
+    "sectionAppearance": "Apparence",
+    "deleteAccountBlockedTitle": "Suppression impossible",
+    "deleteAccountBlockedMessage": "Des dossiers en cours maintiennent le compte ouvert. Clôturez-les d'abord :\n{{files}}"
   },
   "changePassword": {
     "title": "Changer le mot de passe",

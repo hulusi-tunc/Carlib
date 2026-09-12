@@ -266,7 +266,9 @@
     "notificationPreferences": "Push & status updates",
     "sectionLanguage": "Language",
     "languageNote": "Pick the language Carlib uses throughout the app.",
-    "sectionAppearance": "Appearance"
+    "sectionAppearance": "Appearance",
+    "deleteAccountBlockedTitle": "Deletion blocked",
+    "deleteAccountBlockedMessage": "Files still in progress keep the account open. Close them first:\n{{files}}"
   },
   "changePassword": {
     "title": "Change password",
