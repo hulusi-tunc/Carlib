@@ -177,16 +177,6 @@ export const garages: Garage[] = [
   },
 ];
 
-/** Simulated distances from user (km). */
-export const garageDistances: Record<string, number> = {
-  '00000001-0000-0000-0000-000000000001': 2.3,
-  '00000002-0000-0000-0000-000000000002': 1.8,
-  '00000003-0000-0000-0000-000000000003': 5.1,
-  '00000004-0000-0000-0000-000000000004': 8.4,
-  '00000005-0000-0000-0000-000000000005': 3.6,
-  '00000006-0000-0000-0000-000000000006': 0.9,
-};
-
 /** Years the shop has been operating (shown in Garage Profile stats). */
 export const garageYearsActive: Record<string, number> = {
   '00000001-0000-0000-0000-000000000001': 12,
@@ -605,6 +595,3 @@ export function garageForId(id?: string): Garage | undefined {
   return garages.find((garage) => garage.id === id);
 }
 
-export function distanceForGarage(garageId: string): number {
-  return garageDistances[garageId] ?? 0;
-}

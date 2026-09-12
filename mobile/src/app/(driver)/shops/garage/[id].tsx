@@ -16,11 +16,14 @@ import { DummyImage } from '@/components/DummyImage';
 import { EmptyState } from '@/components/EmptyState';
 import { RemixIcon, type RemixIconName } from '@/components/RemixIcon';
 import { shortFormatted, timeFormatted } from '@/lib/dates';
+import { formatDistance } from '@/lib/geo';
 import { openMaps, openTel } from '@/lib/links';
+import { distanceFromOrigin } from '@/lib/shopSearch';
 import type { RepairSpecialty } from '@/models/enums';
 import { garageFormattedPhone } from '@/models/types';
-import { garageDistances, garageYearsActive } from '@/services/mockData';
+import { garageYearsActive } from '@/services/mockData';
 import { availableSlots, useClaimStore } from '@/stores/claimStore';
+import { useShopsUiStore } from '@/stores/shopsUiStore';
 import { carlibFont, radius, spacing, text, useTheme } from '@/theme';
 
 // Raw enum values are French; en.json keys are English.
@@ -43,6 +46,7 @@ export default function GarageDetailScreen() {
   const garage = useClaimStore((s) => s.garages.find((g) => g.id === id));
   // Swift prefix(4) — the horizontal preview shows the first few open slots.
   const slots = useClaimStore(useShallow(availableSlots(id ?? ''))).slice(0, 4);
+  const origin = useShopsUiStore((s) => s.origin);
 
   if (garage == null) {
     return (
@@ -54,7 +58,8 @@ export default function GarageDetailScreen() {
     );
   }
 
-  const km = garageDistances[garage.id] ?? 0;
+  // PROSEARCH-02: an unknown distance hides the row rather than showing 0 km.
+  const km = distanceFromOrigin(origin, garage.location);
   const years = garageYearsActive[garage.id] ?? 0;
 
   const infoRow = (icon: RemixIconName, label: string, onPress?: () => void) => (
@@ -76,12 +81,14 @@ export default function GarageDetailScreen() {
         {/* ── Header ── */}
         <View style={styles.header}>
           <Text style={[text.title1, { color: colors.carlibDark }]}>{garage.name}</Text>
-          <View style={styles.distanceRow}>
-            <RemixIcon name="mapPinLine" size={14} color={colors.carlibSecondary} />
-            <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
-              {`${km.toFixed(1)} km`}
-            </Text>
-          </View>
+          {km != null && (
+            <View style={styles.distanceRow}>
+              <RemixIcon name="mapPinLine" size={14} color={colors.carlibSecondary} />
+              <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
+                {formatDistance(km)}
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* ── Photos carousel ── */}

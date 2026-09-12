@@ -68,7 +68,7 @@
     "emptyFileHeadline": "Nothing on file right now.",
     "viewClaim": "View claim",
     "comePickUp": "Come pick it up",
-    "distanceAway": "{{km}} km away",
+    "distanceAway": "{{distance}} away",
     "readyBy": "Ready {{date}}",
     "reportCtaTitle": "Report damage",
     "reportCtaBody": "Declare in a few minutes\nand find a garage nearby",
@@ -190,7 +190,16 @@
     "nearby_other": "{{count}} shops nearby",
     "listAction": "List",
     "found_one": "{{count}} shop found",
-    "found_other": "{{count}} shops found"
+    "found_other": "{{count}} shops found",
+    "nearFile_one": "{{count}} shop near your file",
+    "nearFile_other": "{{count}} shops near your file",
+    "noLocation_one": "{{count}} shop · location off",
+    "noLocation_other": "{{count}} shops · location off",
+    "locationDenied": "Location is off. Turn it on to see distances.",
+    "locationUnavailable": "Position unavailable right now.",
+    "noneInRadius": "No body shop within {{km}} km",
+    "widenSearch": "Search within {{km}} km",
+    "supportFallback": "Carlib support will find one for you."
   },
   "garageDetail": {
     "notFoundTitle": "Shop not found",

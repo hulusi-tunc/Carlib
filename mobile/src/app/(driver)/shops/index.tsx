@@ -16,6 +16,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import {
   FlatList,
+  Linking,
   Pressable,
   StyleSheet,
   Text,
@@ -38,6 +39,13 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Glass } from '@/components/Glass';
+import { regionAround } from '@/lib/geo';
+import {
+  nextRadius,
+  rankGarages,
+  resolveSearchOrigin,
+  type RankedGarage,
+} from '@/lib/shopSearch';
 import { PageDot } from '@/components/PageDot';
 import { PressableScale } from '@/components/PressableScale';
 import { RemixIcon } from '@/components/RemixIcon';
@@ -47,7 +55,6 @@ import {
   ListGarageRow,
   withAlpha,
 } from '@/components/shops/GarageSearchCards';
-import type { Garage } from '@/models/types';
 import { useClaimStore } from '@/stores/claimStore';
 import { useShopsUiStore } from '@/stores/shopsUiStore';
 import { carlibFont, fontFamilies, text, useTheme } from '@/theme';
@@ -76,11 +83,11 @@ const FLING_VELOCITY = 500;
 const MORPH_MIDPOINT = 0.5;
 const MORPH_HYSTERESIS = 0.06;
 
-function filterGarages(garages: Garage[], searchText: string): Garage[] {
-  if (!searchText) return garages;
+function filterRanked(entries: RankedGarage[], searchText: string): RankedGarage[] {
+  if (!searchText) return entries;
   const query = searchText.trim().toLowerCase();
-  return garages.filter(
-    (garage) =>
+  return entries.filter(
+    ({ garage }) =>
       garage.name.toLowerCase().includes(query) || garage.address.toLowerCase().includes(query),
   );
 }
@@ -102,6 +109,11 @@ export default function GarageSearchScreen() {
 
   const garages = useClaimStore((s) => s.garages);
   const setPanelExpanded = useShopsUiStore((s) => s.setPanelExpanded);
+  const claims = useClaimStore((s) => s.claims);
+  const origin = useShopsUiStore((s) => s.origin);
+  const setOrigin = useShopsUiStore((s) => s.setOrigin);
+  const radiusKm = useShopsUiStore((s) => s.radiusKm);
+  const setRadiusKm = useShopsUiStore((s) => s.setRadiusKm);
 
   const [expanded, setExpanded] = useState(false);
   // Live content state during a drag (Swift isContentExpanded). `expanded`
@@ -109,15 +121,17 @@ export default function GarageSearchScreen() {
   const [contentExpanded, setContentExpanded] = useState(false);
   const liveExpanded = useSharedValue(false);
   const [searchText, setSearchText] = useState('');
-  // Swift onAppear: the first shop starts selected.
-  const [selectedId, setSelectedId] = useState<string | null>(() => garages[0]?.id ?? null);
+  // Swift onAppear: the first shop starts selected — the nearest once an origin is known.
+  const [selectedId, setSelectedId] = useState<string | null>(
+    () => rankGarages(garages, origin, radiusKm)[0]?.garage.id ?? null,
+  );
   const [containerSize, setContainerSize] = useState({
     width: window.width,
     height: window.height,
   });
 
   const mapRef = useRef<MapView>(null);
-  const carouselRef = useRef<FlatList<Garage>>(null);
+  const carouselRef = useRef<FlatList<RankedGarage>>(null);
   // Breaks the pin ↔ carousel feedback loop: while a programmatic carousel
   // scroll is in flight, viewability changes must not drive the selection.
   const programmaticScroll = useRef(false);
@@ -146,18 +160,20 @@ export default function GarageSearchScreen() {
   const cardWidth = containerSize.width - PANEL_MARGIN_H * 2 - CAROUSEL_MARGIN * 2;
   const cardStride = cardWidth + CAROUSEL_GAP;
 
-  const filteredGarages = useMemo(() => filterGarages(garages, searchText), [garages, searchText]);
+  const ranked = useMemo(() => rankGarages(garages, origin, radiusKm), [garages, origin, radiusKm]);
+  const mapGarages = useMemo(() => ranked.map((entry) => entry.garage), [ranked]);
+  const filteredGarages = useMemo(() => filterRanked(ranked, searchText), [ranked, searchText]);
 
   // Swift onChange(searchText): keep the selection inside the filtered set.
   const onSearchChange = useCallback(
     (next: string) => {
       setSearchText(next);
-      const nextFiltered = filterGarages(garages, next);
-      if (selectedId != null && !nextFiltered.some((garage) => garage.id === selectedId)) {
-        setSelectedId(nextFiltered[0]?.id ?? null);
+      const nextFiltered = filterRanked(ranked, next);
+      if (selectedId != null && !nextFiltered.some((entry) => entry.garage.id === selectedId)) {
+        setSelectedId(nextFiltered[0]?.garage.id ?? null);
       }
     },
-    [garages, selectedId],
+    [ranked, selectedId],
   );
 
   // Selection → camera + carousel. Camera always follows; the carousel only
@@ -180,7 +196,7 @@ export default function GarageSearchScreen() {
       selectionFromCarousel.current = false;
       return;
     }
-    const index = filteredGarages.findIndex((g) => g.id === selectedId);
+    const index = filteredGarages.findIndex((entry) => entry.garage.id === selectedId);
     if (index >= 0) {
       programmaticScroll.current = true;
       carouselRef.current?.scrollToOffset({ offset: index * cardStride, animated: !reduceMotion });
@@ -201,13 +217,49 @@ export default function GarageSearchScreen() {
     [setPanelExpanded],
   );
 
+  // Resolve where the search is centred — once per mount, like Swift's
+  // onAppear. A device fix from an earlier visit is kept; anything weaker is
+  // retried so a permission granted meanwhile upgrades the origin. With
+  // nothing in range the camera shows the whole radius instead of a shop.
+  useEffect(() => {
+    if (origin?.kind !== 'device') {
+      void resolveSearchOrigin(claims, { prompt: true }).then((next) => {
+        setOrigin(next);
+        const nearest = rankGarages(garages, next, radiusKm)[0];
+        if (nearest) {
+          setSelectedId(nearest.garage.id);
+        } else if (next.kind !== 'none') {
+          mapRef.current?.animateToRegion(regionAround(next.coords, radiusKm), reduceMotion ? 0 : 400);
+        }
+      });
+    }
+    // Mount-only by design: the values read here are the mount-time ones.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const widenSearch = useCallback(
+    (nextRadiusKm: number) => {
+      setRadiusKm(nextRadiusKm);
+      const nearest = rankGarages(garages, origin, nextRadiusKm)[0];
+      if (nearest) {
+        setSelectedId(nearest.garage.id);
+      } else if (origin != null && origin.kind !== 'none') {
+        mapRef.current?.animateToRegion(
+          regionAround(origin.coords, nextRadiusKm),
+          reduceMotion ? 0 : 400,
+        );
+      }
+    },
+    [garages, origin, reduceMotion, setRadiusKm],
+  );
+
   const [viewabilityConfigCallbackPairs] = useState(() => [
     {
       viewabilityConfig: { itemVisiblePercentThreshold: 60 },
-      onViewableItemsChanged: ({ viewableItems }: { viewableItems: ViewToken<Garage>[] }) => {
+      onViewableItemsChanged: ({ viewableItems }: { viewableItems: ViewToken<RankedGarage>[] }) => {
         if (programmaticScroll.current) return;
         const first = viewableItems.find((token) => token.isViewable);
-        const id = first?.item?.id;
+        const id = first?.item?.garage.id;
         if (id != null && id !== selectedIdRef.current) {
           selectionFromCarousel.current = true;
           setSelectedId(id);
@@ -307,7 +359,16 @@ export default function GarageSearchScreen() {
   }));
 
   const shopsCount = filteredGarages.length;
-  const selectedIndex = filteredGarages.findIndex((garage) => garage.id === selectedId);
+  const selectedIndex = filteredGarages.findIndex((entry) => entry.garage.id === selectedId);
+  const hasOrigin = origin != null && origin.kind !== 'none';
+  const widerRadius = nextRadius(radiusKm);
+
+  // The counter says where the count is measured from.
+  const countLabel = (fallbackKey: 'nearby' | 'found') => {
+    if (origin?.kind === 'file') return t('garageSearch.nearFile', { count: shopsCount });
+    if (origin?.kind === 'none') return t('garageSearch.noLocation', { count: shopsCount });
+    return t(`garageSearch.${fallbackKey}`, { count: shopsCount });
+  };
 
   const dragHandle = (
     <GestureDetector gesture={panelGesture}>
@@ -356,6 +417,23 @@ export default function GarageSearchScreen() {
     </View>
   );
 
+  // Only a refusal can be fixed from Settings; a missing fix just gets stated.
+  const locationHint =
+    origin?.kind === 'none' ? (
+      <Pressable
+        onPress={() => void Linking.openSettings()}
+        disabled={origin.reason !== 'denied'}
+        style={styles.locationHint}
+      >
+        <RemixIcon name="mapPinLine" size={12} color={colors.carlibLabel} />
+        <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
+          {origin.reason === 'denied'
+            ? t('garageSearch.locationDenied')
+            : t('garageSearch.locationUnavailable')}
+        </Text>
+      </Pressable>
+    ) : null;
+
   const emptyResults = (
     <View style={styles.empty}>
       <RemixIcon name="searchEyeLine" size={28} color={colors.carlibLabel} />
@@ -368,10 +446,33 @@ export default function GarageSearchScreen() {
     </View>
   );
 
+  // Nothing in range: widen step by step, then hand the file to support (Epic 16).
+  const emptyRadius = (
+    <View style={styles.empty}>
+      <RemixIcon name="mapPinLine" size={28} color={colors.carlibLabel} />
+      <Text style={[carlibFont(15, 'medium'), { color: colors.carlibDark }]}>
+        {t('garageSearch.noneInRadius', { km: radiusKm })}
+      </Text>
+      {widerRadius != null ? (
+        <Pressable onPress={() => widenSearch(widerRadius)} hitSlop={8} style={styles.listButton}>
+          <Text style={[carlibFont(15, 'medium'), { color: colors.carlibDark }]}>
+            {t('garageSearch.widenSearch', { km: widerRadius })}
+          </Text>
+          <RemixIcon name="arrowRightSLine" size={16} color={colors.carlibDark} />
+        </Pressable>
+      ) : (
+        <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
+          {t('garageSearch.supportFallback')}
+        </Text>
+      )}
+    </View>
+  );
+  const emptyBody = hasOrigin && ranked.length === 0 ? emptyRadius : emptyResults;
+
   const pageDots =
     shopsCount > 1 ? (
       <View style={styles.dotsRow}>
-        {filteredGarages.map((garage) => (
+        {filteredGarages.map(({ garage }) => (
           <PageDot
             key={garage.id}
             active={garage.id === selectedId}
@@ -388,7 +489,7 @@ export default function GarageSearchScreen() {
     <View style={styles.carouselSection}>
       <View style={styles.carouselHeader}>
         <Text style={[text.caption, styles.nearbyLabel, { color: colors.carlibLabel }]}>
-          {t('garageSearch.nearby', { count: shopsCount })}
+          {countLabel('nearby')}
         </Text>
         <Pressable onPress={() => settle(true)} hitSlop={8} style={styles.listButton}>
           <Text style={[text.caption, { color: colors.carlibLabel }]}>
@@ -399,13 +500,13 @@ export default function GarageSearchScreen() {
       </View>
 
       {shopsCount === 0 ? (
-        emptyResults
+        emptyBody
       ) : (
         <>
           <FlatList
             ref={carouselRef}
             data={filteredGarages}
-            keyExtractor={(garage) => garage.id}
+            keyExtractor={(entry) => entry.garage.id}
             horizontal
             showsHorizontalScrollIndicator={false}
             snapToInterval={cardStride}
@@ -425,8 +526,12 @@ export default function GarageSearchScreen() {
               programmaticScroll.current = false;
             }}
             renderItem={({ item }) => (
-              <Pressable onPress={() => openDetail(item.id)}>
-                <CarouselGarageCard garage={item} width={cardWidth} />
+              <Pressable onPress={() => openDetail(item.garage.id)}>
+                <CarouselGarageCard
+                  garage={item.garage}
+                  distanceKm={item.distanceKm}
+                  width={cardWidth}
+                />
               </Pressable>
             )}
           />
@@ -439,23 +544,27 @@ export default function GarageSearchScreen() {
   const listBody = (
     <View style={styles.flex}>
       <Text style={[text.footnote, styles.foundLabel, { color: colors.carlibSecondary }]}>
-        {t('garageSearch.found', { count: shopsCount })}
+        {countLabel('found')}
       </Text>
       {shopsCount === 0 ? (
-        <View style={styles.emptyExpanded}>{emptyResults}</View>
+        <View style={styles.emptyExpanded}>{emptyBody}</View>
       ) : (
         <FlatList
           data={filteredGarages}
-          keyExtractor={(garage) => garage.id}
+          keyExtractor={(entry) => entry.garage.id}
           contentContainerStyle={[styles.listContent, { paddingBottom: 24 + insets.bottom }]}
           renderItem={({ item }) => (
             <Pressable
               onPress={() => {
-                setSelectedId(item.id);
-                openDetail(item.id);
+                setSelectedId(item.garage.id);
+                openDetail(item.garage.id);
               }}
             >
-              <ListGarageRow garage={item} selected={item.id === selectedId} />
+              <ListGarageRow
+                garage={item.garage}
+                distanceKm={item.distanceKm}
+                selected={item.garage.id === selectedId}
+              />
             </Pressable>
           )}
         />
@@ -477,7 +586,9 @@ export default function GarageSearchScreen() {
         <GarageMapCanvas
           ref={mapRef}
           region={PARIS_REGION}
-          garages={garages}
+          garages={mapGarages}
+          showsUserLocation={origin?.kind === 'device'}
+          fileOrigin={origin?.kind === 'file' ? origin.coords : null}
           selectedId={selectedId}
           onSelect={focusGarage}
         />
@@ -507,6 +618,7 @@ export default function GarageSearchScreen() {
                 {contentExpanded ? navBar : dragHandle}
               </Animated.View>
               {searchField}
+              {locationHint}
               <Animated.View
                 key={`body-${contentExpanded}`}
                 entering={FadeIn.duration(160)}
@@ -590,6 +702,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: fontFamilies.regular,
     fontSize: 15,
+  },
+  locationHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 20,
+    paddingBottom: 6,
   },
   carouselSection: {
     gap: 8,

@@ -13,7 +13,9 @@ import { RemixIcon } from '@/components/RemixIcon';
 import { openMaps, openTel } from '@/lib/links';
 import type { RepairSpecialty } from '@/models/enums';
 import { garageFormattedPhone, type Garage } from '@/models/types';
-import { garageDistances } from '@/services/mockData';
+import { formatDistance } from '@/lib/geo';
+import { distanceFromOrigin } from '@/lib/shopSearch';
+import { useShopsUiStore } from '@/stores/shopsUiStore';
 import { carlibFont, radius, spacing, text, useTheme } from '@/theme';
 
 const SPECIALTY_KEY = {
@@ -29,7 +31,7 @@ export type GarageCardVariant = 'compact' | 'full';
 export interface GarageCardProps {
   garage: Garage;
   variant?: GarageCardVariant;
-  /** km from the user — defaults to the mock distance table. */
+  /** km override; by default the distance from the shared search origin, hidden when unknown. */
   distance?: number;
 }
 
@@ -37,7 +39,8 @@ export function GarageCard({ garage, variant = 'full', distance }: GarageCardPro
   const { t } = useTranslation();
   const { colors, scheme } = useTheme();
 
-  const km = distance ?? garageDistances[garage.id];
+  const origin = useShopsUiStore((s) => s.origin);
+  const km = distance ?? distanceFromOrigin(origin, garage.location);
   // carlibAccent === tileSecondary in dark, so the chip would melt into the
   // card it sits on; step down to screenBg there. Light keeps the accent fill.
   const chipBg = scheme === 'dark' ? colors.carlibScreenBg : colors.carlibAccent;
@@ -58,7 +61,7 @@ export function GarageCard({ garage, variant = 'full', distance }: GarageCardPro
           </Text>
           {km != null && (
             <Text style={[text.caption, { color: colors.carlibSecondary }]}>
-              {`${km.toFixed(1)} km`}
+              {formatDistance(km)}
             </Text>
           )}
         </View>
@@ -86,7 +89,7 @@ export function GarageCard({ garage, variant = 'full', distance }: GarageCardPro
           </Text>
           {km != null && (
             <Text style={[text.footnote, { color: colors.carlibSecondary }]}>
-              {`${km.toFixed(1)} km`}
+              {formatDistance(km)}
             </Text>
           )}
 

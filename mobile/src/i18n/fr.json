@@ -68,7 +68,7 @@
     "emptyFileHeadline": "Aucun dossier en cours.",
     "viewClaim": "Voir le dossier",
     "comePickUp": "Venir le récupérer",
-    "distanceAway": "À {{km}} km",
+    "distanceAway": "à {{distance}}",
     "readyBy": "Prêt le {{date}}",
     "reportCtaTitle": "Déclarer des dommages",
     "reportCtaBody": "Déclarez en quelques minutes\net trouvez un carrossier proche",
@@ -190,7 +190,16 @@
     "nearby_other": "{{count}} carrossiers à proximité",
     "listAction": "Liste",
     "found_one": "{{count}} carrossier trouvé",
-    "found_other": "{{count}} carrossiers trouvés"
+    "found_other": "{{count}} carrossiers trouvés",
+    "nearFile_one": "{{count}} carrossier près de votre dossier",
+    "nearFile_other": "{{count}} carrossiers près de votre dossier",
+    "noLocation_one": "{{count}} carrossier · position désactivée",
+    "noLocation_other": "{{count}} carrossiers · position désactivée",
+    "locationDenied": "Position désactivée. Activez-la pour voir les distances.",
+    "locationUnavailable": "Position indisponible pour le moment.",
+    "noneInRadius": "Aucun carrossier à moins de {{km}} km",
+    "widenSearch": "Chercher à {{km}} km",
+    "supportFallback": "Le support Carlib vous en trouvera un."
   },
   "garageDetail": {
     "notFoundTitle": "Carrossier introuvable",
